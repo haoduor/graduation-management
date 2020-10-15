@@ -1,0 +1,125 @@
+/* 登录页背景 */
+
+.loginBk {
+    background: linear-gradient(-45deg, #0066ff, #33ffff);
+}
+
+.loginBody {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-evenly;
+   
+}
+
+/* 表单 */
+
+.loginForm {
+    margin: 0 5rem;
+    padding: 2rem 3em 1rem 3em;
+    border-radius: 0.25rem;
+    background-color: rgba(255, 255, 255, 0.85);
+    display: flex;
+    flex-flow: column nowrap;
+    box-sizing: border-box;
+    box-shadow: 4px 4px 5px rgba(0,0,0,0.2), -4px 0px 5px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+}
+.loginForm:hover{
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.2), -1px 0px 5px rgba(0,0,0,0.2);
+}
+
+/* 标题 */
+
+.loginForm .title, .loginMsg .title {
+    width: 15rem;
+    margin: 1rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.loginForm .form {
+    width: 24rem;
+}
+
+.loginForm p {
+    width: 4.5rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.loginForm .rowDiv {
+    margin: 1rem;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+/* 修改el默认样式 */
+
+.loginForm .rowDiv .el-input {
+    width: 80%
+}
+
+.loginForm .rowDiv .el-button {
+    margin-top: 1rem;
+    padding: 0.75rem 8rem;
+}
+
+/* 验证码图片 */
+
+.codeDiv .el-input {
+    width: 50% !important;
+    flex: 1;
+}
+
+.codeImg {
+    width: 80px;
+    height: 30px;
+    /* margin-left: 1rem; */
+}
+
+/* 公告 */
+
+.loginMsg {
+    margin: 0 5rem;
+    padding: 2rem 3em 1rem 3em;
+    border-radius: 0.25rem;
+    background-color: rgba(255, 255, 255, 0.85);
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-shadow: 4px 4px 5px rgba(0,0,0,0.2), -4px 0px 5px rgba(0,0,0,0.2);
+    transition: all 0.3s;
+}
+.loginMsg:hover{
+    box-shadow: 1px 1px 5px rgba(0,0,0,0.2), -1px 0px 5px rgba(0,0,0,0.2);
+}
+
+.loginMsg .msgBody{
+    width: 20rem;
+}
+
+/* 验证码行 */  
+.loginForm .form .codeRow{
+    position: relative;
+}
+.loginForm .form .codeRow .codeImg{
+     position: absolute;
+     top: calc(50% + 5px);     
+     right: 4.5rem;
+}
+.loginForm .form .codeRow .el-input__inner{
+    width: 58%;
+}
+
+.loginForm .form .codeRow .loginRefresh{
+    position: absolute;
+    top: 50%;     
+    right: 0rem;
+}

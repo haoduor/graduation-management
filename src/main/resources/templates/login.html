@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录页</title>
+    <link rel="stylesheet" href="./css/login.css">
+
+</head>
+
+<body class="loginBk">
+    <div id="app">
+        <div id="public"></div>
+        <div class="loginBody">
+            <div id="loginForm" class="loginForm"></div>
+            <div id="loginMsg" class="loginMsg"></div>
+        </div>
+    </div>
+</body>
+<script src="./js/tool.js" type="module"></script>
+<script src="./js/vue.js" type="module"></script>
+<script src="./js/element.js" type="module"></script>
+<script src="./js/axios.js"></script>
+<script type="module">
+    import { tools } from './js/tool.js';
+    let codeUrl = 'http://127.0.0.1:9999/captcha/get?';
+    (async () => {
+        await tools.setPage('loginForm', './view/login/loginForm.html');
+        await tools.setPage('loginMsg', './view/login/loginMsg.html');
+        await tools.setPage('public', './view/public.html');
+        //初始加载二维码
+        tools.$('#codeImg').src = `${codeUrl}${(Math.random()*100 + '').slice(0,2)}`;
+        var app = Vue.extend({
+            data() {
+                return {
+                    rules: {
+                        username: [
+                            { required: true, message: '请输入用户名', trigger: 'blur' }
+                        ],
+                        password: [
+                            { required: true, message: '请输入密码', trigger: 'blur' }
+                        ],
+                        verificationCode: [
+                            { required: true, message: '请输入验证码', trigger: 'blur' }
+                        ]
+                    },
+                    loginForm: {
+                        username: '',
+                        password: '',
+                        verificationCode: ''
+                    },
+                    username: '',
+                    password: '',
+                    verificationCode: '',
+                }
+            },
+            methods: {
+                // 登录
+                submitForm(formName) {
+                    this.$refs[formName].validate(async (valid) => {
+                        if (valid) {
+                            let userData = {
+                                username: this.loginForm.username,
+                                password: this.loginForm.password,
+                                code: this.loginForm.verificationCode,
+                            };
+                            try {
+                                let loginResult = await axios.post('/login', tools.buildFormData(userData));
+                                console.log(loginResult);
+                                if(loginResult['data']['id'] == 1 ||loginResult['data']['id'] == 0 ){
+                                    tools.setTimeOutP(3000,()=>this.$message.success("3秒后将跳转")).then(val=>{
+                                        console.log("跳转了")
+                                    });
+                                }
+                                if(loginResult['data']['id'] == 3){
+                                    tools.setTimeOutP(0,()=>this.$message.error("验证码错误")).then(val=>{
+                                        this.loginForm.verificationCode = '';
+                                        tools.$('#codeImg').src = `${codeUrl}${(Math.random()*100 + '').slice(0,2)}`;
+                                    });
+                                }
+                            } catch {
+                                this.$message.error("网络出错了")
+                            }
+                        } else {
+                            alert('请输入完整信息');
+                            return false;
+                        }
+                    });
+                },
+                // 刷新验证码
+                async refreshCode() {
+                    try {
+                        tools.$('#codeImg').src = `${codeUrl}${(Math.random()*100 + '').slice(0,2)}`;
+                    } catch {
+                        alert('获取失败');
+                    }
+                }
+            }
+        });
+        var fin = new app().$mount("#app");
+    })();
+
+</script>
+
+</html>

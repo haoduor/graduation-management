@@ -1,0 +1,19 @@
+<p class="title">登录</p>
+<el-form :model="loginForm" ref="loginForm" :rules="rules" class="form">
+    <el-form-item prop="username" label="账号">
+        <el-input placeholder="请输入账号" v-model="loginForm.username" clearable></el-input>
+    </el-form-item>
+    <el-form-item prop="password" label="密码">
+        <el-input placeholder="请输入密码" v-model="loginForm.password" clearable show-password></el-input>
+    </el-form-item>
+    <div class="codeRow">
+        <el-form-item prop="verificationCode" label="验证码">
+            <el-input class="ipt_code" placeholder="请输入验证码" v-model="loginForm.verificationCode" clearable></el-input>
+        </el-form-item>
+        <img id="codeImg" class="codeImg" src="./img/code.png" />
+        <el-button class="loginRefresh" type="text" @click="refreshCode" icon="el-icon-refresh">换一张</el-button>
+    </div>
+    <div class="rowDiv">
+        <el-button type="primary" @click="submitForm('loginForm')" icon="el-icon-position">登录</el-button>
+    </div>
+</el-form>
