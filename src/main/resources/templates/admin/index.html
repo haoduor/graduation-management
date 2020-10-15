@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/admin/index.css">
+</head>
+
+<body>
+    <div id="app">
+        <div id="public"></div>
+        <div class="adminNav">
+            <p class="navTitle"></p>
+            <div class="userInformation">
+                <p>当前用户:gugu</p>
+                <el-button class="userLoginOut" @click="" type="text" icon="el-icon-switch-button">登出</el-button>
+            </div>
+        </div>
+        <div class="adminBody">
+
+            <el-row class="adminList">
+                <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect"
+                    background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+                    <el-menu-item index="1">
+                        <i class="el-icon-user"></i>
+                        <span slot="title">教师用户列表</span>
+                    </el-menu-item>
+                    <el-menu-item index="2">
+                        <i class="el-icon-suitcase-1"></i>
+                        <span slot="title">学生用户列表</span>
+                    </el-menu-item>
+                </el-menu>
+            </el-row>
+            <div class="adminData">
+                <div class="listTool">
+                    <p class="listToolTitle"><i class="el-icon-s-operation"></i>用户列表</p>
+                    <el-button class="listToolRefresh" type="primary" icon="el-icon-refresh">刷新</el-button>
+                    <el-button class="listToolAdd" type="primary" icon="el-icon-document-add">添加</el-button>
+                </div>
+                <el-table :data="studentData" class="accountTable">
+                    <el-table-column prop="stuId" label="学生编号">
+                    </el-table-column>
+                    <el-table-column prop="stuName" label="学生姓名">
+                    </el-table-column>
+                    <el-table-column prop="stuAccount" label="账号">
+                    </el-table-column>
+                    <el-table-column prop="stuPassword" label="密码">
+                    </el-table-column>
+                    <el-table-column label="操作" width="280">
+                        <template slot-scope="scope">
+                            <el-button @click="showList(scope.row)" type="text" icon="el-icon-edit">编辑</el-button>
+                            <el-button @click="editList(scope.row)" type="text" icon="el-icon-delete">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <el-pagination class="listPagination" background @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                    :current-page.sync="currentPage3" :page-size="100" layout="prev, pager, next, jumper" :total="1000">
+                </el-pagination>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="./js/tool.js" type="module"></script>
+<script src="./js/vue.js" type="module"></script>
+<script src="./js/element.js" type="module"></script>
+<script type="module">
+    import { tools } from './js/tool.js';
+    (async () => {
+        await tools().setPage('public', './view/public.html');
+        var app = Vue.extend({
+            data() {
+                return {
+                    studentData: [{
+                        stuId: 'A0001',
+                        stuName: '张三',
+                        stuAccount: 'user001',
+                        stuPassword: '123456'
+                    }, {
+                        stuId: 'A0002',
+                        stuName: '李四',
+                        stuAccount: 'user002',
+                        stuPassword: '321321'
+                    }, {
+                        stuId: 'A0003',
+                        stuName: '王五',
+                        stuAccount: 'user003',
+                        stuPassword: '321123'
+                    }]
+                }
+            },
+            methods: {
+                handleSelect(key, keyPath) {
+                    console.log(key, keyPath);
+                },
+                showList(data) {
+                    console.log(index);
+                },
+                editList(data) {
+                    console.log(index);
+                }
+            }
+        });
+        var fin = new app().$mount("#app");
+    })();
+</script>
+
+</html>

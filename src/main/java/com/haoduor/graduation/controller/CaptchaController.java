@@ -20,15 +20,11 @@ import java.io.OutputStream;
 @Controller
 @RequestMapping("/captcha")
 public class CaptchaController {
-
-    @Autowired
-    private HttpServletResponse response;
-
     @Autowired
     private HttpServletRequest request;
 
     @GetMapping("/get")
-    public void getCaptcha() {
+    public void getCaptcha(HttpServletResponse response) {
         LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(80, 30);
         lineCaptcha.setGenerator(new LoginCodeGenerator());
 
