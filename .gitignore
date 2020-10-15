@@ -22,6 +22,7 @@ target/
 *.PDM
 .mvn/
 
+file/
 
 ### NetBeans ###
 /nbproject/private/
