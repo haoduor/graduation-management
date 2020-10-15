@@ -14,6 +14,21 @@ drop table if exists teacher;
 
 drop table if exists user;
 
+drop table if exists templet;
+
+/*==============================================================*/
+/* Table: template                                               */
+/*==============================================================*/
+create table template
+(
+   id                   bigint comment 'id',
+   file_name            varchar(64) comment '样板文件名称',
+   sha256               varchar(256) comment '文件的256校验值',
+   upload_time          datetime comment '上传时间',
+   is_delete            bool comment '是否被删除',
+   delete_time          datetime comment '删除时间'
+);
+
 /*==============================================================*/
 /* Table: department                                            */
 /*==============================================================*/
