@@ -1,7 +1,7 @@
 /* 登录页背景 */
 
 .loginBk {
-    background: linear-gradient(-45deg, #0066ff, #33ffff);
+    /*background: linear-gradient(-45deg, #0066ff, #33ffff);*/
 }
 
 .loginBody {
@@ -21,7 +21,7 @@
     margin: 0 5rem;
     padding: 2rem 3em 1rem 3em;
     border-radius: 0.25rem;
-    background-color: rgba(255, 255, 255, 0.85);
+    background-color: rgba(255, 255, 255, 0.95);
     display: flex;
     flex-flow: column nowrap;
     box-sizing: border-box;

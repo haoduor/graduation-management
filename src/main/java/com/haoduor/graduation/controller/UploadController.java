@@ -9,6 +9,7 @@ import com.haoduor.graduation.dto.StudentDto;
 import com.haoduor.graduation.exception.DuplicateIdException;
 import com.haoduor.graduation.service.UserService;
 import com.haoduor.graduation.vo.BaseMessage;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +28,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+@Slf4j
 @Controller
 @RequestMapping("/import")
 public class UploadController {
@@ -47,6 +50,7 @@ public class UploadController {
 
     private static List<String> suffix = Arrays.asList("xlsx", "xls");
 
+    @ResponseBody
     @PostMapping("/student")
     public BaseMessage uploadStudent(MultipartFile file) {
         Subject currentUser = SecurityUtils.getSubject();
@@ -81,14 +85,15 @@ public class UploadController {
                 boolean isFirst = false;
 
                 List<StudentDto> students = new LinkedList<>();
-                for (List<Object> o: contents) {
+
+                for (int i = 1; i < contents.size(); i++) {
                     StudentDto tmp = null;
                     try {
-                        tmp = adapter.toStudent(o);
+                        tmp = adapter.toStudent(contents.get(i));
                     } catch (DuplicateIdException e) {
                         return new BaseMessage(4, "id重复 " + e.getId());
                     } catch (Exception e) {
-
+                        return new BaseMessage(5, "不知道");
                     }
 
                     students.add(tmp);

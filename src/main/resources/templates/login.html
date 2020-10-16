@@ -29,8 +29,10 @@
         await tools.setPage('loginForm', './view/login/loginForm.html');
         await tools.setPage('loginMsg', './view/login/loginMsg.html');
         await tools.setPage('public', './view/public.html');
+
+        tools.$('.loginBk').style.background = `url(http://127.0.0.1:9999/image/Sola.png)`
         //初始加载二维码
-        tools.$('#codeImg').src = `${codeUrl}${(Math.random()*100 + '').slice(0,2)}`;
+        tools.$('#codeImg').src =`${codeUrl}${(Math.random()*100 + '').slice(0,2)}`
         var app = Vue.extend({
             data() {
                 return {
@@ -67,10 +69,13 @@
                             };
                             try {
                                 let loginResult = await axios.post('/login', tools.buildFormData(userData));
-                                console.log(loginResult);
                                 if(loginResult['data']['id'] == 1 ||loginResult['data']['id'] == 0 ){
                                     tools.setTimeOutP(3000,()=>this.$message.success("3秒后将跳转")).then(val=>{
-                                        console.log("跳转了")
+                                        if(window.location.href.includes('admin')){
+                                            tools.jump('/manager');
+                                            return;
+                                        }
+                                        tools.jump('/');
                                     });
                                 }
                                 if(loginResult['data']['id'] == 3){
