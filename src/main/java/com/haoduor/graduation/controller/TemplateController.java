@@ -155,9 +155,15 @@ public class TemplateController {
     }
 
     @GetMapping("/student")
-    public void getStudentTemplate(HttpServletResponse response) {
+    public void getStudentTemplate(HttpServletResponse response) throws UnsupportedEncodingException {
         ExcelWriter writer = ExcelUtil.getWriter();
         writer.writeHeadRow(CommonAdapter.studentTitle);
+
+        String filename = "学生导入样板.xlsx";
+
+        response.setHeader("content-type", "application/octet-stream");
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
 
         try {
             OutputStream out = response.getOutputStream();
