@@ -18,9 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jca.cci.core.support.CommAreaRecord;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,8 +49,6 @@ public class TemplateController {
     @Autowired
     private HttpServletRequest request;
 
-    @Autowired
-    private CommonAdapter adapter;
 
     @PostMapping("/upload")
     public BaseMessage upload(MultipartFile file) {
@@ -169,7 +165,26 @@ public class TemplateController {
             OutputStream out = response.getOutputStream();
             writer.flush(out);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.info("学生样板文件下载出错");
+        }
+    }
+
+    @GetMapping("/teacher")
+    public void getTeacherTemplate(HttpServletResponse response) throws UnsupportedEncodingException {
+        ExcelWriter writer = ExcelUtil.getWriter();
+        writer.writeHeadRow(CommonAdapter.teacherTitle);
+
+        String filename = "教师导入样板.xlsx";
+
+        response.setHeader("content-type", "application/octet-stream");
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
+
+        try {
+            OutputStream out = response.getOutputStream();
+            writer.flush(out);
+        } catch (IOException e) {
+            log.info("教师样板文件下载出错");
         }
     }
 }

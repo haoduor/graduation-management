@@ -48,6 +48,8 @@ public class MainController {
                     return new BaseMessage(5, "密码错误");
                 } catch (UnknownAccountException e) {
                     return new BaseMessage(6, "未知用户名");
+                } catch (Exception e) {
+                    return new BaseMessage(7, "未知错误");
                 }
             } else {
                 return new BaseMessage(4, "用户名或者密码不能为空");

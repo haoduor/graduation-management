@@ -41,7 +41,8 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public Template getTemplateBySha256(String sha256) {
         TemplateExample te = new TemplateExample();
-        te.createCriteria().andSha256EqualTo(sha256);
+        te.createCriteria().andSha256EqualTo(sha256)
+          .andIsDeleteEqualTo(false);
 
         List<Template> res = templateMapper.selectByExample(te);
         if (res.size() == 1) {
@@ -54,6 +55,7 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public List<Template> getTemplate() {
         TemplateExample te = new TemplateExample();
+        te.createCriteria().andIsDeleteEqualTo(false);
         return templateMapper.selectByExample(te);
     }
 }
