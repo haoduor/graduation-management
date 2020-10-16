@@ -2,11 +2,14 @@ package com.haoduor.graduation.vo;
 
 import lombok.Data;
 
-import java.util.List;
-
+/**
+ * nowPage 当前页面
+ * totalPage 全部页码
+ * data 数据
+ */
 @Data
 public class PageMessage {
-    int nowPage;
+    long nowPage;
     long totalPage;
     Object data;
 }

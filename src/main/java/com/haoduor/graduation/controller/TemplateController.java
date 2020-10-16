@@ -5,8 +5,11 @@ import cn.hutool.core.io.IORuntimeException;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.poi.excel.ExcelUtil;
+import cn.hutool.poi.excel.ExcelWriter;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.haoduor.graduation.adapter.CommonAdapter;
 import com.haoduor.graduation.model.Template;
 import com.haoduor.graduation.service.TemplateService;
 import com.haoduor.graduation.vo.BaseMessage;
@@ -15,7 +18,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jca.cci.core.support.CommAreaRecord;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,6 +50,9 @@ public class TemplateController {
 
     @Autowired
     private HttpServletRequest request;
+
+    @Autowired
+    private CommonAdapter adapter;
 
     @PostMapping("/upload")
     public BaseMessage upload(MultipartFile file) {
@@ -144,5 +152,18 @@ public class TemplateController {
         pm.setData(res);
 
         return pm;
+    }
+
+    @GetMapping("/student")
+    public void getStudentTemplate(HttpServletResponse response) {
+        ExcelWriter writer = ExcelUtil.getWriter();
+        writer.writeHeadRow(CommonAdapter.studentTitle);
+
+        try {
+            OutputStream out = response.getOutputStream();
+            writer.flush(out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

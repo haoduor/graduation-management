@@ -23,8 +23,8 @@ public class CommonAdapter {
     @Resource(name = "teacherFilter")
     private BitMapBloomFilter teacherFilter;
 
-    private static final List<String> studentTitle = Arrays.asList("学号","姓名","班级","系部");
-    private static final List<String> teacherTitle = Arrays.asList("工号", "姓名", "系部");
+    public static final List<String> studentTitle = Arrays.asList("学号","姓名","班级","系部");
+    public static final List<String> teacherTitle = Arrays.asList("工号", "姓名", "系部");
 
     public boolean studentTitleEqual(List<Object> list) {
         return ListUtils.isEqualList(studentTitle, studentTitle);

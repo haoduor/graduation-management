@@ -4,9 +4,11 @@ import com.haoduor.graduation.dao.StudentMapper;
 import com.haoduor.graduation.service.StudentService;
 import com.haoduor.graduation.vo.StudentVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class StudentServiceImpl implements StudentService {
 
     @Autowired
