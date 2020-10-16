@@ -5,7 +5,8 @@ import lombok.Data;
 
 @Data
 public class StudentVo {
-    String id;
+    long id;
+    String studentId;
     String name;
     String classname;
     String department;
