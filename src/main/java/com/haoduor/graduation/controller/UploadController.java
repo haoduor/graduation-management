@@ -1,5 +1,6 @@
 package com.haoduor.graduation.controller;
 
+import cn.hutool.bloomfilter.BitMapBloomFilter;
 import cn.hutool.core.io.FileTypeUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.poi.excel.ExcelReader;
@@ -7,6 +8,7 @@ import cn.hutool.poi.excel.ExcelUtil;
 import com.haoduor.graduation.adapter.CommonAdapter;
 import com.haoduor.graduation.dto.StudentDto;
 import com.haoduor.graduation.exception.DuplicateIdException;
+import com.haoduor.graduation.exception.NameParseException;
 import com.haoduor.graduation.service.UserService;
 import com.haoduor.graduation.vo.BaseMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -47,6 +50,12 @@ public class UploadController {
 
     @Autowired
     private UserService userService;
+
+    @Resource(name = "studentFilter")
+    private BitMapBloomFilter studentFilter;
+
+    @Resource(name = "teacherFilter")
+    private BitMapBloomFilter teacherFilter;
 
     private static List<String> suffix = Arrays.asList("xlsx", "xls");
 
@@ -86,12 +95,15 @@ public class UploadController {
 
                 List<StudentDto> students = new LinkedList<>();
 
+                BitMapBloomFilter filter = new BitMapBloomFilter(100000);
                 for (int i = 1; i < contents.size(); i++) {
                     StudentDto tmp = null;
                     try {
-                        tmp = adapter.toStudent(contents.get(i));
+                        tmp = adapter.toStudent(contents.get(i), filter);
                     } catch (DuplicateIdException e) {
                         return new BaseMessage(4, "id重复 " + e.getId());
+                    } catch (NameParseException e) {
+                        return new BaseMessage(6, "姓名必须为中文");
                     } catch (Exception e) {
                         return new BaseMessage(5, "不知道");
                     }
@@ -105,6 +117,8 @@ public class UploadController {
                     if (!res) {
                         commit = false;
                     }
+
+                    studentFilter.add(Long.toString(student.getId()));
                 }
 
                 if (commit) {

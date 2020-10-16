@@ -35,6 +35,10 @@ snow:
   data-center: 1
   worker: 1
 
+# 分页插件 配置
+pagehelper:
+  helperDialect: mysql
+
 file:
   save-path: E:\graduation_management\file\save\
   tmp-path: E:\graduation_management\file\tmp\

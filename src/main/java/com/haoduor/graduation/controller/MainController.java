@@ -39,6 +39,7 @@ public class MainController {
         String inCode = (String) currentUser.getSession().getAttribute("code");
 
         if (inCode.equals(code)) {
+
             if (!StrUtil.isEmpty(username) && !StrUtil.isEmpty(password)) {
                 try {
                     currentUser.login(new UsernamePasswordToken(username, password));

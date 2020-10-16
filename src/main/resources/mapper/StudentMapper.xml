@@ -171,6 +171,6 @@
     select u.username, s.name as name, s.class_name, d.name as dname
     from student s
     left join user u on s.user_id = u.id
-    left join department d on s.department_id = d.id;
+    left join department d on s.department_id = d.id
   </select>
 </mapper>

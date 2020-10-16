@@ -174,7 +174,7 @@ public class TemplateController {
         ExcelWriter writer = ExcelUtil.getWriter();
         writer.writeHeadRow(CommonAdapter.teacherTitle);
 
-        String filename = "教师导入样板.xlsx";
+        String filename = "教师导入样板.xls";
 
         response.setHeader("content-type", "application/octet-stream");
         response.setContentType("application/octet-stream");

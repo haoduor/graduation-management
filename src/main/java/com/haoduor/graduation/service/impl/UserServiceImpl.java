@@ -74,6 +74,7 @@ public class UserServiceImpl implements UserService {
         user.setRoleId(sr.getId());
 
         Student stu = new Student();
+        stu.setUserId(user.getId());
         stu.setName(s.getName());
         stu.setClassName(s.getClassname());
 
@@ -83,6 +84,6 @@ public class UserServiceImpl implements UserService {
         int resU = userMapper.insert(user);
         int resS = studentMapper.insert(stu);
 
-        return resU == 0 && resS == 0;
+        return resU == 1 && resS == 1;
     }
 }

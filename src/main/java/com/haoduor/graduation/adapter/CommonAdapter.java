@@ -5,6 +5,7 @@ import cn.hutool.core.lang.Validator;
 import com.haoduor.graduation.dto.StudentDto;
 import com.haoduor.graduation.exception.DuplicateIdException;
 import com.haoduor.graduation.exception.ExcelFormatException;
+import com.haoduor.graduation.exception.NameParseException;
 import org.apache.commons.collections.ListUtils;
 import org.springframework.stereotype.Component;
 
@@ -34,18 +35,22 @@ public class CommonAdapter {
         return ListUtils.isEqualList(teacherTitle, studentTitle);
     }
 
-    public StudentDto toStudent(List<Object> list) throws Exception {
+    public StudentDto toStudent(List<Object> list, BitMapBloomFilter filter) throws Exception {
         if (list.size() == 4) {
             long id = Long.parseLong(list.get(0).toString());
 
             StudentDto s = new StudentDto();
-            if (studentFilter.contains(Long.toString(id))) {
+            if (studentFilter.contains(Long.toString(id)) || filter.contains(Long.toString(id))) {
                 throw new DuplicateIdException(id);
             }
             s.setId(id);
 
             String name = (String)list.get(1);
-            Validator.isChinese(name);
+            if (Validator.isChinese(name)) {
+                s.setName(name);
+            } else {
+                throw new NameParseException();
+            }
 
             String classname = (String)list.get(2);
             String department = (String)list.get(3);
