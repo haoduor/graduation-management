@@ -7,6 +7,12 @@
     <result column="name" property="name" jdbcType="VARCHAR" />
     <result column="department_id" property="departmentId" jdbcType="BIGINT" />
   </resultMap>
+  <resultMap id="StudentVoMap" type="com.haoduor.graduation.vo.StudentVo" >
+    <result column="username" property="id" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="class_name" property="classname" jdbcType="VARCHAR" />
+    <result column="dname" property="department" jdbcType="VARCHAR" />
+  </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
       <foreach collection="oredCriteria" item="criteria" separator="or" >
@@ -161,4 +167,10 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
+  <select id="selectStudentVo" resultMap="StudentVoMap">
+    select u.username, s.name as name, s.class_name, d.name as dname
+    from student s
+    left join user u on s.user_id = u.id
+    left join department d on s.department_id = d.id;
+  </select>
 </mapper>

@@ -34,3 +34,7 @@ mybatis:
 snow:
   data-center: 1
   worker: 1
+
+file:
+  save-path: E:\graduation_management\file\save\
+  tmp-path: E:\graduation_management\file\tmp\

@@ -4,6 +4,8 @@ import cn.hutool.core.util.StrUtil;
 import com.haoduor.graduation.vo.BaseMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Controller;
@@ -17,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class MainController {
 
     @GetMapping("/")
-    public String hello() {
+    public String login() {
         return "index";
     }
 
@@ -42,8 +44,10 @@ public class MainController {
                     currentUser.login(new UsernamePasswordToken(username, password));
                     log.info("{} 用户成功登录", username);
                     return new BaseMessage(1, "登录成功");
-                } catch (Exception e) {
-
+                } catch (IncorrectCredentialsException e) {
+                    return new BaseMessage(5, "密码错误");
+                } catch (UnknownAccountException e) {
+                    return new BaseMessage(6, "未知用户名");
                 }
             } else {
                 return new BaseMessage(4, "用户名或者密码不能为空");
@@ -51,7 +55,5 @@ public class MainController {
         } else {
             return new BaseMessage(3, "验证码错误");
         }
-
-        return null;
     }
 }

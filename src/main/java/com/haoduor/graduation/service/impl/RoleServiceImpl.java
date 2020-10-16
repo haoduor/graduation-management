@@ -21,6 +21,14 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private UserMapper userMapper;
 
+    private static RoleExample createRoleExampleWithNameE(String name) {
+        RoleExample re = new RoleExample();
+        re.createCriteria().andNameEqualTo(name);
+
+        return re;
+    }
+
+
     @Override
     public Role getRoleById(long id) {
         RoleExample re = new RoleExample();
@@ -33,5 +41,30 @@ public class RoleServiceImpl implements RoleService {
         }
 
         return null;
+    }
+
+    @Override
+    public Role getRoleByName(String name) {
+        List<Role> roles = roleMapper.selectByExample(createRoleExampleWithNameE(name));
+
+        if (roles.size() == 1) {
+            return roles.get(0);
+        }
+        return null;
+    }
+
+    @Override
+    public Role getAdminRole() {
+        return getRoleByName("admin");
+    }
+
+    @Override
+    public Role getStudentRole() {
+        return getRoleByName("student");
+    }
+
+    @Override
+    public Role getTeacherRole() {
+        return getRoleByName("teacher");
     }
 }
