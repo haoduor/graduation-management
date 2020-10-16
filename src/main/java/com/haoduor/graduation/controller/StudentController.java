@@ -38,7 +38,11 @@ public class StudentController {
     // 删除学生
     @PostMapping("/delete")
     public BaseMessage delete(long id) {
-        return null;
+        if (studentService.deleteStudentById(id)) {
+            return new BaseMessage(1, "用户删除成功");
+        } else {
+            return new BaseMessage(2, "用户删除失败");
+        }
     }
 
     // 更改学生
