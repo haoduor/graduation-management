@@ -7,5 +7,5 @@ import java.util.List;
 public interface StudentService {
     public List<StudentVo> getStudentVos();
     public boolean deleteStudentById(long id);
-    public boolean updateStudent();
+    public boolean updateStudent(StudentVo vo);
 }

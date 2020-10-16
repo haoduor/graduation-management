@@ -57,34 +57,42 @@ public class UploadController {
     @Resource(name = "teacherFilter")
     private BitMapBloomFilter teacherFilter;
 
+    // 允许的文件后缀
     private static List<String> suffix = Arrays.asList("xlsx", "xls");
 
+    // 导入学生用户
     @ResponseBody
     @PostMapping("/student")
     public BaseMessage uploadStudent(MultipartFile file) {
         Subject currentUser = SecurityUtils.getSubject();
 
+        // 文件有效性判断
         if (file != null) {
             String filename = file.getOriginalFilename();
             File tmpFile = new File(tmpPath + filename);
 
+            // 临时文件校验
             if (tmpFile.exists()) {
                 FileUtil.del(tmpFile);
             } else {
                 FileUtil.touch(tmpFile);
             }
 
+            // 将上传文件转换至临时文件处
             try {
                 file.transferTo(tmpFile);
             } catch (IOException e) {
                 return new BaseMessage(2, "文件io 出错");
             }
 
+            // 上传后缀名判断
             String type = FileTypeUtil.getType(tmpFile);
             if (suffix.contains(type)) {
+                // excel 处理部分
                 ExcelReader reader = ExcelUtil.getReader(tmpFile);
                 List<List<Object>> contents = reader.read();
 
+                // 表头校验
                 List<Object> title = contents.get(0);
 
                 if (!adapter.studentTitleEqual(title)) {
@@ -95,6 +103,7 @@ public class UploadController {
 
                 List<StudentDto> students = new LinkedList<>();
 
+                // 转换行数据变为实体类
                 BitMapBloomFilter filter = new BitMapBloomFilter(100000);
                 for (int i = 1; i < contents.size(); i++) {
                     StudentDto tmp = null;
@@ -111,6 +120,7 @@ public class UploadController {
                     students.add(tmp);
                 }
 
+                // 进入数据库
                 boolean commit = true;
                 for (StudentDto student : students) {
                     boolean res = userService.addStudentDto(student);
@@ -121,6 +131,7 @@ public class UploadController {
                     studentFilter.add(Long.toString(student.getId()));
                 }
 
+                // 最终数据库判断
                 if (commit) {
                     return new BaseMessage(1, "导入成功");
                 } else {

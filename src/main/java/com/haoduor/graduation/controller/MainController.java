@@ -23,23 +23,33 @@ public class MainController {
         return "index";
     }
 
+    /**
+     * 用户登录接口
+     * @param username 用户名
+     * @param password 密码
+     * @param code 验证码
+     * @return
+     */
     @ResponseBody
     @PostMapping("/login")
     public BaseMessage login(@RequestParam String username, @RequestParam String password, @RequestParam String code) {
         Subject currentUser = SecurityUtils.getSubject();
 
+        // 用户是否登录校验
         if (currentUser.isAuthenticated()) {
             return new BaseMessage(-1, "用户已登陆");
         }
 
+        // 验证码有效性校验
         if (StrUtil.isEmpty(code)) {
             return new BaseMessage(2, "验证码不能为空");
         }
 
         String inCode = (String) currentUser.getSession().getAttribute("code");
 
-        if (inCode.equals(code)) {
+        if (inCode != null && inCode.equals(code)) {
 
+            // 用户名与密码有效性校验
             if (!StrUtil.isEmpty(username) && !StrUtil.isEmpty(password)) {
                 try {
                     currentUser.login(new UsernamePasswordToken(username, password));

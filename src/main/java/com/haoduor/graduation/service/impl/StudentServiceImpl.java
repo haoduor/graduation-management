@@ -1,5 +1,6 @@
 package com.haoduor.graduation.service.impl;
 
+import cn.hutool.core.lang.Validator;
 import com.haoduor.graduation.dao.StudentMapper;
 import com.haoduor.graduation.dao.UserMapper;
 import com.haoduor.graduation.model.Student;
@@ -40,7 +41,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public boolean updateStudent() {
+    public boolean updateStudent(StudentVo vo) {
         return false;
     }
 }

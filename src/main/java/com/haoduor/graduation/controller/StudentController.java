@@ -35,11 +35,13 @@ public class StudentController {
         return pageMessage;
     }
 
+    // 删除学生
     @PostMapping("/delete")
     public BaseMessage delete(long id) {
         return null;
     }
 
+    // 更改学生
     @PostMapping("/set")
     public BaseMessage set() {
         return null;

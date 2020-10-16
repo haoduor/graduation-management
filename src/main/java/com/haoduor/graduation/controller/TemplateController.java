@@ -20,10 +20,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -49,7 +46,7 @@ public class TemplateController {
     @Autowired
     private HttpServletRequest request;
 
-
+    // 管理员上传样板文档
     @PostMapping("/upload")
     public BaseMessage upload(MultipartFile file) {
         Subject currentUser = SecurityUtils.getSubject();
@@ -92,6 +89,12 @@ public class TemplateController {
         return new BaseMessage(2, "文件不能为空");
     }
 
+    /**
+     * 下载样板文档
+     * @param sha256 文件的sha256值
+     * @param response 用户的请求对象
+     * @return
+     */
     @GetMapping("/download/{sha256}")
     public BaseMessage download(@PathVariable String sha256, HttpServletResponse response) {
         if (StrUtil.isEmpty(sha256)) {
@@ -135,8 +138,10 @@ public class TemplateController {
         }
     }
 
+    // 获取样板文档列表
     @GetMapping("/list")
-    public PageMessage list(int page, int pageSize) {
+    public PageMessage list(@RequestParam(defaultValue = "1") int page,
+                            @RequestParam(defaultValue = "30") int pageSize) {
         PageHelper.startPage(page, pageSize);
 
         List<Template> res = templateService.getTemplate();
@@ -150,6 +155,7 @@ public class TemplateController {
         return pm;
     }
 
+    // 下载批量导入学生导入excel
     @GetMapping("/student")
     public void getStudentTemplate(HttpServletResponse response) throws UnsupportedEncodingException {
         ExcelWriter writer = ExcelUtil.getWriter();
@@ -169,6 +175,7 @@ public class TemplateController {
         }
     }
 
+    // 下载批量导入教师excel
     @GetMapping("/teacher")
     public void getTeacherTemplate(HttpServletResponse response) throws UnsupportedEncodingException {
         ExcelWriter writer = ExcelUtil.getWriter();

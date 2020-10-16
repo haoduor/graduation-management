@@ -15,6 +15,7 @@ public class TokenConfig {
     @Value("${snow.datacenter}")
     private long dataCenter;
 
+    // id 生成器
     @Bean
     public Snowflake snowflake() {
         return IdUtil.createSnowflake(worker, dataCenter);

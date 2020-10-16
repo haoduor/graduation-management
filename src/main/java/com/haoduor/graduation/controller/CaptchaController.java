@@ -23,15 +23,20 @@ public class CaptchaController {
     @Autowired
     private HttpServletRequest request;
 
+    // 获取验证码接口
     @GetMapping("/get")
     public void getCaptcha(HttpServletResponse response) {
+        // 创建验证码对象
         LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(80, 30);
+
+        // 设置验证码生成规则
         lineCaptcha.setGenerator(new LoginCodeGenerator());
 
+        // 将生成的验证码存储至用户session中
         HttpSession s = request.getSession();
-
         s.setAttribute("code", lineCaptcha.getCode());
 
+        // 输出验证码图像至其前台
         try {
             OutputStream os = response.getOutputStream();
             lineCaptcha.write(os);

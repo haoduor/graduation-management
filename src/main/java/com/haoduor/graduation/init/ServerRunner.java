@@ -42,6 +42,7 @@ public class ServerRunner implements CommandLineRunner {
     @Resource(name = "teacherFilter")
     private BitMapBloomFilter teacherFilter;
 
+    // 服务器初始化
     @Override
     public void run(String... args) throws Exception {
         if (!roleIsGenerate()) {
