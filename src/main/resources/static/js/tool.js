@@ -1,8 +1,13 @@
 const tools = (() => {
     let xmlhttp;
     return {
+        //简化绑定
         $(id){
             return document.querySelector(id);
+        },
+        //简化链接跳转
+        jump(href){
+            window.location.href = href;
         },
         loadData(url, cfunc) {
             if (window.XMLHttpRequest) {

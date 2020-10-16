@@ -69,8 +69,8 @@ public class UserServiceImpl implements UserService {
         User user = new User();
         user.setId(snowflake.nextId());
         user.setUsername(String.valueOf(s.getId()));
-        user.setPassword("123456");
         user.setSalt(EncryptedUtil.getSalt());
+        user.setPassword(EncryptedUtil.encryptedPassword("123456", user.getSalt()));
         user.setRoleId(sr.getId());
 
         Student stu = new Student();
