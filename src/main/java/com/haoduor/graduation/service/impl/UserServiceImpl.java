@@ -48,6 +48,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public User getUserById(long id) {
+        UserExample ue = new UserExample();
+        ue.createCriteria().andIdEqualTo(id);
+
+        List<User> res = userMapper.selectByExample(ue);
+
+        if (res.size() == 1) {
+            return res.get(0);
+        }
+
+        return null;
+    }
+
+    @Override
     public List<User> getUserByRole(long roleId) {
         UserExample userExample = new UserExample();
         userExample.createCriteria().andRoleIdEqualTo(roleId);
@@ -60,6 +74,29 @@ public class UserServiceImpl implements UserService {
         UserExample ue = new UserExample();
 
         return userMapper.selectByExample(ue);
+    }
+
+    @Override
+    public boolean setUserPasswordById(long id, String password) {
+        User u = this.getUserById(id);
+
+        if (u == null) {
+            return false;
+        }
+
+        return setUserPasswordById(id, password, u.getSalt());
+    }
+
+    @Override
+    public boolean setUserPasswordById(long id, String password, String salt) {
+        UserExample ue = new UserExample();
+        ue.createCriteria().andIdEqualTo(id);
+
+        User u = new User();
+        u.setPassword(EncryptedUtil.encryptedPassword(password, salt));
+        int res = userMapper.updateByExample(u, ue);
+
+        return res == 1;
     }
 
     @Override
