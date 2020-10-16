@@ -31,7 +31,7 @@ public class StudentController {
         PageInfo<StudentVo> pages = new PageInfo<>(res);
 
         PageMessage pageMessage = new PageMessage();
-        pageMessage.setTotalPage(pages.getTotal());
+        pageMessage.setTotalPage(pages.getPages());
         pageMessage.setNowPage(pages.getPageNum());
         pageMessage.setData(res);
 
