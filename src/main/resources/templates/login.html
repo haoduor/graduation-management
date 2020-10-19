@@ -69,12 +69,14 @@
                             };
                             try {
                                 let loginResult = await axios.post('/login', tools.buildFormData(userData));
+                                console.log(loginResult)
                                 if(loginResult['data']['id'] == 1 ||loginResult['data']['id'] == 0 ){
                                     tools.setTimeOutP(3000,()=>this.$message.success("3秒后将跳转")).then(val=>{
                                         if(window.location.href.includes('admin')){
                                             tools.jump('/manager');
                                             return;
                                         }
+                                        console.log('登录成功');
                                         tools.jump('/');
                                     });
                                 }
