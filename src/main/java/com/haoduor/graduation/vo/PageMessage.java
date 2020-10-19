@@ -11,5 +11,6 @@ import lombok.Data;
 public class PageMessage {
     long nowPage;
     long totalPage;
+    long total;
     Object data;
 }
