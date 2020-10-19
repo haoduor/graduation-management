@@ -10,7 +10,6 @@ import com.haoduor.graduation.service.RoleService;
 import com.haoduor.graduation.service.UserService;
 import com.haoduor.graduation.util.EncryptedUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

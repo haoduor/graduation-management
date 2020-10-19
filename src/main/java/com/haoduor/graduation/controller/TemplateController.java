@@ -12,6 +12,7 @@ import com.github.pagehelper.PageInfo;
 import com.haoduor.graduation.adapter.CommonAdapter;
 import com.haoduor.graduation.model.Template;
 import com.haoduor.graduation.service.TemplateService;
+import com.haoduor.graduation.util.ResponseUtil;
 import com.haoduor.graduation.vo.BaseMessage;
 import com.haoduor.graduation.vo.PageMessage;
 import lombok.extern.slf4j.Slf4j;
@@ -157,19 +158,13 @@ public class TemplateController {
 
     // 下载批量导入学生导入excel
     @GetMapping("/student")
-    public void getStudentTemplate(HttpServletResponse response) throws UnsupportedEncodingException {
+    public void getStudentTemplate(HttpServletResponse response) {
         ExcelWriter writer = ExcelUtil.getWriter();
         writer.writeHeadRow(CommonAdapter.studentTitle);
 
         String filename = "学生导入样板.xls";
-
-        response.setHeader("content-type", "application/octet-stream");
-        response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
-
         try {
-            OutputStream out = response.getOutputStream();
-            writer.flush(out);
+            ResponseUtil.sendExcel(response, filename, writer);
         } catch (IOException e) {
             log.info("学生样板文件下载出错");
         }
@@ -177,19 +172,14 @@ public class TemplateController {
 
     // 下载批量导入教师excel
     @GetMapping("/teacher")
-    public void getTeacherTemplate(HttpServletResponse response) throws UnsupportedEncodingException {
+    public void getTeacherTemplate(HttpServletResponse response) {
         ExcelWriter writer = ExcelUtil.getWriter();
         writer.writeHeadRow(CommonAdapter.teacherTitle);
 
         String filename = "教师导入样板.xls";
 
-        response.setHeader("content-type", "application/octet-stream");
-        response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
-
         try {
-            OutputStream out = response.getOutputStream();
-            writer.flush(out);
+            ResponseUtil.sendExcel(response, filename, writer);
         } catch (IOException e) {
             log.info("教师样板文件下载出错");
         }

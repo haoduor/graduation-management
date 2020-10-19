@@ -7,6 +7,7 @@ import com.haoduor.graduation.model.Student;
 import com.haoduor.graduation.model.StudentExample;
 import com.haoduor.graduation.model.UserExample;
 import com.haoduor.graduation.service.StudentService;
+import com.haoduor.graduation.service.UserService;
 import com.haoduor.graduation.vo.StudentVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private StudentMapper studentMapper;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private UserMapper userMapper;
