@@ -66,9 +66,22 @@ public class StudentController {
     @PostMapping("/add")
     public BaseMessage add(@RequestParam StudentVo vo) {
         if (vo != null) {
-            StudentDto tmp = StudentAdapter.studentVoToDto(vo);
+            StudentDto tmp = null;
+            try {
+                tmp = StudentAdapter.studentVoToDto(vo);
+            } catch (NumberFormatException e) {
+                return new BaseMessage(2, "格式化错误");
+            }
+
             boolean res = userService.addStudentDto(tmp);
+
+            if (res) {
+                return new BaseMessage(1, "添加成功");
+            } else {
+                return new BaseMessage(4, "数据库错误");
+            }
+        } else {
+            return new BaseMessage(3, "字段不能为空");
         }
-        return null;
     }
 }
