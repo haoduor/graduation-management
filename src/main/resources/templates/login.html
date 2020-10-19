@@ -5,34 +5,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>登录页</title>
-    <link rel="stylesheet" href="./css/login.css">
+    <link rel="stylesheet" href="/css/admin/index.css">
+    <link rel="stylesheet" href="/css/globel.css">
+    <link rel="stylesheet" href="/css/element.css">
+    <link rel="stylesheet" href="/css/frame.css">
+    <link rel="stylesheet" href="/css/lTable.css">
 
 </head>
 
 <body class="loginBk">
     <div id="app">
-        <div id="public"></div>
         <div class="loginBody">
             <div id="loginForm" class="loginForm"></div>
             <div id="loginMsg" class="loginMsg"></div>
         </div>
     </div>
 </body>
-<script src="./js/tool.js" type="module"></script>
-<script src="./js/vue.js" type="module"></script>
-<script src="./js/element.js" type="module"></script>
-<script src="./js/axios.js"></script>
+<script src="/js/tool.js" type="module"></script>
+<script src="/js/vue.js" type="module"></script>
+<script src="/js/element.js" type="module"></script>
+<script src="/js/axios.js"></script>
 <script type="module">
     import { tools } from './js/tool.js';
-    let codeUrl = 'http://127.0.0.1:9999/captcha/get?';
+    let codeUrl = '/captcha/get?';
     (async () => {
         await tools.setPage('loginForm', './view/login/loginForm.html');
         await tools.setPage('loginMsg', './view/login/loginMsg.html');
-        await tools.setPage('public', './view/public.html');
 
         tools.$('.loginBk').style.background = `url(http://127.0.0.1:9999/image/Sola.png)`
         //初始加载二维码
-        tools.$('#codeImg').src =`${codeUrl}${(Math.random()*100 + '').slice(0,2)}`
+        tools.$('.codeImg').src =`${codeUrl}${(Math.random()*100 + '').slice(0,2)}`
         var app = Vue.extend({
             data() {
                 return {
@@ -69,15 +71,13 @@
                             };
                             try {
                                 let loginResult = await axios.post('/login', tools.buildFormData(userData));
-                                console.log(loginResult)
                                 if(loginResult['data']['id'] == 1 ||loginResult['data']['id'] == 0 ){
                                     tools.setTimeOutP(3000,()=>this.$message.success("3秒后将跳转")).then(val=>{
                                         if(window.location.href.includes('admin')){
                                             tools.jump('/manager');
                                             return;
                                         }
-                                        console.log('登录成功');
-                                        tools.jump('/');
+                                        tools.jump('/admin/manage');
                                     });
                                 }
                                 if(loginResult['data']['id'] == 3){

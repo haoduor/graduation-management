@@ -1,0 +1,157 @@
+/* 管理页顶栏 */
+.adminNav{
+    width: 100%;
+    height:5rem;
+    background-color: rgb(39, 42, 44);
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+/* NAV */
+.adminNav .navTitle{
+    flex: 1;
+    padding-left: 5rem;
+    font-size: 1.5rem;    
+    letter-spacing: 0.25rem;
+    color: white;
+}
+
+.adminNav .userInformation{
+    margin: 0rem 2rem;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.adminNav .userInformation p{
+    
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid white;
+    color: white;
+    transition: all 0.3s;
+}
+
+.adminNav .userInformation p:hover{
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+.adminNav .userInformation .userLoginOut{
+    margin: 0px 1rem;
+}
+
+/* 管理页主体 */
+.adminBody{
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+
+/* 管理页左侧列表 */
+.adminList{
+    width: 15%;
+    /* margin-top : 0.5rem; */
+    height: calc(100vh - 5rem);
+    background-color: rgb(84, 92, 100);
+}
+
+/* 修改默认样式 */
+.adminList .el-menu-item{
+    font-size: 1rem;
+}
+.adminList .el-menu{
+    border-right: none;
+}
+.adminData .el-table{
+    font-size: 1rem;
+}
+
+/* 管理员信息块 */
+.adminData{
+    position: relative;
+    flex: 1;
+    height: calc(100vh - 6rem);;
+    margin: 0.5rem;
+    background-color: white;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+}
+
+/* 顶部工具栏 */
+.listTool{
+    position: absolute;
+    width: 100%;
+    height:4rem;
+    padding-right: 1rem;
+    background-color: white;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0px 3px 2px rgba(0,0,0,0.1);
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.listTool .listToolSelect{
+    margin: 0rem 5rem 0rem 1rem;
+}
+
+.listTool .listToolTitle{
+    flex: 1;
+    padding: 0rem 2rem;
+    font-size: 1.2rem;
+}
+
+/* 分页 */
+.adminData .listPagination{
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+}
+
+/* 遮罩 */
+.editMark{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.2);
+    z-index: 999;
+    opacity: 0;
+    display: none;
+    transition:opacity 0.3s;
+}
+
+.editMark .tableEdit{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    padding: 2.5rem 1.5rem 2rem 1.5rem;
+    min-width: 20rem;
+    min-height: 10rem;
+    border-radius:5px;
+    transform: translate(-50%,-50%);
+    background-color: white;
+    border: 3px solid rgb(189, 189, 189);
+}
+
+/*.editMark .editTool{*/
+/*    position: absolute;*/
+/*    bottom: 0;*/
+/*    left: 0;*/
+/*    width: 100%;*/
+/*    height: 3rem;    */
+/*}*/
+
+/*.editMark .editClose{*/
+/*    position: absolute;*/
+/*    right:1rem;*/
+/*    bottom: 1rem;*/
+/*}*/
+
+/* 主体 */
+.adminData .mainContent{
+    flex: 1;
+    margin: 5rem 2rem 4rem 2rem;
+    opacity: 1;
+    transition: opacity 0.3s;
+}

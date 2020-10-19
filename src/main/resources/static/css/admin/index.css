@@ -1,110 +1,87 @@
-body{
+body {
     position: relative;
     background-color: rgb(246, 246, 246);
 }
 
-/* 管理页顶栏 */
-.adminNav{
-    width: 100%;
-    height:6rem;
-    background-color: white;
+/* 公告模块 */
+
+.noticeTitle {
+    margin: 1rem 0rem;
+    font-size: 1.2rem;
     display: flex;
-    flex-flow: row nowrap;
     align-items: center;
 }
 
-/* 管理页主体 */
-.adminBody{
+.currentNotices {
+    width: 100%;
+    height: calc(100% - 1rem);
+    padding: 0.5rem 0rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    overflow-x: hidden;
+    overflow-y: auto;
     display: flex;
-    flex-flow: row nowrap;
+    flex-flow: row wrap;
 }
 
-/* 管理页左侧列表 */
-.adminList{
-    width: 18%;
-    margin-top : 0.5rem;
-    height: calc(100vh - 6.5rem);
-    background-color: rgb(84, 92, 100);
+.currentNotices .noticeItems {
+    width: 15%;
+    min-width: 12rem;
+    height: 20rem;
+    margin: 0.7%;
+    padding: 0.75rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    box-shadow: 3px 4px 4px rgba(0, 0, 0, 0.08), -2px 0px 4px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s;
+    display: flex;
+    flex-flow: column nowrap;
+    box-sizing: border-box;
 }
 
-/* 修改默认样式 */
-.adminList .el-menu-item{
-    font-size: 1rem;
-}
-.adminList .el-menu{
-    border-right: none;
-}
-.adminData .el-table{
-    font-size: 1rem;
+.currentNotices .noticeItems:hover {
+    box-shadow: 2px 3px 2px rgba(0, 0, 0, 0.25), -1px 0px 2px rgba(0, 0, 0, 0.25);
 }
 
-/* 管理员信息块 */
-.adminData{
+/* 单个公告 */
+
+.currentNotices .noticeItems .noticeHead {
     position: relative;
+    width: 100%;
+    height: 4rem;
+}
+
+.currentNotices .noticeItems .noticeHead .title{
+    position: absolute;
+    left:0.5rem;
+    top: 0.5rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color:rgb(95, 95, 95);
+}
+.currentNotices .noticeItems .noticeHead .data{
+    position: absolute;
+    right: 0rem;
+    bottom: 1rem;
+    font-size: 0.8rem;
+    
+}
+.currentNotices .noticeItems .noticeMessage {
     flex: 1;
-    height: calc(100vh - 7rem);;
-    margin: 0.5rem;
-    background-color: white;
+    width: 100%;
+    padding: 0.25rem;
+    font-size: 1.05rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+
+.currentNotices .noticeItems .noticeFooter{
+    width: 100%;
+    height: 2rem;
+    margin-top: 1rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
     display: flex;
     flex-flow: row nowrap;
     justify-content: center;
-}
- 
-.adminData .accountTable{
-    flex: 1;
-    margin: 5rem 2rem 4rem 2rem;
-}
-
-/* 顶部工具栏 */
-.listTool{
-    position: absolute;
-    width: 100%;
-    height:4rem;
-    background-color: white;
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-    box-shadow: 0px 3px 2px rgba(0,0,0,0.1);
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-}
-
-.listTool .listToolTitle{
-    flex: 1;
-    padding: 0rem 2rem;
-    font-size: 1.2rem;
-}
-.listTool .listToolAdd{
-    margin: 0rem 1rem;
-}
-
-.adminData .listPagination{
-    position: absolute;
-    bottom: 1rem;
-    left: 1rem;
-}
-
-/* NAV */
-.adminNav .navTitle{
-    flex: 1;
-}
-
-.adminNav .userInformation{
-    margin: 0rem 2rem;
-    display: flex;
-    flex-flow: row nowrap;
-    align-items: center;
-}
-
-.adminNav .userInformation p{
-    padding: 0.75rem 0.5rem;
-    background-color: white;
-    border-bottom: 1px solid white;
-    transition: all 0.3s;
-}
-
-.adminNav .userInformation p:hover{
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-}
-.adminNav .userInformation .userLoginOut{
-    margin: 0px 1rem;
 }
