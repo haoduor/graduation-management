@@ -149,7 +149,8 @@ public class TemplateController {
         PageInfo<Template> pageInfo = new PageInfo<>(res);
 
         PageMessage pm = new PageMessage();
-        pm.setTotalPage(pageInfo.getTotal());
+        pm.setTotalPage(pageInfo.getPages());
+        pm.setTotal(pageInfo.getTotal());
         pm.setNowPage(page);
         pm.setData(res);
 

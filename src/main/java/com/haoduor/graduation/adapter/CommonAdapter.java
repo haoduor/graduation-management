@@ -37,21 +37,25 @@ public class CommonAdapter {
 
     public StudentDto toStudent(List<Object> list, BitMapBloomFilter filter) throws Exception {
         if (list.size() == 4) {
+            // 学号 需要仅数字校验
             long id = Long.parseLong(list.get(0).toString());
 
             StudentDto s = new StudentDto();
+            // 学号 非重复校验
             if (studentFilter.contains(Long.toString(id)) || filter.contains(Long.toString(id))) {
                 throw new DuplicateIdException(id);
             }
             s.setId(id);
 
             String name = (String)list.get(1);
+            // 姓名 中只能有中文
             if (Validator.isChinese(name)) {
                 s.setName(name);
             } else {
                 throw new NameParseException();
             }
 
+            // 班级和系部不能为空
             String classname = (String)list.get(2);
             String department = (String)list.get(3);
 

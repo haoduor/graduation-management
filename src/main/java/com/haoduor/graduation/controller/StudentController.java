@@ -1,5 +1,6 @@
 package com.haoduor.graduation.controller;
 
+import cn.hutool.bloomfilter.BitMapBloomFilter;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.haoduor.graduation.adapter.StudentAdapter;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -26,6 +29,9 @@ public class StudentController {
     @Autowired
     private UserService userService;
 
+    @Resource(name = "studentFilter")
+    private BitMapBloomFilter studentFilter;
+
     @GetMapping("/list")
     public PageMessage getStudent(@RequestParam(defaultValue = "1") int page,
                                   @RequestParam(defaultValue = "30") int pageSize) {
@@ -36,6 +42,7 @@ public class StudentController {
 
         PageMessage pageMessage = new PageMessage();
         pageMessage.setTotalPage(pages.getPages());
+        pageMessage.setTotal(pages.getTotal());
         pageMessage.setNowPage(pages.getPageNum());
         pageMessage.setData(res);
 
@@ -52,10 +59,16 @@ public class StudentController {
         }
     }
 
-    // 更改学生
+    // 更改学生 (无法更改学号)
     @PostMapping("/set")
-    public BaseMessage set(@RequestParam StudentVo vo) {
-        return null;
+    public BaseMessage set(@Valid @RequestParam StudentVo vo) {
+
+        boolean res = studentService.updateStudentByVo(vo);
+        if (res) {
+            return new BaseMessage(1, "更新成功");
+        }
+
+        return new BaseMessage(2, "更新用户数据失败");
     }
 
     /**
@@ -66,9 +79,22 @@ public class StudentController {
     @PostMapping("/add")
     public BaseMessage add(@RequestParam StudentVo vo) {
         if (vo != null) {
-            StudentDto tmp = StudentAdapter.studentVoToDto(vo);
+            StudentDto tmp = null;
+            try {
+                tmp = StudentAdapter.studentVoToDto(vo);
+            } catch (NumberFormatException e) {
+                return new BaseMessage(2, "格式化错误");
+            }
+
             boolean res = userService.addStudentDto(tmp);
+
+            if (res) {
+                return new BaseMessage(1, "添加成功");
+            } else {
+                return new BaseMessage(4, "数据库错误");
+            }
+        } else {
+            return new BaseMessage(3, "字段不能为空");
         }
-        return null;
     }
 }

@@ -113,7 +113,6 @@ public class UserServiceImpl implements UserService {
         stu.setUserId(user.getId());
         stu.setName(s.getName());
         stu.setClassName(s.getClassname());
-
         Department de = departmentService.getOrAddDepartment(s.getDepartment());
         stu.setDepartmentId(de.getId());
 
