@@ -62,4 +62,5 @@ public class CommonAdapter {
             throw new ExcelFormatException();
         }
     }
+
 }

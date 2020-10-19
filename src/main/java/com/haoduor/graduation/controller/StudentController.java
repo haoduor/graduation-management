@@ -2,6 +2,8 @@ package com.haoduor.graduation.controller;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.haoduor.graduation.adapter.StudentAdapter;
+import com.haoduor.graduation.dto.StudentDto;
 import com.haoduor.graduation.model.Student;
 import com.haoduor.graduation.service.StudentService;
 import com.haoduor.graduation.service.UserService;
@@ -64,6 +66,8 @@ public class StudentController {
     @PostMapping("/add")
     public BaseMessage add(@RequestParam StudentVo vo) {
         if (vo != null) {
+            StudentDto tmp = StudentAdapter.studentVoToDto(vo);
+            boolean res = userService.addStudentDto(tmp);
         }
         return null;
     }
