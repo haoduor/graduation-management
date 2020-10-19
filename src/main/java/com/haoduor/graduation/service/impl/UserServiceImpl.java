@@ -4,6 +4,7 @@ import cn.hutool.core.lang.Snowflake;
 import com.haoduor.graduation.dao.StudentMapper;
 import com.haoduor.graduation.dao.UserMapper;
 import com.haoduor.graduation.dto.StudentDto;
+import com.haoduor.graduation.dto.TeacherDto;
 import com.haoduor.graduation.model.*;
 import com.haoduor.graduation.service.DepartmentService;
 import com.haoduor.graduation.service.RoleService;
@@ -120,5 +121,15 @@ public class UserServiceImpl implements UserService {
         int resS = studentMapper.insert(stu);
 
         return resU == 1 && resS == 1;
+    }
+
+    @Override
+    public boolean addTeacherDto(TeacherDto t) {
+        Role teacher = roleService.getTeacherRole();
+
+        User u = new User();
+        u.setId(snowflake.nextId());
+
+        return false;
     }
 }

@@ -1,6 +1,7 @@
 package com.haoduor.graduation.service;
 
 import com.haoduor.graduation.dto.StudentDto;
+import com.haoduor.graduation.dto.TeacherDto;
 import com.haoduor.graduation.model.User;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface UserService {
     public boolean setUserPasswordById(long id, String password);
     public boolean setUserPasswordById(long id, String password, String salt);
     public boolean addStudentDto(StudentDto s);
+    public boolean addTeacherDto(TeacherDto t);
 }

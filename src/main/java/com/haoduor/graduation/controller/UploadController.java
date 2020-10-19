@@ -145,6 +145,31 @@ public class UploadController {
 
     @PostMapping("/teacher")
     public BaseMessage uploadTeacher(MultipartFile file) {
+        if (file != null) {
+            String filename = file.getOriginalFilename();
+            File tmpFile = new File(tmpPath + filename);
+
+            // 临时文件校验
+            if (tmpFile.exists()) {
+                FileUtil.del(tmpFile);
+            } else {
+                FileUtil.touch(tmpFile);
+            }
+
+            // 将上传文件转换至临时文件处
+            try {
+                file.transferTo(tmpFile);
+            } catch (IOException e) {
+                return new BaseMessage(2, "文件io 出错");
+            }
+
+            // 上传后缀名判断
+            String type = FileTypeUtil.getType(tmpFile);
+
+
+        }
+
+
         return null;
     }
 }
