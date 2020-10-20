@@ -79,7 +79,7 @@ public class CommonAdapter {
             }
 
             String username = (String) list.get(1);
-            if (Validator.isChinese(username)) {
+            if (!Validator.isChinese(username)) {
                 throw new NameParseException();
             }
 

@@ -79,8 +79,8 @@ public class TeacherController {
     }
 
     @PostMapping("/set")
-    public BaseMessage set(@RequestParam TeacherVo teacherVo) {
-        boolean res = teacherService.updateTeacherByVo(teacherVo);
+    public BaseMessage set(@RequestParam TeacherVo vo) {
+        boolean res = teacherService.updateTeacherByVo(vo);
 
         if (res) {
             return new BaseMessage(1, "更新成功");
