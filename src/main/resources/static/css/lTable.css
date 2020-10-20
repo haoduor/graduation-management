@@ -1,0 +1,54 @@
+.lTable{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.lTable .tableHead{
+    width: 100%;
+    padding: 12px 0px;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    border-bottom: 1px solid #EBEEF5;
+}
+
+.lTable .tableHead .nmTitle{
+    flex: 1;
+    padding: 0px 10px;
+    color: #909399;
+    font-weight: 600;
+}
+
+.lTable .tableHead .staticTitle{
+    width: 280px;
+    color: #909399;
+    font-weight: 600;
+}
+
+.lTable .tableDate{
+    width: 100%;    
+}
+
+.lTable .tableDate .dateColumn{
+    width: 100%;
+    padding: 12px 0px;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    border-bottom: 1px solid #EBEEF5;
+}
+
+.lTable .tableDate .dateColumn .nmDate{
+    flex: 1;
+    padding: 0px 10px;
+    color: #606266;
+}
+
+.lTable .tableDate .dateColumn .staticDate{
+    width: 280px;
+    display: flex;
+    flex-flow: row nowrap;
+}

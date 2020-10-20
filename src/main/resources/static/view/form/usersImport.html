@@ -1,0 +1,11 @@
+<el-upload
+class="upload-demo"
+ref="upload"
+action="http://127.0.0.1:9999/import/student"
+:file-list="fileList"
+:auto-upload="false">
+<el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+<el-button style="margin-left: 10px;" size="small" type="success" @click="usersSubmitUpload">上传到服务器</el-button>
+
+</el-upload>
+<el-button style="position: absolute;right: 1rem;bottom: 1rem" class="editClose" @click="closeEdit" type="primary" icon="el-icon-switch-button">关闭</el-button>

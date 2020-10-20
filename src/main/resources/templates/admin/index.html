@@ -5,104 +5,418 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="./css/admin/index.css">
+    <link rel="stylesheet" href="/css/admin/index.css">
+    <link rel="stylesheet" href="/css/globel.css">
+    <link rel="stylesheet" href="/css/element.css">
+    <link rel="stylesheet" href="/css/frame.css">
+    <link rel="stylesheet" href="/css/lTable.css">
 </head>
 
 <body>
-    <div id="app">
-        <div id="public"></div>
-        <div class="adminNav">
-            <p class="navTitle"></p>
-            <div class="userInformation">
-                <p>当前用户:gugu</p>
-                <el-button class="userLoginOut" @click="" type="text" icon="el-icon-switch-button">登出</el-button>
-            </div>
-        </div>
-        <div class="adminBody">
-
-            <el-row class="adminList">
-                <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect"
-                    background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
-                    <el-menu-item index="1">
-                        <i class="el-icon-user"></i>
-                        <span slot="title">教师用户列表</span>
-                    </el-menu-item>
-                    <el-menu-item index="2">
-                        <i class="el-icon-suitcase-1"></i>
-                        <span slot="title">学生用户列表</span>
-                    </el-menu-item>
-                </el-menu>
-            </el-row>
-            <div class="adminData">
-                <div class="listTool">
-                    <p class="listToolTitle"><i class="el-icon-s-operation"></i>用户列表</p>
-                    <el-button class="listToolRefresh" type="primary" icon="el-icon-refresh">刷新</el-button>
-                    <el-button class="listToolAdd" type="primary" icon="el-icon-document-add">添加</el-button>
-                </div>
-                <el-table :data="studentData" class="accountTable">
-                    <el-table-column prop="stuId" label="学生编号">
-                    </el-table-column>
-                    <el-table-column prop="stuName" label="学生姓名">
-                    </el-table-column>
-                    <el-table-column prop="stuAccount" label="账号">
-                    </el-table-column>
-                    <el-table-column prop="stuPassword" label="密码">
-                    </el-table-column>
-                    <el-table-column label="操作" width="280">
-                        <template slot-scope="scope">
-                            <el-button @click="showList(scope.row)" type="text" icon="el-icon-edit">编辑</el-button>
-                            <el-button @click="editList(scope.row)" type="text" icon="el-icon-delete">删除</el-button>
-                        </template>
-                    </el-table-column>
-                </el-table>
-                <el-pagination class="listPagination" background @size-change="handleSizeChange" @current-change="handleCurrentChange"
-                    :current-page.sync="currentPage3" :page-size="100" layout="prev, pager, next, jumper" :total="1000">
-                </el-pagination>
-            </div>
+<div id="app">
+    <!-- 遮罩数据操作 -->
+    <div class="editMark" id="editMark">
+        <div class="tableEdit" id="tableEdit">
+            <div class="editMain" id="editMain"></div>
         </div>
     </div>
+    <div class="adminNav">
+        <p class="navTitle"><i class="el-icon-user-solid"></i> 管理端</p>
+        <div class="userInformation">
+            <p>当前用户:gugu</p>
+            <el-button class="userLoginOut" @click="" type="text" icon="el-icon-switch-button">登出</el-button>
+        </div>
+    </div>
+    <div class="adminBody">
+
+        <el-row class="adminList">
+            <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect"
+                     background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+                <el-menu-item index="1">
+                    <i class="el-icon-user"></i>
+                    <span slot="title">学生用户列表</span>
+                </el-menu-item>
+                <el-menu-item index="2">
+                    <i class="el-icon-suitcase-1"></i>
+                    <span slot="title">教师用户列表</span>
+                </el-menu-item>
+                <el-menu-item index="3">
+                    <i class="el-icon-edit-outline"></i>
+                    <span slot="title">选题管理</span>
+                </el-menu-item>
+                <el-menu-item index="4">
+                    <i class="el-icon-chat-square"></i>
+                    <span slot="title">公告管理</span>
+                </el-menu-item>
+                <el-menu-item index="5">
+                    <i class="el-icon-document"></i>
+                    <span slot="title">文件管理</span>
+                </el-menu-item>
+                <el-menu-item index="6">
+                    <i class="el-icon-date"></i>
+                    <span slot="title">毕业设计流程日期管理</span>
+                </el-menu-item>
+            </el-menu>
+        </el-row>
+        <div class="adminData">
+            <div id="listTool" class="listTool"></div>
+            <!-- 主体 -->
+            <div class="mainContent" id="mainContent">
+            </div>
+            <!-- 分页 -->
+            <el-pagination class="listPagination" background
+                           @current-change="handleCurrentChange" :page-size="pageInfo.pageSize" :total="pageInfo.totalData"
+                           layout="prev, pager, next, jumper">
+            </el-pagination>
+
+        </div>
+    </div>
+</div>
 </body>
-<script src="./js/tool.js" type="module"></script>
-<script src="./js/vue.js" type="module"></script>
-<script src="./js/element.js" type="module"></script>
+<script src="/js/tool.js" type="module"></script>
+<script src="/js/vue.js" type="module"></script>
+<script src="/js/element.js" type="module"></script>
+<script src="/js/axios.js"></script>
 <script type="module">
-    import { tools } from './js/tool.js';
+
+    import {tools} from '/js/tool.js';
+
     (async () => {
-        await tools().setPage('public', './view/public.html');
+        tools.setDefaultPage({
+            title: '标题',
+            topicSelect: ['none', 'none'],
+            listToolAddAll: 'none'
+        });
+        await tools.setPage('mainContent', '/view/data/studentTable.html');
+        await tools.setPage('listTool', '/view/listTool.html', {title: '学生用户管理', listToolAddAll: 'block'});
+        let studentData = await tools.getAxiosData('/student/list?page=1&pageSize=8');//获取数据
+        tools.$('#tableDate').innerHTML = await tools.getStudentTableDate(studentData['data']['data']);//绑定数据
         var app = Vue.extend({
             data() {
                 return {
-                    studentData: [{
-                        stuId: 'A0001',
-                        stuName: '张三',
-                        stuAccount: 'user001',
-                        stuPassword: '123456'
+                    //多文件上传列表
+                    fileList: [],
+                    pageInfo:{
+                        pageSize: 8,
+                        nowPage:1,
+                        totalData: 1000,
+                    },
+                    teacherData: [{
+                        teaId: 'B0001',
+                        teaName: 'GU1',
+                        teaAccount: 'userA01',
+                        teaPassword: '123456'
                     }, {
-                        stuId: 'A0002',
-                        stuName: '李四',
-                        stuAccount: 'user002',
-                        stuPassword: '321321'
+                        teaId: 'B0002',
+                        teaName: 'GU2',
+                        teaAccount: 'userA02',
+                        teaPassword: '123456'
                     }, {
-                        stuId: 'A0003',
-                        stuName: '王五',
-                        stuAccount: 'user003',
-                        stuPassword: '321123'
-                    }]
+                        teaId: 'B0003',
+                        teaName: 'GU3',
+                        teaAccount: 'userA03',
+                        teaPassword: '123456'
+                    }],
+                    topicTeachers: [
+                        {
+                            key: 0,
+                            choseTeacher: '全选',
+                            label: '全选'
+                        }, {
+                            key: 1,
+                            choseTeacher: '王老师',
+                            label: '王老师'
+                        }, {
+                            key: 2,
+                            choseTeacher: '李老师',
+                            label: '李老师'
+                        }, {
+                            key: 3,
+                            choseTeacher: '陈老师',
+                            label: '蚵仔煎'
+                        }, {
+                            key: 4,
+                            choseTeacher: '张老师',
+                            label: '龙须面'
+                        }, {
+                            key: 5,
+                            choseTeacher: '杨老师',
+                            label: '北京烤鸭'
+                        }],
+                    topicData: [{
+                        topicId: '编号1',
+                        topicName: '课题1',
+                        topicInfo: '好,介绍',
+                        topicTeacher: '张老师'
+                    }],
+                    choseTeacher: '',
+                    //编辑用户表单
+                    studentEditRule: {
+                        studentName: [
+                            { required: true, message: '请输入姓名', trigger: 'blur' }
+                        ],
+                        studentGarden: [
+                            { required: true, message: '请输入班级', trigger: 'blur' }
+                        ],
+                        studentDepartment: [
+                            { required: true, message: '请输入系部', trigger: 'blur' }
+                        ]
+                    },
+                    studentEdit: {
+                        studentName: '',
+                        studentGarden: '',
+                        studentDepartment: ''
+                    },
+                    //添加用户表单
+                    studentAddRule: {
+                        studentName: [
+                            { required: true, message: '请输入姓名', trigger: 'blur' }
+                        ],
+                        studentGarden: [
+                            { required: true, message: '请输入班级', trigger: 'blur' }
+                        ],
+                        studentDepartment: [
+                            { required: true, message: '请输入系部', trigger: 'blur' }
+                        ]
+                    },
+                    studentAdd: {
+                        studentName: '',
+                        studentGarden: '',
+                        studentDepartment: ''
+                    },
                 }
             },
             methods: {
+                //左栏选择
                 handleSelect(key, keyPath) {
-                    console.log(key, keyPath);
+                    tools.setCurrentPage(key);//设置当前页面                
+                    //教师用户列表
+                    if (key == 2) {
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#mainContent').style.opacity = '0';
+                        }).then(async val => {
+                            await tools.setPage('listTool', '/view/listTool.html', {
+                                title: '教师用户管理',
+                                listToolAddAll: 'block'
+                            });
+                            await tools.setPage('mainContent', '/view/data/teacherTable.html');
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                        });
+                    }
+                    //学生用户列表
+                    if (key == 1) {
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#mainContent').style.opacity = '0';
+                        }).then(async val => {
+                            await tools.setPage('listTool', '/view/listTool.html', {
+                                title: '学生用户管理',
+                                listToolAddAll: 'block'
+                            });
+                            await tools.setPage('mainContent', '/view/data/studentTable.html');
+                            let studentData = await tools.getAxiosData('/student/list?page=1&pageSize=8');
+                            tools.$('#tableDate').innerHTML = await tools.getStudentTableDate(studentData['data']['data']);
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                        });
+                    }
+                    //选题管理
+                    if (key == 3) {
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#mainContent').style.opacity = '0';
+                        }).then(async val => {
+                            await tools.setPage('listTool', '/view/listTool.html', {
+                                title: '选题管理',
+                                topicSelect: ['block', 'block']
+                            });
+                            await tools.setPage('mainContent', '/view/data/selectTopicTable.html');
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                        });
+                    }
+                    //公告管理
+                    if (key == 4) {
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#mainContent').style.opacity = '0';
+                        }).then(async val => {
+                            await tools.setPage('listTool', '/view/listTool.html', {title: '公告管理'});
+                            await tools.setPage('mainContent', '/view/data/noticeManage.html');
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                        });
+                    }
+                    //文件管理
+                    if (key == 5) {
+
+                    }
+                    //毕业设计流程日期管理
+                    if (key == 6) {
+
+                    }
                 },
-                showList(data) {
-                    console.log(index);
+
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //                   编辑页面                     //
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //编辑页面
+                showEdit(data) {
+                    tools.setTimeOutP(0, async () => {
+                        tools.$('#editMark').style.display = 'block';
+                        //教师页面上传一项
+                        if (tools.getCurrentPage() == 2) {
+                            await tools.setPage('editMain', '/view/form/userOneEdit.html');
+                            new app().$mount('#editMain');
+                        }
+                        //学生页面上传一项
+                        if (tools.getCurrentPage() == 1) {
+                            await tools.setPage('editMain', '/view/form/userOneEdit.html');
+                            new app().$mount('#editMain');
+                            //数据为默认选中的数据
+                            let studentData = await tools.getAxiosData(`/student/list?page=${tools.getPageNumber()}&pageSize=8`);
+                            console.log(studentData);
+                            studentData['data']['data'].forEach((items,index)=>{
+                                if(items['id'] === data){
+                                    tools.$('#studentName').value = items['name'];
+                                    tools.$('#studentGarden').value =  items['classname'];
+                                    tools.$('#studentDepartment').value =  items['department'];
+                                }
+                            });
+
+                        }
+                        if (tools.getCurrentPage() == 3) {
+
+                        }
+                        //公告页面上传一项
+                        if (tools.getCurrentPage() == 4) {
+                            await tools.setPage('editMain', '/view/form/noticeEdit.html');
+                            new app().$mount('#editMain');
+                        }
+                    }).then(val => {
+                        tools.$('#editMark').style.opacity = '1';
+                    })
                 },
-                editList(data) {
-                    console.log(index);
+                //关闭编辑
+                closeEdit() {
+                    tools.setTimeOutP(300, () => {
+                        tools.$('#editMark').style.opacity = '0';
+                    }).then(async val => {
+                        tools.$('#editMark').style.display = 'none';
+                        await tools.setPage('editMain', '/view/form/none.html');
+                        new app().$mount("#editMain");
+                    })
+                },
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //                    添加页面                    //
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //添加或新建
+                addItems() {
+                    tools.setTimeOutP(0, async () => {
+                        tools.$('#editMark').style.display = 'block';
+                        //教师页面上传一项
+                        if (tools.getCurrentPage() == 2) {
+                            await tools.setPage('editMain', '/view/form/userOneImport.html');
+                            new app().$mount("#editMain");
+                        }
+                        //学生页面上传一项
+                        if (tools.getCurrentPage() == 1) {
+                            await tools.setPage('editMain', '/view/form/userOneImport.html');
+                            new app().$mount("#editMain");
+                        }
+                        //公告页面上传一项
+                        if (tools.getCurrentPage() == 4) {
+                            await tools.setPage('editMain', '/view/form/noticeOneImport.html');
+                            new app().$mount("#editMain");
+                        }
+                    }).then(val => {
+                        tools.$('#editMark').style.opacity = '1';
+                    });
+                },
+                //批量添加或新建
+                addItemsAll() {
+                    tools.setTimeOutP(0, async () => {
+                        tools.$('#editMark').style.display = 'block';
+                        //教师页面上传多项
+                        if (tools.getCurrentPage() == 2) {
+                            await tools.setPage('editMain', '/view/form/usersImport.html');
+                            new app().$mount("#editMain");
+                        }
+                        //学生页面上传多项
+                        if (tools.getCurrentPage() == 1) {
+                            await tools.setPage('editMain', '/view/form/usersImport.html');
+                            new app().$mount("#editMain");
+                        }
+                    }).then(val => {
+                        tools.$('#editMark').style.opacity = '1';
+                    });
+                },
+
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //                    删除功能                    //
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //表格删除
+                deleteList(data) {
+                    console.log(data);
+                },
+                //公告删除
+                deleteNotice(id) {
+                    console.log(this);
+                },
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //                    表单提交                    //
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //多用户提交文件
+                usersSubmitUpload() {
+                    this.$refs.upload.submit();
+                },
+                //学生修改表单
+                studentEditForm(formName){
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            console.log(this.studentEdit);
+                        } else {
+                            console.log('error submit!!');
+                            return false;
+                        }
+                    });
+                },
+                studentAddForm(formName){
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            console.log(this.studentAdd);
+                        } else {
+                            console.log('error submit!!');
+                            return false;
+                        }
+                    });
+                },
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //                    查询功能                    //
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                selectTableItems() {
+
+                },
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //                      杂                       //
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //刷新
+                refreshTableItems() {
+
+                },
+                //换页
+                async handleCurrentChange(val) {
+                    this.$set(this.pageInfo,'nowPage',val)
+                    tools.setPageNumber(this.pageInfo['nowPage']);
+                    let studentData = await tools.getAxiosData(`/student/list?page=${val}&pageSize=8`);
+                    tools.$('#tableDate').innerHTML = await tools.getStudentTableDate(studentData['data']['data']);
+                    new app().$mount("#mainContent");
                 }
             }
         });
-        var fin = new app().$mount("#app");
+        new app().$mount("#app");
     })();
 </script>
 
