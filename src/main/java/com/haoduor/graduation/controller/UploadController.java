@@ -7,6 +7,7 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import com.haoduor.graduation.adapter.CommonAdapter;
 import com.haoduor.graduation.dto.StudentDto;
+import com.haoduor.graduation.dto.TeacherDto;
 import com.haoduor.graduation.exception.DuplicateIdException;
 import com.haoduor.graduation.exception.NameParseException;
 import com.haoduor.graduation.service.UserService;
@@ -99,8 +100,6 @@ public class UploadController {
                     return new BaseMessage(3, "表头不符合");
                 }
 
-                boolean isFirst = false;
-
                 List<StudentDto> students = new LinkedList<>();
 
                 // 转换行数据变为实体类
@@ -166,10 +165,57 @@ public class UploadController {
             // 上传后缀名判断
             String type = FileTypeUtil.getType(tmpFile);
 
+            // 后缀名判断
+            if (suffix.contains(type)) {
+                // excel 处理部分
+                ExcelReader reader = ExcelUtil.getReader(tmpFile);
+                List<List<Object>> contents = reader.read();
 
+                // 表头校验
+                List<Object> title = contents.get(0);
+
+                if (!adapter.teacherTitleEqual(title)) {
+                    return new BaseMessage(3, "表头不符合");
+                }
+
+                List<TeacherDto> teachers = new LinkedList<>();
+
+                // 转换行数据变为实体类
+                BitMapBloomFilter filter = new BitMapBloomFilter(100000);
+                for (int i = 1; i < contents.size(); i++) {
+                    TeacherDto tmp = null;
+                    try {
+                        tmp = adapter.toTeacher(contents.get(i), filter);
+                    } catch (DuplicateIdException e) {
+                        return new BaseMessage(4, "id重复 " + e.getId());
+                    } catch (NameParseException e) {
+                        return new BaseMessage(6, "姓名必须为中文");
+                    } catch (Exception e) {
+                        return new BaseMessage(5, "不知道");
+                    }
+
+                    teachers.add(tmp);
+                }
+
+                // 进入数据库
+                boolean commit = true;
+                for (TeacherDto teacher : teachers) {
+                    boolean res = userService.addTeacherDto(teacher);
+                    if (!res) {
+                        commit = false;
+                    }
+                    teacherFilter.add(teacher.getId());
+                }
+
+                // 最终数据库判断
+                if (commit) {
+                    return new BaseMessage(1, "导入成功");
+                } else {
+                    return new BaseMessage(6, "数据库出错");
+                }
+            }
         }
 
-
-        return null;
+        return new BaseMessage(5, "文件不能为空");
     }
 }

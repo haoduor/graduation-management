@@ -3,14 +3,17 @@ package com.haoduor.graduation.adapter;
 import cn.hutool.bloomfilter.BitMapBloomFilter;
 import cn.hutool.core.lang.Validator;
 import com.haoduor.graduation.dto.StudentDto;
+import com.haoduor.graduation.dto.TeacherDto;
 import com.haoduor.graduation.exception.DuplicateIdException;
 import com.haoduor.graduation.exception.ExcelFormatException;
 import com.haoduor.graduation.exception.NameParseException;
 import org.apache.commons.collections.ListUtils;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.naming.InvalidNameException;
+import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +39,7 @@ public class CommonAdapter {
     }
 
     public StudentDto toStudent(List<Object> list, BitMapBloomFilter filter) throws Exception {
-        if (list.size() == 4) {
+        if (list.size() == studentTitle.size()) {
             // 学号 需要仅数字校验
             long id = Long.parseLong(list.get(0).toString());
 
@@ -62,6 +65,32 @@ public class CommonAdapter {
             s.setClassname(classname);
             s.setDepartment(department);
             return s;
+        } else {
+            throw new ExcelFormatException();
+        }
+    }
+
+    public TeacherDto toTeacher(List<Object> list, BitMapBloomFilter fileter) throws DuplicateIdException, NameParseException, ExcelFormatException {
+        if (list.size() == teacherTitle.size()) {
+            String id = list.get(0).toString();
+
+            if (fileter.contains(id) || teacherFilter.contains(id)) {
+                throw new DuplicateIdException(id);
+            }
+
+            String username = (String) list.get(1);
+            if (Validator.isChinese(username)) {
+                throw new NameParseException();
+            }
+
+            String department = (String)list.get(2);
+
+            TeacherDto res = new TeacherDto();
+            res.setId(id);
+            res.setName(username);
+            res.setDepartment(department);
+
+            return res;
         } else {
             throw new ExcelFormatException();
         }
