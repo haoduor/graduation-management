@@ -17,6 +17,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -113,7 +114,7 @@ public class UploadController {
                     } catch (NameParseException e) {
                         return new BaseMessage(6, "姓名必须为中文");
                     } catch (Exception e) {
-                        return new BaseMessage(5, "不知道");
+                        return new BaseMessage(5, "数据格式化失败");
                     }
 
                     students.add(tmp);
@@ -142,6 +143,7 @@ public class UploadController {
         return new BaseMessage(5, "文件不能为空");
     }
 
+    @ResponseBody
     @PostMapping("/teacher")
     public BaseMessage uploadTeacher(MultipartFile file) {
         if (file != null) {
@@ -191,7 +193,7 @@ public class UploadController {
                     } catch (NameParseException e) {
                         return new BaseMessage(6, "姓名必须为中文");
                     } catch (Exception e) {
-                        return new BaseMessage(5, "不知道");
+                        return new BaseMessage(5, "数据格式化失败");
                     }
 
                     teachers.add(tmp);

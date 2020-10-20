@@ -31,11 +31,11 @@ public class CommonAdapter {
     public static final List<String> teacherTitle = Arrays.asList("工号", "姓名", "系部");
 
     public boolean studentTitleEqual(List<Object> list) {
-        return ListUtils.isEqualList(studentTitle, studentTitle);
+        return ListUtils.isEqualList(list, studentTitle);
     }
 
     public boolean teacherTitleEqual(List<Object> list) {
-        return ListUtils.isEqualList(teacherTitle, studentTitle);
+        return ListUtils.isEqualList(list, teacherTitle);
     }
 
     public StudentDto toStudent(List<Object> list, BitMapBloomFilter filter) throws Exception {
