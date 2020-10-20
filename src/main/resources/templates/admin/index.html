@@ -45,16 +45,28 @@
                     <span slot="title">选题管理</span>
                 </el-menu-item>
                 <el-menu-item index="4">
+                    <i class="el-icon-edit-outline"></i>
+                    <span slot="title">选题标签管理</span>
+                </el-menu-item>
+                <el-menu-item index="5">
                     <i class="el-icon-chat-square"></i>
                     <span slot="title">公告管理</span>
                 </el-menu-item>
-                <el-menu-item index="5">
-                    <i class="el-icon-document"></i>
-                    <span slot="title">文件管理</span>
-                </el-menu-item>
                 <el-menu-item index="6">
+                    <i class="el-icon-document"></i>
+                    <span slot="title">模板文件管理</span>
+                </el-menu-item>
+                <el-menu-item index="7">
+                    <i class="el-icon-document"></i>
+                    <span slot="title">学生提交文件管理</span>
+                </el-menu-item>
+                <el-menu-item index="8">
                     <i class="el-icon-date"></i>
                     <span slot="title">毕业设计流程日期管理</span>
+                </el-menu-item>
+                <el-menu-item index="9">
+                    <i class="el-icon-user"></i>
+                    <span slot="title">用户管理</span>
                 </el-menu-item>
             </el-menu>
         </el-row>
@@ -74,12 +86,16 @@
 </div>
 </body>
 <script src="/js/tool.js" type="module"></script>
+<script src="/js/staticValue.js" type="module"></script>
+<script src="/js/tableModel.js" type="module"></script>
 <script src="/js/vue.js" type="module"></script>
 <script src="/js/element.js" type="module"></script>
 <script src="/js/axios.js"></script>
 <script type="module">
 
     import {tools} from '/js/tool.js';
+    import {staticValue} from '/js/staticValue.js';
+    import {tableModel} from '/js/tableModel.js';
 
     (async () => {
         tools.setDefaultPage({
@@ -90,7 +106,7 @@
         await tools.setPage('mainContent', '/view/data/studentTable.html');
         await tools.setPage('listTool', '/view/listTool.html', {title: '学生用户管理', listToolAddAll: 'block'});
         let studentData = await tools.getAxiosData('/student/list?page=1&pageSize=8');//获取数据
-        tools.$('#tableDate').innerHTML = await tools.getStudentTableDate(studentData['data']['data']);//绑定数据
+        tools.$('#tableDate').innerHTML = await tableModel.getStudentTableData(studentData['data']['data']);//绑定数据
         var app = Vue.extend({
             data() {
                 return {
@@ -101,22 +117,6 @@
                         nowPage:1,
                         totalData: studentData['data']['total'],
                     },
-                    teacherData: [{
-                        teaId: 'B0001',
-                        teaName: 'GU1',
-                        teaAccount: 'userA01',
-                        teaPassword: '123456'
-                    }, {
-                        teaId: 'B0002',
-                        teaName: 'GU2',
-                        teaAccount: 'userA02',
-                        teaPassword: '123456'
-                    }, {
-                        teaId: 'B0003',
-                        teaName: 'GU3',
-                        teaAccount: 'userA03',
-                        teaPassword: '123456'
-                    }],
                     topicTeachers: [
                         {
                             key: 0,
@@ -198,7 +198,7 @@
             methods: {
                 //左栏选择
                 handleSelect(key, keyPath) {
-                    tools.setCurrentPage(key);//设置当前页面                
+                    staticValue.setCurrentPage(key);//设置当前页面
 
                     //学生用户列表
                     if (key == 1) {
@@ -211,7 +211,7 @@
                             });
                             await tools.setPage('mainContent', '/view/data/studentTable.html');
                             let studentData = await tools.getAxiosData('/student/list?page=1&pageSize=8');
-                            tools.$('#tableDate').innerHTML = await tools.getStudentTableDate(studentData['data']['data']);
+                            tools.$('#tableDate').innerHTML = await tableModel.getStudentTableData(studentData['data']['data']);
                             new app().$mount("#mainContent");
                             new app().$mount("#listTool");
                             tools.$('#mainContent').style.opacity = '1';
@@ -229,7 +229,7 @@
                             });
                             await tools.setPage('mainContent', '/view/data/teacherTable.html');
                             let teacherData = await tools.getAxiosData('/teacher/list?page=1&pageSize=8');
-                            tools.$('#tableDate').innerHTML = await tools.getTeacherTableDate(teacherData['data']['data']);
+                            tools.$('#tableDate').innerHTML = await tableModel.getTeacherTableData(teacherData['data']['data']);
                             new app().$mount("#mainContent");
                             new app().$mount("#listTool");
                             tools.$('#mainContent').style.opacity = '1';
@@ -251,8 +251,12 @@
                             tools.$('#mainContent').style.opacity = '1';
                         });
                     }
-                    //公告管理
+                    //选题标签管理
                     if (key == 4) {
+
+                    }
+                    //公告管理
+                    if (key == 5) {
                         tools.setTimeOutP(300, async () => {
                             tools.$('#mainContent').style.opacity = '0';
                         }).then(async val => {
@@ -263,12 +267,20 @@
                             tools.$('#mainContent').style.opacity = '1';
                         });
                     }
-                    //文件管理
-                    if (key == 5) {
+                    //模板文件管理
+                    if (key == 6) {
+
+                    }
+                    //学生提交文件管理
+                    if (key == 7) {
 
                     }
                     //毕业设计流程日期管理
-                    if (key == 6) {
+                    if (key == 8) {
+
+                    }
+                    //用户管理
+                    if (key == 9) {
 
                     }
                 },
@@ -277,16 +289,16 @@
                 //                   编辑页面                     //
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //编辑页面
-                showEdit(data) {
+                showEdit(data = '') {
                     tools.setTimeOutP(0, async () => {
                         tools.$('#editMark').style.display = 'block';
 
                         //学生页面编辑一项
-                        if (tools.getCurrentPage() == 1) {
+                        if (staticValue.getCurrentPage() == 1) {
                             await tools.setPage('editMain', '/view/form/studentOneEdit.html');
                             new app().$mount('#editMain');
                             //数据为默认选中的数据
-                            let studentData = await tools.getAxiosData(`/student/list?page=${tools.getPageNumber()}&pageSize=8`);
+                            let studentData = await tools.getAxiosData(`/student/list?page=${staticValue.getPageNumber()}&pageSize=8`);
                             studentData['data']['data'].forEach((items,index)=>{
                                 if(items['id'] === data){
                                     tools.$('#studentName').value = items['name'];
@@ -295,33 +307,33 @@
                                     tools.inputIsNull('#studentName','blur');//判空校验
                                     tools.inputIsNull('#studentGarden','blur');//判空校验
                                     tools.inputIsNull('#studentDepartment','blur');//判空校验
-                                    tools.setChoseId(items['id']);
+                                    staticValue.setChoseId(items['id']);
                                 }
                             });
                         }
 
                         //教师页面编辑一项
-                        if (tools.getCurrentPage() == 2) {
+                        if (staticValue.getCurrentPage() == 2) {
                             await tools.setPage('editMain', '/view/form/teacherOneEdit.html');
                             new app().$mount('#editMain');
                             //数据为默认选中的数据
-                            let teacherData = await tools.getAxiosData(`/teacher/list?page=${tools.getPageNumber()}&pageSize=8`);
+                            let teacherData = await tools.getAxiosData(`/teacher/list?page=${staticValue.getPageNumber()}&pageSize=8`);
                             teacherData['data']['data'].forEach((items,index)=>{
                                 if(items['id'] === data){
                                     tools.$('#teacherName').value = items['name'];
                                     tools.$('#teacherDepartment').value =  items['department'];
                                     tools.inputIsNull('#teacherName','blur');//判空校验
                                     tools.inputIsNull('#teacherDepartment','blur');//判空校验
-                                    tools.setChoseId(items['id']);
+                                    staticValue.setChoseId(items['id']);
                                 }
                             });
                         }
                         //选题页面编辑一项
-                        if (tools.getCurrentPage() == 3) {
+                        if (staticValue.getCurrentPage() == 3) {
 
                         }
                         //公告页面编辑一项
-                        if (tools.getCurrentPage() == 4) {
+                        if (staticValue.getCurrentPage() == 5) {
                             await tools.setPage('editMain', '/view/form/noticeEdit.html');
                             new app().$mount('#editMain');
                         }
@@ -347,17 +359,17 @@
                     tools.setTimeOutP(0, async () => {
                         tools.$('#editMark').style.display = 'block';
                         //教师页面上传一项
-                        if (tools.getCurrentPage() == 2) {
+                        if (staticValue.getCurrentPage() == 2) {
                             await tools.setPage('editMain', '/view/form/teacherOneImport.html');
                             new app().$mount("#editMain");
                         }
                         //学生页面上传一项
-                        if (tools.getCurrentPage() == 1) {
+                        if (staticValue.getCurrentPage() == 1) {
                             await tools.setPage('editMain', '/view/form/studentOneImport.html');
                             new app().$mount("#editMain");
                         }
                         //公告页面上传一项
-                        if (tools.getCurrentPage() == 4) {
+                        if (staticValue.getCurrentPage() == 5) {
                             await tools.setPage('editMain', '/view/form/noticeOneImport.html');
                             new app().$mount("#editMain");
                         }
@@ -370,12 +382,12 @@
                     tools.setTimeOutP(0, async () => {
                         tools.$('#editMark').style.display = 'block';
                         //教师页面上传多项
-                        if (tools.getCurrentPage() == 2) {
+                        if (staticValue.getCurrentPage() == 2) {
                             await tools.setPage('editMain', '/view/form/usersImport.html');
                             new app().$mount("#editMain");
                         }
                         //学生页面上传多项
-                        if (tools.getCurrentPage() == 1) {
+                        if (staticValue.getCurrentPage() == 1) {
                             await tools.setPage('editMain', '/view/form/usersImport.html');
                             new app().$mount("#editMain");
                         }
@@ -411,7 +423,7 @@
                             studentName: tools.$('#studentName').value,
                             studentGarden: tools.$('#studentGarden').value,
                             studentDepartment: tools.$('#studentDepartment').value,
-                            id:tools.getChoseId()
+                            id:staticValue.getChoseId()
                         });
                         this.$message.success("修改成功");
                     }else{
@@ -437,7 +449,7 @@
                         console.log({
                             studentName: tools.$('#teacherName').value,
                             studentGarden: tools.$('#teacherDepartment').value,
-                            id:tools.getChoseId()
+                            id:staticValue.getChoseId()
                         });
                         this.$message.success("修改成功");
                     }else{
@@ -471,16 +483,16 @@
                 //换页
                 async handleCurrentChange(val) {
                     this.$set(this.pageInfo,'nowPage',val);
-                    tools.setPageNumber(this.pageInfo['nowPage']);
+                    staticValue.setPageNumber(this.pageInfo['nowPage']);
                     //学生换页
-                    if(tools.getCurrentPage() == '1'){
+                    if(staticValue.getCurrentPage() == '1'){
                         let studentData = await tools.getAxiosData(`/student/list?page=${val}&pageSize=8`);
-                        tools.$('#tableDate').innerHTML = await tools.getStudentTableDate(studentData['data']['data']);
+                        tools.$('#tableDate').innerHTML = await tableModel.getStudentTableData(studentData['data']['data']);
                     }
                     //教师换页
-                    if(tools.getCurrentPage() == '2'){
+                    if(staticValue.getCurrentPage() == '2'){
                         let teacherData = await tools.getAxiosData(`/teacher/list?page=${val}&pageSize=8`);
-                        tools.$('#tableDate').innerHTML = await tools.getTeacherTableDate(teacherData['data']['data']);
+                        tools.$('#tableDate').innerHTML = await tableModel.getTeacherTableData(teacherData['data']['data']);
                     }
                     new app().$mount("#mainContent");
                 }
