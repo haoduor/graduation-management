@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/globel.css">
+    <link rel="stylesheet" href="./css/element.css">
+    <link rel="stylesheet" href="./css/frame.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- 遮罩数据操作 -->
+        <div class="editMark" id="editMark">
+            <div class="tableEdit">
+                <el-button class="editSave" @click="editSave" type="primary" icon="el-icon-check">保存</el-button>
+                <el-button class="editClose" @click="editClose" type="primary" icon="el-icon-switch-button">关闭
+                </el-button>
+            </div>
+        </div>
+        <div class="adminNav">
+            <p class="navTitle"><i class="el-icon-user-solid"></i> 学生端</p>
+            <div class="userInformation">
+                <p>当前用户:gugu</p>
+                <el-button class="userLoginOut" @click="" type="text" icon="el-icon-switch-button">登出</el-button>
+            </div>
+        </div>
+        <div class="adminBody">
+            <el-row class="adminList">
+                <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect"
+                    background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
+                    <el-menu-item index="1">
+                        <i class="el-icon-user"></i>
+                        <span slot="title">XXXX</span>
+                    </el-menu-item>
+                    <el-menu-item index="2">
+                        <i class="el-icon-suitcase-1"></i>
+                        <span slot="title">XXXX</span>
+                    </el-menu-item>
+                </el-menu>
+            </el-row>
+            <div class="adminData">
+                <div id="listTool" class="listTool"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="./js/tool.js" type="module"></script>
+<script src="./js/vue.js" type="module"></script>
+<script src="./js/element.js" type="module"></script>
+<script type="module">
+
+    import { tools } from './js/tool.js';
+    (async () => {
+        await tools.setPage('listTool', './view/listTool.html', { title: '学生列表' });
+        var app = Vue.extend({
+            data() {
+                return {}
+            },
+            methods: {
+                //左栏选择
+                handleSelect(key, keyPath) {
+                    if (key == 1) {
+
+                    }
+                    if (key == 2) {
+
+                    }
+                },
+                //关闭编辑
+                editClose() {
+                    tools.setTimeOutP(300, () => {
+                        tools.$('#editMark').style.opacity = '0';
+                    }).then(val => {
+                        tools.$('#editMark').style.display = 'none';
+                    })
+                },
+                //保存编辑
+                editSave() {
+
+                },
+                //刷新
+                refreshTableItems() {
+
+                },
+                //添加
+                addTableItems() {
+                    tools.setTimeOutP(0, () => {
+                        tools.$('#editMark').style.display = 'block';
+                    }).then(val => {
+                        tools.$('#editMark').style.opacity = '1';
+                    })
+                }
+            }
+        });
+        var fin = new app().$mount("#app");
+    })();
+</script>
+
+</html>

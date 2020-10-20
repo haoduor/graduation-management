@@ -1,0 +1,12 @@
+<el-form style="margin-right: 2rem" :model="teacherAdd" status-icon ref="teacherAdd" :rules="teacherAddRule"  label-width="100px" class="demo-ruleForm">
+    <el-form-item prop="teacherName" label="姓名:" label-position="left">
+        <el-input id="teacherName" v-model="teacherAdd.teacherName" clearable></el-input>
+    </el-form-item>
+    <el-form-item prop="teacherDepartment" label="部门:" label-position="left">
+        <el-input id="teacherDepartment" v-model="teacherAdd.teacherDepartment" clearable></el-input>
+    </el-form-item>
+    <el-form-item>
+        <el-button type="primary" @click="teacherAddForm('teacherAdd')" icon="el-icon-edit">添加</el-button>
+        <el-button class="editClose" @click="closeEdit" type="primary" icon="el-icon-switch-button">关闭</el-button>
+    </el-form-item>
+</el-form>

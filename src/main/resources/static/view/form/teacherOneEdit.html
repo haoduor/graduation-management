@@ -1,0 +1,15 @@
+<el-form style="margin-right: 2rem" :model="teacherEdit" status-icon ref="teacherEdit"  label-width="5rem" >
+    <el-form-item prop="teacherName" label="姓名:" label-position="left">
+        <el-input id="teacherName" v-model="teacherEdit.teacherName" clearable></el-input>
+        <span class="inputRule" id="teacherNameRule">请输入姓名</span>
+    </el-form-item>
+    <el-form-item prop="teacherDepartment" label="部门:" label-position="left">
+        <el-input id="teacherDepartment" v-model="teacherEdit.teacherDepartment" clearable></el-input>
+        <span class="inputRule" id="teacherDepartmentRule">请输入部门</span>
+    </el-form-item>
+    <el-form-item>
+        <el-button type="primary" @click="teacherEditForm" icon="el-icon-edit">修改</el-button>
+        <el-button class="editClose" @click="closeEdit" type="primary" icon="el-icon-switch-button">关闭</el-button>
+    </el-form-item>
+</el-form>
+
