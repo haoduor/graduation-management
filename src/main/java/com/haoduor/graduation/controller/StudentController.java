@@ -32,6 +32,12 @@ public class StudentController {
     @Resource(name = "studentFilter")
     private BitMapBloomFilter studentFilter;
 
+    /**
+     * 获取用户列表
+     * @param page 第几页
+     * @param pageSize 页面数据存在多少
+     * @return
+     */
     @GetMapping("/list")
     public PageMessage getStudent(@RequestParam(defaultValue = "1") int page,
                                   @RequestParam(defaultValue = "30") int pageSize) {
@@ -61,8 +67,7 @@ public class StudentController {
 
     // 更改学生 (无法更改学号)
     @PostMapping("/set")
-    public BaseMessage set(@Valid @RequestParam StudentVo vo) {
-
+    public BaseMessage set(@RequestParam StudentVo vo) {
         boolean res = studentService.updateStudentByVo(vo);
         if (res) {
             return new BaseMessage(1, "更新成功");
@@ -77,7 +82,7 @@ public class StudentController {
      * @return
      */
     @PostMapping("/add")
-    public BaseMessage add(@RequestParam StudentVo vo) {
+    public BaseMessage add(@Valid @RequestParam StudentVo vo) {
         if (vo != null) {
             StudentDto tmp = null;
             try {

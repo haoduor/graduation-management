@@ -2,8 +2,10 @@ package com.haoduor.graduation.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
 import com.haoduor.graduation.dao.StudentMapper;
+import com.haoduor.graduation.dao.TeacherMapper;
 import com.haoduor.graduation.dao.UserMapper;
 import com.haoduor.graduation.dto.StudentDto;
+import com.haoduor.graduation.dto.TeacherDto;
 import com.haoduor.graduation.model.*;
 import com.haoduor.graduation.service.DepartmentService;
 import com.haoduor.graduation.service.RoleService;
@@ -22,6 +24,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private StudentMapper studentMapper;
+
+    @Autowired
+    private TeacherMapper teacherMapper;
 
     @Autowired
     private DepartmentService departmentService;
@@ -120,5 +125,29 @@ public class UserServiceImpl implements UserService {
         int resS = studentMapper.insert(stu);
 
         return resU == 1 && resS == 1;
+    }
+
+    @Override
+    public boolean addTeacherDto(TeacherDto t) {
+        Role teacher = roleService.getTeacherRole();
+
+        User u = new User();
+        u.setId(snowflake.nextId());
+        u.setUsername(t.getId());
+        u.setRoleId(teacher.getId());
+        u.setSalt(EncryptedUtil.getSalt());
+        u.setPassword(EncryptedUtil.encryptedPassword("123456", u.getSalt()));
+
+        Teacher te = new Teacher();
+        te.setUserId(u.getId());
+        te.setName(t.getName());
+
+        Department de = departmentService.getOrAddDepartment(t.getDepartment());
+        te.setDepartmentId(de.getId());
+
+        int resU = userMapper.insert(u);
+        int resT = teacherMapper.insert(te);
+
+        return resT == 1 && resU == 1;
     }
 }

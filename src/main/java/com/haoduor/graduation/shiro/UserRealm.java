@@ -29,7 +29,6 @@ public class UserRealm extends AuthorizingRealm {
             if (role != null) {
                 SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
                 info.addRole(role.getName());
-
                 return info;
             }
         }
@@ -40,16 +39,20 @@ public class UserRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         UsernamePasswordToken t = (UsernamePasswordToken)token;
 
+        // 获取用户名
         String username = t.getUsername();
 
+        // 更具用户名 获取数据库的用户
         User dbuser = userService.getUserByName(username);
         if (dbuser == null) {
+            // 如果数据库中没有用户 返回空用户错误
             throw new UnknownAccountException();
         }
 
         String pass = new String(t.getPassword());
         String salt = dbuser.getSalt();
 
+        // 设置加密的密码
         t.setPassword(EncryptedUtil.encryptedPassword(pass, salt).toCharArray());
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(token.getPrincipal(), dbuser.getPassword(), getName());
         return info;
