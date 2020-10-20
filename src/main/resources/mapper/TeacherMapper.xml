@@ -160,6 +160,6 @@
     select u.id, u.username, t.name, d.name department
     from teacher t
     left join user u on t.user_id = u.id
-    left join department d on t.department_id = d.id;
+    left join department d on t.department_id = d.id
   </select>
 </mapper>

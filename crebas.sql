@@ -3,7 +3,6 @@
 /* Created on:     2020/10/14 9:53:49                           */
 /*==============================================================*/
 
-
 drop table if exists department;
 
 drop table if exists role;
