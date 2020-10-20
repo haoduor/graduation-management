@@ -419,13 +419,18 @@
                     if(tools.inputIsNullValue('#studentName')
                     &&tools.inputIsNullValue('#studentGarden')
                     &&tools.inputIsNullValue('#studentDepartment')){
-                        console.log({
-                            studentName: tools.$('#studentName').value,
-                            studentGarden: tools.$('#studentGarden').value,
-                            studentDepartment: tools.$('#studentDepartment').value,
+                        let postData = {
+                            name: tools.$('#studentName').value,
+                            classname: tools.$('#studentGarden').value,
+                            department: tools.$('#studentDepartment').value,
                             id:staticValue.getChoseId()
+                        };
+                        console.log(postData);
+                        axios.post('/student/set',{vo:postData}).then(val=>{
+                            this.$message.success("修改成功");
+                        }).catch(err=>{
+                            this.$message.error("修改失败");
                         });
-                        this.$message.success("修改成功");
                     }else{
                         this.$message.error("请填写完整信息");
                     }
@@ -434,7 +439,12 @@
                 studentAddForm(formName){
                     this.$refs[formName].validate((valid) => {
                         if (valid) {
-                            console.log(this.studentAdd);
+                            let postData = {
+                                name: this.studentAdd['studentName'],
+                                classname: this.studentAdd['studentGarden'],
+                                department: this.studentAdd['studentDepartment'],
+                                id:staticValue.getChoseId()
+                            };
                             this.$message.success("添加成功");
                         } else {
                             this.$message.error("请填写完整信息");
@@ -446,12 +456,17 @@
                 teacherEditForm(){
                     if(tools.inputIsNullValue('#teacherName')
                         &&tools.inputIsNullValue('#teacherDepartment')){
-                        console.log({
-                            studentName: tools.$('#teacherName').value,
-                            studentGarden: tools.$('#teacherDepartment').value,
+                        let postData = {
+                            name: tools.$('#teacherName').value,
+                            department: tools.$('#teacherDepartment').value,
                             id:staticValue.getChoseId()
+                        };
+                        console.log(postData);
+                        axios.post('/teacher/set',{vo:postData}).then(val=>{
+                            this.$message.success("修改成功");
+                        }).catch(err=>{
+                            this.$message.error("修改失败");
                         });
-                        this.$message.success("修改成功");
                     }else{
                         this.$message.error("请填写完整信息");
                     }
