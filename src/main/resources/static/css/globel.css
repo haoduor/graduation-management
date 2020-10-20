@@ -37,3 +37,16 @@ body {
     border-radius: 10px;
     background: #EDEDED;
 }
+
+/*表单验证样式*/
+.inputRule{
+    position: absolute;
+    top: 100%;
+    left: 0;
+    padding-top: 4px;
+    color: #F56C6C;
+    font-size: 12px;
+    line-height: 1;
+    opacity: 0;
+    transition: opacity 0.3s;
+}

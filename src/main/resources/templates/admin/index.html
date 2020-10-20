@@ -99,7 +99,7 @@
                     pageInfo:{
                         pageSize: 8,
                         nowPage:1,
-                        totalData: 1000,
+                        totalData: studentData['data']['total'],
                     },
                     teacherData: [{
                         teaId: 'B0001',
@@ -151,32 +151,28 @@
                     }],
                     choseTeacher: '',
                     //编辑用户表单
-                    studentEditRule: {
-                        studentName: [
-                            { required: true, message: '请输入姓名', trigger: 'blur' }
-                        ],
-                        studentGarden: [
-                            { required: true, message: '请输入班级', trigger: 'blur' }
-                        ],
-                        studentDepartment: [
-                            { required: true, message: '请输入系部', trigger: 'blur' }
-                        ]
-                    },
+                    //学生
                     studentEdit: {
                         studentName: '',
                         studentGarden: '',
                         studentDepartment: ''
                     },
+                    //教师
+                    teacherEdit: {
+                        studentName: '',
+                        studentDepartment: ''
+                    },
                     //添加用户表单
+                    //学生
                     studentAddRule: {
                         studentName: [
-                            { required: true, message: '请输入姓名', trigger: 'blur' }
+                            { required: true, message: '请输入学生姓名', trigger: 'blur' }
                         ],
                         studentGarden: [
-                            { required: true, message: '请输入班级', trigger: 'blur' }
+                            { required: true, message: '请输入学生班级', trigger: 'blur' }
                         ],
                         studentDepartment: [
-                            { required: true, message: '请输入系部', trigger: 'blur' }
+                            { required: true, message: '请输入学生系部', trigger: 'blur' }
                         ]
                     },
                     studentAdd: {
@@ -184,27 +180,26 @@
                         studentGarden: '',
                         studentDepartment: ''
                     },
+                    //教师
+                    teacherAddRule: {
+                        teacherName: [
+                            { required: true, message: '请输入教师姓名', trigger: 'blur' }
+                        ],
+                        teacherDepartment: [
+                            { required: true, message: '请输入教师系部', trigger: 'blur' }
+                        ]
+                    },
+                    teacherAdd: {
+                        teacherName: '',
+                        teacherDepartment: ''
+                    },
                 }
             },
             methods: {
                 //左栏选择
                 handleSelect(key, keyPath) {
                     tools.setCurrentPage(key);//设置当前页面                
-                    //教师用户列表
-                    if (key == 2) {
-                        tools.setTimeOutP(300, async () => {
-                            tools.$('#mainContent').style.opacity = '0';
-                        }).then(async val => {
-                            await tools.setPage('listTool', '/view/listTool.html', {
-                                title: '教师用户管理',
-                                listToolAddAll: 'block'
-                            });
-                            await tools.setPage('mainContent', '/view/data/teacherTable.html');
-                            new app().$mount("#mainContent");
-                            new app().$mount("#listTool");
-                            tools.$('#mainContent').style.opacity = '1';
-                        });
-                    }
+
                     //学生用户列表
                     if (key == 1) {
                         tools.setTimeOutP(300, async () => {
@@ -222,6 +217,25 @@
                             tools.$('#mainContent').style.opacity = '1';
                         });
                     }
+
+                    //教师用户列表
+                    if (key == 2) {
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#mainContent').style.opacity = '0';
+                        }).then(async val => {
+                            await tools.setPage('listTool', '/view/listTool.html', {
+                                title: '教师用户管理',
+                                listToolAddAll: 'block'
+                            });
+                            await tools.setPage('mainContent', '/view/data/teacherTable.html');
+                            let teacherData = await tools.getAxiosData('/teacher/list?page=1&pageSize=8');
+                            tools.$('#tableDate').innerHTML = await tools.getTeacherTableDate(teacherData['data']['data']);
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                        });
+                    }
+
                     //选题管理
                     if (key == 3) {
                         tools.setTimeOutP(300, async () => {
@@ -266,31 +280,47 @@
                 showEdit(data) {
                     tools.setTimeOutP(0, async () => {
                         tools.$('#editMark').style.display = 'block';
-                        //教师页面上传一项
-                        if (tools.getCurrentPage() == 2) {
-                            await tools.setPage('editMain', '/view/form/userOneEdit.html');
-                            new app().$mount('#editMain');
-                        }
-                        //学生页面上传一项
+
+                        //学生页面编辑一项
                         if (tools.getCurrentPage() == 1) {
-                            await tools.setPage('editMain', '/view/form/userOneEdit.html');
+                            await tools.setPage('editMain', '/view/form/studentOneEdit.html');
                             new app().$mount('#editMain');
                             //数据为默认选中的数据
                             let studentData = await tools.getAxiosData(`/student/list?page=${tools.getPageNumber()}&pageSize=8`);
-                            console.log(studentData);
                             studentData['data']['data'].forEach((items,index)=>{
                                 if(items['id'] === data){
                                     tools.$('#studentName').value = items['name'];
                                     tools.$('#studentGarden').value =  items['classname'];
                                     tools.$('#studentDepartment').value =  items['department'];
+                                    tools.inputIsNull('#studentName','blur');//判空校验
+                                    tools.inputIsNull('#studentGarden','blur');//判空校验
+                                    tools.inputIsNull('#studentDepartment','blur');//判空校验
+                                    tools.setChoseId(items['id']);
                                 }
                             });
-
                         }
+
+                        //教师页面编辑一项
+                        if (tools.getCurrentPage() == 2) {
+                            await tools.setPage('editMain', '/view/form/teacherOneEdit.html');
+                            new app().$mount('#editMain');
+                            //数据为默认选中的数据
+                            let teacherData = await tools.getAxiosData(`/teacher/list?page=${tools.getPageNumber()}&pageSize=8`);
+                            teacherData['data']['data'].forEach((items,index)=>{
+                                if(items['id'] === data){
+                                    tools.$('#teacherName').value = items['name'];
+                                    tools.$('#teacherDepartment').value =  items['department'];
+                                    tools.inputIsNull('#teacherName','blur');//判空校验
+                                    tools.inputIsNull('#teacherDepartment','blur');//判空校验
+                                    tools.setChoseId(items['id']);
+                                }
+                            });
+                        }
+                        //选题页面编辑一项
                         if (tools.getCurrentPage() == 3) {
 
                         }
-                        //公告页面上传一项
+                        //公告页面编辑一项
                         if (tools.getCurrentPage() == 4) {
                             await tools.setPage('editMain', '/view/form/noticeEdit.html');
                             new app().$mount('#editMain');
@@ -318,12 +348,12 @@
                         tools.$('#editMark').style.display = 'block';
                         //教师页面上传一项
                         if (tools.getCurrentPage() == 2) {
-                            await tools.setPage('editMain', '/view/form/userOneImport.html');
+                            await tools.setPage('editMain', '/view/form/teacherOneImport.html');
                             new app().$mount("#editMain");
                         }
                         //学生页面上传一项
                         if (tools.getCurrentPage() == 1) {
-                            await tools.setPage('editMain', '/view/form/userOneImport.html');
+                            await tools.setPage('editMain', '/view/form/studentOneImport.html');
                             new app().$mount("#editMain");
                         }
                         //公告页面上传一项
@@ -373,22 +403,55 @@
                     this.$refs.upload.submit();
                 },
                 //学生修改表单
-                studentEditForm(formName){
-                    this.$refs[formName].validate((valid) => {
-                        if (valid) {
-                            console.log(this.studentEdit);
-                        } else {
-                            console.log('error submit!!');
-                            return false;
-                        }
-                    });
+                studentEditForm(){
+                    if(tools.inputIsNullValue('#studentName')
+                    &&tools.inputIsNullValue('#studentGarden')
+                    &&tools.inputIsNullValue('#studentDepartment')){
+                        console.log({
+                            studentName: tools.$('#studentName').value,
+                            studentGarden: tools.$('#studentGarden').value,
+                            studentDepartment: tools.$('#studentDepartment').value,
+                            id:tools.getChoseId()
+                        });
+                        this.$message.success("修改成功");
+                    }else{
+                        this.$message.error("请填写完整信息");
+                    }
                 },
+                //学生添加表单
                 studentAddForm(formName){
                     this.$refs[formName].validate((valid) => {
                         if (valid) {
                             console.log(this.studentAdd);
+                            this.$message.success("添加成功");
                         } else {
-                            console.log('error submit!!');
+                            this.$message.error("请填写完整信息");
+                            return false;
+                        }
+                    });
+                },
+                //教师修改表单
+                teacherEditForm(){
+                    if(tools.inputIsNullValue('#teacherName')
+                        &&tools.inputIsNullValue('#teacherDepartment')){
+                        console.log({
+                            studentName: tools.$('#teacherName').value,
+                            studentGarden: tools.$('#teacherDepartment').value,
+                            id:tools.getChoseId()
+                        });
+                        this.$message.success("修改成功");
+                    }else{
+                        this.$message.error("请填写完整信息");
+                    }
+                },
+                //教师添加表单
+                teacherAddForm(formName){
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            console.log(this.teacherAdd);
+                            this.$message.success("添加成功");
+                        } else {
+                            this.$message.error("请填写完整信息");
                             return false;
                         }
                     });
@@ -404,20 +467,29 @@
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //刷新
                 refreshTableItems() {
-
                 },
                 //换页
                 async handleCurrentChange(val) {
-                    this.$set(this.pageInfo,'nowPage',val)
+                    this.$set(this.pageInfo,'nowPage',val);
                     tools.setPageNumber(this.pageInfo['nowPage']);
-                    let studentData = await tools.getAxiosData(`/student/list?page=${val}&pageSize=8`);
-                    tools.$('#tableDate').innerHTML = await tools.getStudentTableDate(studentData['data']['data']);
+                    //学生换页
+                    if(tools.getCurrentPage() == '1'){
+                        let studentData = await tools.getAxiosData(`/student/list?page=${val}&pageSize=8`);
+                        tools.$('#tableDate').innerHTML = await tools.getStudentTableDate(studentData['data']['data']);
+                    }
+                    //教师换页
+                    if(tools.getCurrentPage() == '2'){
+                        let teacherData = await tools.getAxiosData(`/teacher/list?page=${val}&pageSize=8`);
+                        tools.$('#tableDate').innerHTML = await tools.getTeacherTableDate(teacherData['data']['data']);
+                    }
                     new app().$mount("#mainContent");
                 }
             }
         });
         new app().$mount("#app");
-    })();
-</script>
 
+
+    })();
+
+</script>
 </html>
