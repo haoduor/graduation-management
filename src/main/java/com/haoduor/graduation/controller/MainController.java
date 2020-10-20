@@ -20,7 +20,7 @@ public class MainController {
 
     @GetMapping("/")
     public String login() {
-        return "index";
+        return "login";
     }
 
     /**
