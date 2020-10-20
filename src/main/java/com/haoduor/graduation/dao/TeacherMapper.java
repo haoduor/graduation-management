@@ -3,6 +3,8 @@ package com.haoduor.graduation.dao;
 import com.haoduor.graduation.model.Teacher;
 import com.haoduor.graduation.model.TeacherExample;
 import java.util.List;
+
+import com.haoduor.graduation.vo.TeacherVo;
 import org.apache.ibatis.annotations.Param;
 
 public interface TeacherMapper {
@@ -19,4 +21,6 @@ public interface TeacherMapper {
     int updateByExampleSelective(@Param("record") Teacher record, @Param("example") TeacherExample example);
 
     int updateByExample(@Param("record") Teacher record, @Param("example") TeacherExample example);
+
+    List<TeacherVo> selectTeacherVo();
 }
