@@ -1,9 +1,7 @@
 const tools = (() => {
     let xmlhttp;
-    let currentPageName = '1'; //当前选中页面,默认1
-    let chosePageNumber = '1';//当前选中的页数,默认1
     let defaultPage = {};//默认显示页
-    let choseId = '';//选中的id
+
     return {
         $(id) {
             return document.querySelector(id);
@@ -100,92 +98,6 @@ const tools = (() => {
                 });
             });
         },
-
-
-        //学生表行
-        getStudentTableDate(data){
-            let html = '';
-            return new Promise((resolve,reject)=> {
-                data.forEach((items, index) => {
-                    let dataColumn = `
-                    <div class="dateColumn">
-                        <p class="nmDate">${items['studentId']}</p>
-                        <p class="nmDate">${items['classname']}</p>
-                        <p class="nmDate">${items['department']}</p>
-                        <p class="nmDate">${items['name']}</p>
-                        <div class="staticDate">
-                            <el-button @click="showEdit(${items['id']})" type="text" icon="el-icon-edit">编辑</el-button>
-                            <el-button @click="deleteList(${items['id']})" type="text" icon="el-icon-delete">删除</el-button>
-                        </div>
-                     </div>
-                    `;
-                    html += dataColumn;
-                });
-                if(html != null){
-                    resolve(html);
-                }else{
-                    resolve('空页面');
-                }
-            });
-        },
-        //教师表行
-        getTeacherTableDate(data){
-            let html = '';
-            return new Promise((resolve,reject)=> {
-                data.forEach((items, index) => {
-                    let dataColumn = `
-                    <div class="dateColumn">
-                        <p class="nmDate">${items['teacherId']}</p>
-                        <p class="nmDate">${items['name']}</p>
-                        <p class="nmDate">${items['department']}</p>
-                        <div class="staticDate">
-                            <el-button @click="showEdit(${items['id']})" type="text" icon="el-icon-edit">编辑</el-button>
-                            <el-button @click="deleteList(${items['id']})" type="text" icon="el-icon-delete">删除</el-button>
-                        </div>
-                     </div>
-                    `;
-                    html += dataColumn;
-                });
-                if(html != null){
-                    resolve(html);
-                }else{
-                    resolve('空页面');
-                }
-            });
-        },
-        //设置当前选中的页面
-        setCurrentPage(pageName = 1) {
-            currentPageName = pageName;
-        },
-        getCurrentPage() {
-            if (currentPageName == undefined) {
-                return 1;
-            }
-            return currentPageName;
-        },
-        //设置当前选中的页数
-        setPageNumber(pageNumber = '1') {
-            chosePageNumber = pageNumber;
-        },
-        getPageNumber() {
-            if (chosePageNumber == undefined) {
-                return 1;
-            }
-            return chosePageNumber;
-        },
-        //设置当前选中的id
-        setChoseId(id = '1') {
-            choseId = id;
-        },
-        getChoseId() {
-            if (choseId == undefined) {
-                return 1;
-            }
-            return choseId;
-        },
-
-
-
         //判空校验
         inputIsNull(inputId,type){
             this.$(`${inputId}`).addEventListener(type,function () {
