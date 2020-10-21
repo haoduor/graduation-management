@@ -57,8 +57,15 @@ public class StudentController {
 
     // 删除学生
     @PostMapping("/delete")
-    public BaseMessage delete(@RequestParam long id) {
-        if (studentService.deleteStudentById(id)) {
+    public BaseMessage delete(@RequestParam String id) {
+        long _id = -1;
+        try {
+            _id = Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            return new BaseMessage(3, "格式化错误");
+        }
+
+        if (_id != -1 && studentService.deleteStudentById(_id)) {
             return new BaseMessage(1, "用户删除成功");
         } else {
             return new BaseMessage(2, "用户删除失败");

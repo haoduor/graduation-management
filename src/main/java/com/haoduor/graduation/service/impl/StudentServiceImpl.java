@@ -55,6 +55,7 @@ public class StudentServiceImpl implements StudentService {
         se.createCriteria().andUserIdEqualTo(vo.getId());
 
         Student s = new Student();
+        s.setUserId(vo.getId());
         s.setName(vo.getName());
         s.setClassName(vo.getClassname());
 

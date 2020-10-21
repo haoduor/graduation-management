@@ -53,9 +53,17 @@ public class TeacherController {
     }
 
     @PostMapping("/delete")
-    public BaseMessage delete(@RequestParam long id) {
-        boolean res = teacherService.deleteTeacherById(id);
-        if (res) {
+    public BaseMessage delete(@RequestParam String id) {
+        long _id = -1;
+
+        try {
+            _id = Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            return new BaseMessage(3, "格式化错误");
+        }
+
+        boolean res = teacherService.deleteTeacherById(_id);
+        if (_id != -1 && res) {
             return new BaseMessage(1, "删除成功");
         } else {
             return new BaseMessage(2, "数据库出错");
