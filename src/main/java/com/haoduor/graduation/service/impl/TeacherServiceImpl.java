@@ -49,6 +49,7 @@ public class TeacherServiceImpl implements TeacherService {
     public boolean updateTeacherByVo(TeacherVo vo) {
         Teacher t = new Teacher();
 
+        t.setUserId(vo.getId());
         t.setName(vo.getName());
         Department de = departmentService.getOrAddDepartment(vo.getDepartment());
         t.setDepartmentId(de.getId());
