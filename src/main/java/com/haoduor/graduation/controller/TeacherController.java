@@ -63,7 +63,7 @@ public class TeacherController {
     }
 
     @PostMapping("/add")
-    public BaseMessage add(@Valid @RequestParam TeacherVo teacherVo) {
+    public BaseMessage add(@Valid @RequestBody TeacherVo teacherVo) {
         if (teacherFilter.contains(teacherVo.getTeacherId())) {
             return new BaseMessage(2, "工号已存在");
         }
@@ -79,7 +79,7 @@ public class TeacherController {
     }
 
     @PostMapping("/set")
-    public BaseMessage set(@RequestParam TeacherVo vo) {
+    public BaseMessage set(@RequestBody TeacherVo vo) {
         boolean res = teacherService.updateTeacherByVo(vo);
 
         if (res) {

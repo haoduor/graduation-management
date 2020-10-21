@@ -67,7 +67,7 @@ public class StudentController {
 
     // 更改学生 (无法更改学号)
     @PostMapping("/set")
-    public BaseMessage set(@RequestParam StudentVo vo) {
+    public BaseMessage set(@RequestBody StudentVo vo) {
         boolean res = studentService.updateStudentByVo(vo);
         if (res) {
             return new BaseMessage(1, "更新成功");
@@ -82,7 +82,7 @@ public class StudentController {
      * @return
      */
     @PostMapping("/add")
-    public BaseMessage add(@Valid @RequestParam StudentVo vo) {
+    public BaseMessage add(@Valid @RequestBody StudentVo vo) {
         if (vo != null) {
             StudentDto tmp = null;
             try {

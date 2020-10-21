@@ -1,5 +1,7 @@
 package com.haoduor.graduation.vo;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -7,6 +9,7 @@ import javax.validation.constraints.NotNull;
 @Data
 @NotNull
 public class TeacherVo {
+    @JSONField(serializeUsing = ToStringSerializer.class)
     private long id;
     private String teacherId;
     private String name;
