@@ -44,10 +44,6 @@
                     <i class="el-icon-edit-outline"></i>
                     <span slot="title">选题管理</span>
                 </el-menu-item>
-                <el-menu-item index="4">
-                    <i class="el-icon-edit-outline"></i>
-                    <span slot="title">选题标签管理</span>
-                </el-menu-item>
                 <el-menu-item index="5">
                     <i class="el-icon-chat-square"></i>
                     <span slot="title">公告管理</span>
@@ -144,13 +140,7 @@
                             choseTeacher: '杨老师',
                             label: '北京烤鸭'
                         }],
-                    topicData: [{
-                        topicId: '编号1',
-                        topicName: '课题1',
-                        topicInfo: '好,介绍',
-                        topicTeacher: '张老师'
-                    }],
-                    choseTeacher: '',
+                    choseTeacher:'',
                     //编辑用户表单
                     //学生
                     studentEdit: {
@@ -259,14 +249,42 @@
                                 topicSelect: ['block', 'block']
                             });
                             await tools.setPage('mainContent', '/view/data/selectTopicTable.html');
+                            let topicData = [{
+                                "id":"1317999917624594432",
+                                "title":"选题标题1",
+                                "source":"选题来源1",
+                                "content":"选题内容1选题内容1选题内容1选题内容1选题内容1选题内容1选题内容1选题内容1选题内容1选题内容1选题内容1选题内容1选题内容1选题内容1选题内容1选题内容1选题内容1选题内容1",
+                                "difficulty":1,
+                                "createTime":"1603266229552",
+                                "tags":["HTML","JAVA","CSS"],
+                                "teacherName":"王明",
+                                "teacherId":"A00001"
+                            },{
+                                "id":"1317999917624594433",
+                                "title":"选题标题2",
+                                "source":"选题来源2",
+                                "content":"选题内容2",
+                                "difficulty":2,
+                                "createTime":"1603266229553",
+                                "tags":["HTML",".NET"],
+                                "teacherName":"王明2",
+                                "teacherId":"A00002"
+                            },{
+                                "id":"1317999917624594434",
+                                "title":"选题标题3",
+                                "source":"选题来源3",
+                                "content":"选题内容3",
+                                "difficulty":3,
+                                "createTime":"1603266229553",
+                                "tags":[".NET"],
+                                "teacherName":"王明3",
+                                "teacherId":"A00003"
+                            }];
+                            tools.$('#tableDate').innerHTML = await tableModel.getTopicTableData(topicData);
                             new app().$mount("#mainContent");
                             new app().$mount("#listTool");
                             tools.$('#mainContent').style.opacity = '1';
                         });
-                    }
-                    //选题标签管理
-                    if (key == 4) {
-
                     }
                     //公告管理
                     if (key == 5) {
@@ -279,22 +297,6 @@
                             new app().$mount("#listTool");
                             tools.$('#mainContent').style.opacity = '1';
                         });
-                    }
-                    //模板文件管理
-                    if (key == 6) {
-
-                    }
-                    //学生提交文件管理
-                    if (key == 7) {
-
-                    }
-                    //毕业设计流程日期管理
-                    if (key == 8) {
-
-                    }
-                    //用户管理
-                    if (key == 9) {
-
                     }
                 },
 
@@ -381,14 +383,14 @@
                 addItems() {
                     tools.setTimeOutP(0, async () => {
                         tools.$('#editMark').style.display = 'block';
-                        //教师页面上传一项
-                        if (staticValue.getCurrentPage() == 2) {
-                            await tools.setPage('editMain', '/view/form/teacherOneImport.html');
-                            new app().$mount("#editMain");
-                        }
                         //学生页面上传一项
                         if (staticValue.getCurrentPage() == 1) {
                             await tools.setPage('editMain', '/view/form/studentOneImport.html');
+                            new app().$mount("#editMain");
+                        }
+                        //教师页面上传一项
+                        if (staticValue.getCurrentPage() == 2) {
+                            await tools.setPage('editMain', '/view/form/teacherOneImport.html');
                             new app().$mount("#editMain");
                         }
                         //公告页面上传一项
