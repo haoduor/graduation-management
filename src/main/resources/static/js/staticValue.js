@@ -2,6 +2,7 @@ const staticValue = (()=>{
     let choseId = '1';//选中的id
     let currentPageName = '1'; //当前选中页面,默认1
     let chosePageNumber = '1';//当前选中的页数,默认1
+    let that = window; //??
     return{
         //设置当前选中的页面
         setCurrentPage(pageName = 1) {
@@ -34,6 +35,16 @@ const staticValue = (()=>{
             return choseId;
         },
 
+        //设置this
+        setThat(_this = '1') {
+            that = _this;
+        },
+        getThat() {
+            if (that == undefined) {
+                return 1;
+            }
+            return that;
+        },
     }
 })();
 

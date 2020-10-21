@@ -77,7 +77,7 @@
             </div>
             <!-- 分页 -->
             <el-pagination class="listPagination" background
-                           @current-change="handleCurrentChange" :page-size="pageInfo.pageSize" :total="pageInfo.totalData"
+                           @current-change="handleCurrentChange"  :current-page="pageInfo.nowPage" :page-size="pageInfo.pageSize" :total="pageInfo.totalData"
                            layout="prev, pager, next, jumper">
             </el-pagination>
 
@@ -101,7 +101,8 @@
         tools.setDefaultPage({
             title: '标题',
             topicSelect: ['none', 'none'],
-            listToolAddAll: 'none'
+            listToolAddAll: 'none',
+            importUri:'/import/student'
         });
         await tools.setPage('mainContent', '/view/data/studentTable.html');
         await tools.setPage('listTool', '/view/listTool.html', {title: '学生用户管理', listToolAddAll: 'block'});
@@ -165,6 +166,9 @@
                     //添加用户表单
                     //学生
                     studentAddRule: {
+                        studentId: [
+                            { required: true, message: '请输入学生学号', trigger: 'blur' }
+                        ],
                         studentName: [
                             { required: true, message: '请输入学生姓名', trigger: 'blur' }
                         ],
@@ -176,12 +180,16 @@
                         ]
                     },
                     studentAdd: {
+                        studentId:'',
                         studentName: '',
                         studentGarden: '',
                         studentDepartment: ''
                     },
                     //教师
                     teacherAddRule: {
+                        teacherId:[
+                            { required: true, message: '请输入教师工号', trigger: 'blur' }
+                        ],
                         teacherName: [
                             { required: true, message: '请输入教师姓名', trigger: 'blur' }
                         ],
@@ -190,16 +198,19 @@
                         ]
                     },
                     teacherAdd: {
+                        teacherId:'',
                         teacherName: '',
                         teacherDepartment: ''
                     },
                 }
             },
+            mounted:function(){
+                staticValue.setThat(this);
+            },
             methods: {
                 //左栏选择
                 handleSelect(key, keyPath) {
                     staticValue.setCurrentPage(key);//设置当前页面
-
                     //学生用户列表
                     if (key == 1) {
                         tools.setTimeOutP(300, async () => {
@@ -215,6 +226,7 @@
                             new app().$mount("#mainContent");
                             new app().$mount("#listTool");
                             tools.$('#mainContent').style.opacity = '1';
+                            this.refreshTables(1,studentData['data']['total'],8);
                         });
                     }
 
@@ -233,6 +245,7 @@
                             new app().$mount("#mainContent");
                             new app().$mount("#listTool");
                             tools.$('#mainContent').style.opacity = '1';
+                            this.refreshTables(1,teacherData['data']['total'],8);
                         });
                     }
 
@@ -350,6 +363,17 @@
                         new app().$mount("#editMain");
                     })
                 },
+                //关闭编辑并刷新
+                closeEditAndRefresh(){
+                    tools.setTimeOutP(300, () => {
+                        tools.$('#editMark').style.opacity = '0';
+                    }).then(async val => {
+                        tools.$('#editMark').style.display = 'none';
+                        await tools.setPage('editMain', '/view/form/none.html');
+                        new app().$mount("#editMain");
+                        this.refreshBtn();
+                    })
+                },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                    添加页面                    //
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
@@ -380,16 +404,17 @@
                 addItemsAll() {
                     tools.setTimeOutP(0, async () => {
                         tools.$('#editMark').style.display = 'block';
-                        //教师页面上传多项
-                        if (staticValue.getCurrentPage() == 2) {
-                            await tools.setPage('editMain', '/view/form/usersImport.html');
-                            new app().$mount("#editMain");
-                        }
                         //学生页面上传多项
                         if (staticValue.getCurrentPage() == 1) {
-                            await tools.setPage('editMain', '/view/form/usersImport.html');
+                            await tools.setPage('editMain', '/view/form/usersImport.html',{importUri:'/import/student'});
                             new app().$mount("#editMain");
                         }
+                        //教师页面上传多项
+                        if (staticValue.getCurrentPage() == 2) {
+                            await tools.setPage('editMain', '/view/form/usersImport.html',{importUri:'/import/teacher'});
+                            new app().$mount("#editMain");
+                        }
+
                     }).then(val => {
                         tools.$('#editMark').style.opacity = '1';
                     });
@@ -428,6 +453,7 @@
                 //多用户提交文件
                 usersSubmitUpload() {
                     this.$refs.upload.submit();
+
                 },
                 //学生修改表单
                 studentEditForm(){
@@ -443,6 +469,7 @@
                         axios.post('/student/set',postData).then(val=>{
                             if(val['data']['id'] == '1'){
                                 this.$message.success("修改成功");
+                                this.refreshTableItems();
                                 this.closeEdit();//关闭表单页面
                             }
                             if(val['data']['id'] == '2'){
@@ -460,14 +487,15 @@
                     this.$refs[formName].validate((valid) => {
                         if (valid) {
                             let postData = {
+                                studentId:this.studentAdd['studentId'],
                                 name: this.studentAdd['studentName'],
                                 classname: this.studentAdd['studentGarden'],
                                 department: this.studentAdd['studentDepartment'],
-                                id:staticValue.getChoseId()
                             };
-                            axios.post('/teacher/add', postData).then(val=>{
+                            axios.post('/student/add', postData).then(val=>{
                                 if(val['data']['id'] == 1){
                                     this.$message.success("添加成功");
+                                    this.refreshTableItems();
                                     this.closeEdit();//关闭表单页面
                                 }
                                 if(val['data']['id'] == 2){
@@ -492,7 +520,19 @@
                 },
                 //学生删除
                 deleteStudent(){
-                    console.log(staticValue.getChoseId());
+                    axios.post('/student/delete',tools.buildFormData({id:staticValue.getChoseId()})).then(async val=>{
+                        if(val['data']['id'] == 1){
+                            this.$message.success("删除成功");
+                            this.refreshBtn();
+                            this.closeEdit();//关闭表单页面
+                        }
+                        if(val['data']['id'] == 2){
+                            this.$message.success("删除失败,数据库出错");
+                            this.closeEdit();//关闭表单页面
+                        }
+                    }).catch(err=>{
+                        this.$message.error("删除失败");
+                    });
                 },
                 //教师修改表单
                 teacherEditForm(){
@@ -506,6 +546,7 @@
                         axios.post('/teacher/set', postData).then(val=>{
                             if(val['data']['id'] == '1'){
                                 this.$message.success("修改成功");
+                                this.refreshTableItems();
                                 this.closeEdit();
                             }
                             if(val['data']['id'] == '2'){
@@ -523,13 +564,14 @@
                     this.$refs[formName].validate((valid) => {
                         if (valid) {
                             let postData = {
+                                teacherId: this.teacherAdd['teacherId'],
                                 name: this.teacherAdd['teacherName'],
                                 department: this.teacherAdd['teacherDepartment'],
-                                id:staticValue.getChoseId()
                             };
                             axios.post('/teacher/add', postData).then(val=>{
                                 if(val['data']['id'] == '1'){
                                     this.$message.success("添加成功");
+                                    this.refreshTableItems();
                                     this.closeEdit();
                                 }
                                 if(val['data']['id'] == '2'){
@@ -546,7 +588,20 @@
                 },
                 //教师删除
                 deleteTeacher(){
-                    console.log(staticValue.getChoseId());
+                    axios.post('/teacher/delete',tools.buildFormData({id:staticValue.getChoseId()})).then(async val=>{
+                        if(val['data']['id'] == 1){
+                            this.$message.success("删除成功");
+                            this.refreshBtn();//刷新
+                            this.closeEdit();//关闭表单页面
+                        }
+                        if(val['data']['id'] == 2){
+                            this.$message.success("删除失败,数据库出错");
+
+                            this.closeEdit();//关闭表单页面
+                        }
+                    }).catch(err=>{
+                        this.$message.error("删除失败");
+                    });
                 },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                    查询功能                    //
@@ -557,24 +612,48 @@
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                      杂                       //
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
-                //刷新
-                refreshTableItems() {
+                //刷新按钮
+                async refreshBtn(){
+                    if(staticValue.getCurrentPage() == '1'){
+                        let studentData = await tools.getAxiosData('/student/list?page=1&pageSize=8');
+                        staticValue.getThat().refreshTables(1,studentData['data']['total'],8);
+                    }
+                    //教师页刷新
+                    if(staticValue.getCurrentPage() == '2'){
+                        let teacherData = await tools.getAxiosData('/teacher/list?page=1&pageSize=8');
+                        staticValue.getThat().refreshTables(1,teacherData['data']['total'],8);
+                    }
+                    this.$message('刷新成功');
+                    new app().$mount("#mainContent");
+                },
+                //单页面刷新
+                async refreshTableItems() {
+                    //学生页刷新
+                    if(staticValue.getCurrentPage() == '1'){
+                        let studentData = await tools.getAxiosData(`/student/list?page=${staticValue.getPageNumber()}&pageSize=8`);
+                        tools.$('#tableDate').innerHTML = await tableModel.getStudentTableData(studentData['data']['data']);
+                    }
+                    //教师页刷新
+                    if(staticValue.getCurrentPage() == '2'){
+                        let teacherData = await tools.getAxiosData(`/teacher/list?page=${staticValue.getPageNumber()}&pageSize=8`);
+                        tools.$('#tableDate').innerHTML = await tableModel.getTeacherTableData(teacherData['data']['data']);
+                    }
+                    new app().$mount("#mainContent");
+                },
+                //切换页面刷新
+                refreshTables(nowPage,totalData,pageSize){
+                    this.$set(this.pageInfo,'nowPage',nowPage);
+                    this.$set(this.pageInfo,'pageSize',pageSize);
+                    this.$set(this.pageInfo,'totalData',totalData);
+                    staticValue.setPageNumber(nowPage);
+                    this.refreshTableItems();
                 },
                 //换页
                 async handleCurrentChange(val) {
                     this.$set(this.pageInfo,'nowPage',val);
                     staticValue.setPageNumber(this.pageInfo['nowPage']);
                     //学生换页
-                    if(staticValue.getCurrentPage() == '1'){
-                        let studentData = await tools.getAxiosData(`/student/list?page=${val}&pageSize=8`);
-                        tools.$('#tableDate').innerHTML = await tableModel.getStudentTableData(studentData['data']['data']);
-                    }
-                    //教师换页
-                    if(staticValue.getCurrentPage() == '2'){
-                        let teacherData = await tools.getAxiosData(`/teacher/list?page=${val}&pageSize=8`);
-                        tools.$('#tableDate').innerHTML = await tableModel.getTeacherTableData(teacherData['data']['data']);
-                    }
-                    new app().$mount("#mainContent");
+                    this.refreshTableItems();
                 }
             }
         });

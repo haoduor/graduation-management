@@ -12,8 +12,8 @@ const tableModel = (() =>{
                         <p class="nmDate">${items['department']}</p>
                         <p class="nmDate">${items['name']}</p>
                         <div class="staticDate">
-                            <el-button @click="showEdit(${items['id']})" type="text" icon="el-icon-edit">编辑</el-button>
-                            <el-button @click="deleteList(${items['id']})" type="text" icon="el-icon-delete">删除</el-button>
+                            <el-button @click="showEdit('${items['id']}')" type="text" icon="el-icon-edit">编辑</el-button>
+                            <el-button @click="deleteList('${items['id']}')" type="text" icon="el-icon-delete">删除</el-button>
                         </div>
                      </div>
                     `;
@@ -37,8 +37,8 @@ const tableModel = (() =>{
                         <p class="nmDate">${items['name']}</p>
                         <p class="nmDate">${items['department']}</p>
                         <div class="staticDate">
-                            <el-button @click="showEdit(${items['id']})" type="text" icon="el-icon-edit">编辑</el-button>
-                            <el-button @click="deleteList(${items['id']})" type="text" icon="el-icon-delete">删除</el-button>
+                            <el-button @click="showEdit('${items['id']}')" type="text" icon="el-icon-edit">编辑</el-button>
+                            <el-button @click="deleteList('${items['id']}')" type="text" icon="el-icon-delete">删除</el-button>
                         </div>
                      </div>
                     `;
