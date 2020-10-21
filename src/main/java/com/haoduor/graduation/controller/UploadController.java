@@ -76,9 +76,9 @@ public class UploadController {
             // 临时文件校验
             if (tmpFile.exists()) {
                 FileUtil.del(tmpFile);
-            } else {
-                FileUtil.touch(tmpFile);
             }
+
+            FileUtil.touch(tmpFile);
 
             // 将上传文件转换至临时文件处
             try {
@@ -153,9 +153,9 @@ public class UploadController {
             // 临时文件校验
             if (tmpFile.exists()) {
                 FileUtil.del(tmpFile);
-            } else {
-                FileUtil.touch(tmpFile);
             }
+
+            FileUtil.touch(tmpFile);
 
             // 将上传文件转换至临时文件处
             try {

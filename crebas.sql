@@ -1,10 +1,16 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     2020/10/21 10:21:02                          */
+/* Created on:     2020/10/21 13:29:19                          */
 /*==============================================================*/
 
 
+drop table if exists chosen_subject;
+
 drop table if exists department;
+
+drop table if exists final_subject;
+
+drop table if exists period;
 
 drop table if exists role;
 
@@ -21,6 +27,16 @@ drop table if exists teacher;
 drop table if exists user;
 
 /*==============================================================*/
+/* Table: chosen_subject                                        */
+/*==============================================================*/
+create table chosen_subject
+(
+   student_id           bigint comment '学生id',
+   subject_id           bigint comment '选题id',
+   chosen_time          datetime comment '选题时间'
+);
+
+/*==============================================================*/
 /* Table: department                                            */
 /*==============================================================*/
 create table department
@@ -28,6 +44,27 @@ create table department
    id                   bigint not null comment 'id',
    name                 varchar(32) comment '系部名称',
    primary key (id)
+);
+
+/*==============================================================*/
+/* Table: final_subject                                         */
+/*==============================================================*/
+create table final_subject
+(
+   student_id           bigint comment '学生id',
+   subject_id           bigint comment '选题id',
+   final_chosen_time    datetime comment '最终选中时间'
+);
+
+/*==============================================================*/
+/* Table: period                                                */
+/*==============================================================*/
+create table period
+(
+   id                   bigint comment 'id',
+   name                 varchar(64) comment '区间名称',
+   start_time           datetime comment '开始时间',
+   end_time             datetime comment '结束时间'
 );
 
 /*==============================================================*/
