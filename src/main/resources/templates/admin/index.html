@@ -292,7 +292,6 @@
                 showEdit(data = '') {
                     tools.setTimeOutP(0, async () => {
                         tools.$('#editMark').style.display = 'block';
-
                         //学生页面编辑一项
                         if (staticValue.getCurrentPage() == 1) {
                             await tools.setPage('editMain', '/view/form/studentOneEdit.html');
@@ -401,7 +400,23 @@
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //表格删除
                 deleteList(data) {
-                    console.log(data);
+                    staticValue.setChoseId(data);
+                    tools.setTimeOutP(0, async () => {
+                        tools.$('#editMark').style.display = 'block';
+                        //学生页面删除
+                        if (staticValue.getCurrentPage() == 1) {
+                            await tools.setPage('editMain', '/view/form/studentDelete.html');
+                            new app().$mount("#editMain");
+                        }
+
+                        //教师页面删除
+                        if (staticValue.getCurrentPage() == 2) {
+                            await tools.setPage('editMain', '/view/form/teacherDelete.html');
+                            new app().$mount("#editMain");
+                        }
+                    }).then(val => {
+                        tools.$('#editMark').style.opacity = '1';
+                    })
                 },
                 //公告删除
                 deleteNotice(id) {
@@ -419,13 +434,23 @@
                     if(tools.inputIsNullValue('#studentName')
                     &&tools.inputIsNullValue('#studentGarden')
                     &&tools.inputIsNullValue('#studentDepartment')){
-                        console.log({
-                            studentName: tools.$('#studentName').value,
-                            studentGarden: tools.$('#studentGarden').value,
-                            studentDepartment: tools.$('#studentDepartment').value,
+                        let postData = {
+                            name: tools.$('#studentName').value,
+                            classname: tools.$('#studentGarden').value,
+                            department: tools.$('#studentDepartment').value,
                             id:staticValue.getChoseId()
+                        };
+                        axios.post('/student/set',postData).then(val=>{
+                            if(val['data']['id'] == '1'){
+                                this.$message.success("修改成功");
+                                this.closeEdit();//关闭表单页面
+                            }
+                            if(val['data']['id'] == '2'){
+                                this.$message.error("修改失败,数据库错误");
+                            }
+                        }).catch(err=>{
+                            this.$message.error("修改失败");
                         });
-                        this.$message.success("修改成功");
                     }else{
                         this.$message.error("请填写完整信息");
                     }
@@ -434,24 +459,61 @@
                 studentAddForm(formName){
                     this.$refs[formName].validate((valid) => {
                         if (valid) {
-                            console.log(this.studentAdd);
-                            this.$message.success("添加成功");
+                            let postData = {
+                                name: this.studentAdd['studentName'],
+                                classname: this.studentAdd['studentGarden'],
+                                department: this.studentAdd['studentDepartment'],
+                                id:staticValue.getChoseId()
+                            };
+                            axios.post('/teacher/add', postData).then(val=>{
+                                if(val['data']['id'] == 1){
+                                    this.$message.success("添加成功");
+                                    this.closeEdit();//关闭表单页面
+                                }
+                                if(val['data']['id'] == 2){
+                                    this.$message.error("格式化错误");
+                                }
+                                if(val['data']['id'] == 3){
+                                    this.$message.error("字段不能为空");
+                                }
+                                if(val['data']['id'] == 4){
+                                    this.$message.error("数据库错误");
+                                }
+
+                            }).catch(err=>{
+                                this.$message.error("添加失败");
+                            });
+
                         } else {
                             this.$message.error("请填写完整信息");
                             return false;
                         }
                     });
                 },
+                //学生删除
+                deleteStudent(){
+                    console.log(staticValue.getChoseId());
+                },
                 //教师修改表单
                 teacherEditForm(){
                     if(tools.inputIsNullValue('#teacherName')
                         &&tools.inputIsNullValue('#teacherDepartment')){
-                        console.log({
-                            studentName: tools.$('#teacherName').value,
-                            studentGarden: tools.$('#teacherDepartment').value,
+                        let postData = {
+                            name: tools.$('#teacherName').value,
+                            department: tools.$('#teacherDepartment').value,
                             id:staticValue.getChoseId()
+                        };
+                        axios.post('/teacher/set', postData).then(val=>{
+                            if(val['data']['id'] == '1'){
+                                this.$message.success("修改成功");
+                                this.closeEdit();
+                            }
+                            if(val['data']['id'] == '2'){
+                                this.$message.error("修改失败,数据库错误");
+                            }
+                        }).catch(err=>{
+                            this.$message.error("修改失败");
                         });
-                        this.$message.success("修改成功");
                     }else{
                         this.$message.error("请填写完整信息");
                     }
@@ -460,13 +522,31 @@
                 teacherAddForm(formName){
                     this.$refs[formName].validate((valid) => {
                         if (valid) {
-                            console.log(this.teacherAdd);
-                            this.$message.success("添加成功");
+                            let postData = {
+                                name: this.teacherAdd['teacherName'],
+                                department: this.teacherAdd['teacherDepartment'],
+                                id:staticValue.getChoseId()
+                            };
+                            axios.post('/teacher/add', postData).then(val=>{
+                                if(val['data']['id'] == '1'){
+                                    this.$message.success("添加成功");
+                                    this.closeEdit();
+                                }
+                                if(val['data']['id'] == '2'){
+                                    this.$message.error("添加失败,数据库错误");
+                                }
+                            }).catch(err=>{
+                                this.$message.error("添加失败");
+                            });
                         } else {
                             this.$message.error("请填写完整信息");
                             return false;
                         }
                     });
+                },
+                //教师删除
+                deleteTeacher(){
+                    console.log(staticValue.getChoseId());
                 },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                    查询功能                    //
