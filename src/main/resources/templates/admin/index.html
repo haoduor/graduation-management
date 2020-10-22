@@ -153,7 +153,9 @@
                         studentName: '',
                         studentDepartment: ''
                     },
+
                     //添加用户表单
+
                     //学生
                     studentAddRule: {
                         studentId: [
@@ -175,6 +177,7 @@
                         studentGarden: '',
                         studentDepartment: ''
                     },
+
                     //教师
                     teacherAddRule: {
                         teacherId:[
@@ -192,10 +195,40 @@
                         teacherName: '',
                         teacherDepartment: ''
                     },
+
+                    //选题
+                    topicAdd:{
+                        topicId:'',
+                        topicContent:'',
+                        topicTeacher:'',
+                        topicDifficult:'',
+                        topicSource:'',
+                        topicTags:[],
+                        topicOneTag:''
+                    },
+                    topicAddRule:{
+
+                    },
+                    topicSelect:{
+                        teacher:[{
+                            value: '黄金糕1'
+                        }, {
+                            value: '黄金糕2'
+                        }, {
+                            value: '黄金糕3'
+                        }, {
+                            value: '黄金糕4'
+                        }, {
+                            value: '黄金糕5'
+                        }],
+
+                    }
                 }
             },
             mounted:function(){
-                staticValue.setThat(this);
+                if(this._uid == 0){
+                     staticValue.setThat(this);
+                }
             },
             methods: {
                 //左栏选择
@@ -393,6 +426,11 @@
                             await tools.setPage('editMain', '/view/form/teacherOneImport.html');
                             new app().$mount("#editMain");
                         }
+                        //选题页面上传一项
+                        if (staticValue.getCurrentPage() == 3) {
+                            await tools.setPage('editMain', '/view/form/topicOneImport.html');
+                            new app().$mount("#editMain");
+                        }
                         //公告页面上传一项
                         if (staticValue.getCurrentPage() == 5) {
                             await tools.setPage('editMain', '/view/form/noticeOneImport.html');
@@ -447,7 +485,7 @@
                 },
                 //公告删除
                 deleteNotice(id) {
-                    console.log(this);
+                    // console.log(this);
                 },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                    表单提交                    //
@@ -455,7 +493,6 @@
                 //多用户提交文件
                 usersSubmitUpload() {
                     this.$refs.upload.submit();
-
                 },
                 //学生修改表单
                 studentEditForm(){
@@ -605,6 +642,63 @@
                         this.$message.error("删除失败");
                     });
                 },
+                //选题添加表单
+                topicAddForm(formName){
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            let tipArr = [];//所有的标签
+                            for(let key in this.topicAdd.topicTags)
+                            {
+                                tipArr.push(this.topicAdd.topicTags[key]['value']);
+                            }
+
+
+
+                            console.log(tipArr);
+                        }
+                    });
+                },
+                //选题添加标签
+                addTags(){
+                    let tagValue = this.topicAdd.topicOneTag;
+                    if(tagValue){
+                        let isRepeat = false;//判断是否重复
+                        this.topicAdd.topicTags.forEach((items,index)=>{
+                            if(items['value'] == tagValue){
+                                this.$message.error("请不要添加重复的标签");
+                                isRepeat = true;
+                            }
+                        })
+                        if(!isRepeat){
+                            //数组插入标签
+                            let tagsArr =this.topicAdd.topicTags;
+                            tagsArr.push({
+                                value:tagValue
+                            });
+                            //添加小标签
+                            let tagDiv=document.createElement("div");
+                            tagDiv.className = 'nmTag';
+                            tagDiv.innerHTML = `${tagValue}
+                                                <div id="removeTag_${tagValue}" class="nmTagDelete" val="${tagValue}">
+                                                    <i class="el-icon-close"></i>
+                                                </div>`;
+                            tools.$('#topicTags').appendChild(tagDiv);
+                            //添加标签删除功能
+                            tools.$(`#removeTag_${tagValue}`).addEventListener('click',function () {
+                                //删除数组的值
+                                tagsArr.forEach((items,index)=>{
+                                    if(items['value'] == this.getAttribute('val')){
+                                        delete tagsArr[index];
+                                    }
+                                })
+                                this.parentNode.parentNode.removeChild(this.parentNode);//删除节点
+                            });
+                        }
+                        this.$set(this.topicAdd,'topicOneTag','');
+                    }else{
+                        this.$message.error("添加的标签内容不能为空");
+                    }
+                },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                    查询功能                    //
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
@@ -644,9 +738,9 @@
                 },
                 //切换页面刷新
                 refreshTables(nowPage,totalData,pageSize){
-                    this.$set(this.pageInfo,'nowPage',nowPage);
-                    this.$set(this.pageInfo,'pageSize',pageSize);
-                    this.$set(this.pageInfo,'totalData',totalData);
+                    staticValue.getThat().$set(this.pageInfo,'nowPage',nowPage);
+                    staticValue.getThat().$set(this.pageInfo,'pageSize',pageSize);
+                    staticValue.getThat().$set(this.pageInfo,'totalData',totalData);
                     staticValue.setPageNumber(nowPage);
                     this.refreshTableItems();
                 },

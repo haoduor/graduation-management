@@ -92,7 +92,6 @@ const tableModel = (() =>{
                     html += dataColumn;
                 });
                 if(html != null){
-                    console.log(html)
                     resolve(html);
                 }else{
                     resolve('空页面');

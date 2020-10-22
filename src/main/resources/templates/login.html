@@ -34,7 +34,7 @@
         await tools.setPage('loginMsg', './view/login/loginMsg.html');
 
 
-        tools.$('.loginBk').style.background = `url(http://127.0.0.1:9999/image/Sola.png)`
+        tools.$('.loginBk').style.background = `url(/image/Sola.png)`
         //初始加载二维码
         tools.$('.codeImg').src =`${codeUrl}${(Math.random()*100 + '').slice(0,2)}`
         var app = Vue.extend({
