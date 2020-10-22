@@ -23,7 +23,6 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setSecurityManager(securityManager);
         shiroFilterFactoryBean.setUnauthorizedUrl("/");
         shiroFilterFactoryBean.setLoginUrl("/");
-
         // 路由鉴权判断
         LinkedHashMap<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
 

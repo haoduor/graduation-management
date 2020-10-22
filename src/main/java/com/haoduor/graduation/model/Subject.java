@@ -10,15 +10,15 @@ public class Subject implements Serializable {
 
     private Long teacherid;
 
+    private String content;
+
     private String source;
 
     private Integer difficult;
 
     private Date createTime;
 
-    private byte[] content;
-
-    private static final long serialVersionUID = -3477429307015219714L;
+    private static final long serialVersionUID = -2929321150645035433L;
 
     public Long getId() {
         return id;
@@ -44,6 +44,14 @@ public class Subject implements Serializable {
         this.teacherid = teacherid;
     }
 
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content == null ? null : content.trim();
+    }
+
     public String getSource() {
         return source;
     }
@@ -66,13 +74,5 @@ public class Subject implements Serializable {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
-    }
-
-    public byte[] getContent() {
-        return content;
-    }
-
-    public void setContent(byte[] content) {
-        this.content = content;
     }
 }

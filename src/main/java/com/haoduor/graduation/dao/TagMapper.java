@@ -20,4 +20,6 @@ public interface TagMapper {
     int updateByExampleSelective(@Param("record") Tag record, @Param("example") TagExample example);
 
     int updateByExample(@Param("record") Tag record, @Param("example") TagExample example);
+
+    List<Tag> selectBySubjectId(long id);
 }

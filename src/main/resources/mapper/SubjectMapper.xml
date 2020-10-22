@@ -5,12 +5,10 @@
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="title" property="title" jdbcType="VARCHAR" />
     <result column="teacherId" property="teacherid" jdbcType="BIGINT" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
     <result column="source" property="source" jdbcType="VARCHAR" />
     <result column="difficult" property="difficult" jdbcType="INTEGER" />
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
-  </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.haoduor.graduation.model.Subject" extends="BaseResultMap" >
-    <result column="content" property="content" jdbcType="VARBINARY" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -71,27 +69,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    id, title, teacherId, source, difficult, create_time
+    id, title, teacherId, content, source, difficult, create_time
   </sql>
-  <sql id="Blob_Column_List" >
-    content
-  </sql>
-  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.haoduor.graduation.model.SubjectExample" >
-    select
-    <if test="distinct" >
-      distinct
-    </if>
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from subject
-    <if test="_parameter != null" >
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null" >
-      order by ${orderByClause}
-    </if>
-  </select>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.haoduor.graduation.model.SubjectExample" >
     select
     <if test="distinct" >
@@ -106,11 +85,9 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Long" >
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from subject
     where id = #{id,jdbcType=BIGINT}
   </select>
@@ -126,11 +103,11 @@
   </delete>
   <insert id="insert" parameterType="com.haoduor.graduation.model.Subject" >
     insert into subject (id, title, teacherId, 
-      source, difficult, create_time, 
-      content)
+      content, source, difficult, 
+      create_time)
     values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{teacherid,jdbcType=BIGINT}, 
-      #{source,jdbcType=VARCHAR}, #{difficult,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{content,jdbcType=VARBINARY})
+      #{content,jdbcType=VARCHAR}, #{source,jdbcType=VARCHAR}, #{difficult,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.haoduor.graduation.model.Subject" >
     insert into subject
@@ -144,6 +121,9 @@
       <if test="teacherid != null" >
         teacherId,
       </if>
+      <if test="content != null" >
+        content,
+      </if>
       <if test="source != null" >
         source,
       </if>
@@ -152,9 +132,6 @@
       </if>
       <if test="createTime != null" >
         create_time,
-      </if>
-      <if test="content != null" >
-        content,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
@@ -167,6 +144,9 @@
       <if test="teacherid != null" >
         #{teacherid,jdbcType=BIGINT},
       </if>
+      <if test="content != null" >
+        #{content,jdbcType=VARCHAR},
+      </if>
       <if test="source != null" >
         #{source,jdbcType=VARCHAR},
       </if>
@@ -175,9 +155,6 @@
       </if>
       <if test="createTime != null" >
         #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="content != null" >
-        #{content,jdbcType=VARBINARY},
       </if>
     </trim>
   </insert>
@@ -199,6 +176,9 @@
       <if test="record.teacherid != null" >
         teacherId = #{record.teacherid,jdbcType=BIGINT},
       </if>
+      <if test="record.content != null" >
+        content = #{record.content,jdbcType=VARCHAR},
+      </if>
       <if test="record.source != null" >
         source = #{record.source,jdbcType=VARCHAR},
       </if>
@@ -208,23 +188,7 @@
       <if test="record.createTime != null" >
         create_time = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.content != null" >
-        content = #{record.content,jdbcType=VARBINARY},
-      </if>
     </set>
-    <if test="_parameter != null" >
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExampleWithBLOBs" parameterType="map" >
-    update subject
-    set id = #{record.id,jdbcType=BIGINT},
-      title = #{record.title,jdbcType=VARCHAR},
-      teacherId = #{record.teacherid,jdbcType=BIGINT},
-      source = #{record.source,jdbcType=VARCHAR},
-      difficult = #{record.difficult,jdbcType=INTEGER},
-      create_time = #{record.createTime,jdbcType=TIMESTAMP},
-      content = #{record.content,jdbcType=VARBINARY}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -234,6 +198,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       title = #{record.title,jdbcType=VARCHAR},
       teacherId = #{record.teacherid,jdbcType=BIGINT},
+      content = #{record.content,jdbcType=VARCHAR},
       source = #{record.source,jdbcType=VARCHAR},
       difficult = #{record.difficult,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP}
@@ -250,6 +215,9 @@
       <if test="teacherid != null" >
         teacherId = #{teacherid,jdbcType=BIGINT},
       </if>
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
       <if test="source != null" >
         source = #{source,jdbcType=VARCHAR},
       </if>
@@ -259,26 +227,14 @@
       <if test="createTime != null" >
         create_time = #{createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="content != null" >
-        content = #{content,jdbcType=VARBINARY},
-      </if>
     </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.haoduor.graduation.model.Subject" >
-    update subject
-    set title = #{title,jdbcType=VARCHAR},
-      teacherId = #{teacherid,jdbcType=BIGINT},
-      source = #{source,jdbcType=VARCHAR},
-      difficult = #{difficult,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      content = #{content,jdbcType=VARBINARY}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.haoduor.graduation.model.Subject" >
     update subject
     set title = #{title,jdbcType=VARCHAR},
       teacherId = #{teacherid,jdbcType=BIGINT},
+      content = #{content,jdbcType=VARCHAR},
       source = #{source,jdbcType=VARCHAR},
       difficult = #{difficult,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP}

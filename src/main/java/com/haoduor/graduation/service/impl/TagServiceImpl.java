@@ -63,9 +63,14 @@ public class TagServiceImpl implements TagService {
     public Tag getOrAddTagByName(String name) {
         Tag t = getTagByName(name);
         if (t == null) {
-
+            return addTagByName(name);
         }
 
         return t;
+    }
+
+    @Override
+    public List<Tag> getTagsBySubjectId(long id) {
+        return tagMapper.selectBySubjectId(id);
     }
 }

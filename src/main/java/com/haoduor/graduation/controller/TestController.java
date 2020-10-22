@@ -9,11 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/test")
 public class TestController {
 
-
     @RequestMapping("/personal")
     public Object getPersonalInfo() {
         Subject sub = SecurityUtils.getSubject();
-
-        return sub.getPrincipals();
+        return sub.getPrincipal();
     }
 }

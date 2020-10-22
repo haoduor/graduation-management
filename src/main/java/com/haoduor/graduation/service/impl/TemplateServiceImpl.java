@@ -2,7 +2,6 @@ package com.haoduor.graduation.service.impl;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Snowflake;
-import cn.hutool.core.util.HashUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.haoduor.graduation.dao.TemplateMapper;
 import com.haoduor.graduation.model.Template;
