@@ -27,7 +27,7 @@ public class CaptchaController {
     @GetMapping("/get")
     public void getCaptcha(HttpServletResponse response) {
         // 创建验证码对象
-        LineCaptcha lineCaptcha = new LineCaptcha(80, 30 , 4, 100);
+        LineCaptcha lineCaptcha = new LineCaptcha(90, 40 , 4, 100);
 
         // 设置验证码生成规则
         lineCaptcha.setGenerator(new LoginCodeGenerator());

@@ -96,7 +96,7 @@ create table subject
    id                   bigint not null comment 'id',
    title                varchar(255) comment '选题标题',
    teacherId            bigint comment '创建教师id',
-   content              varbinary(255) comment '选题内容',
+   content              varchar(255) comment '选题内容',
    source               varchar(32) comment '选题来源',
    difficult            int comment '选题难度(0: 简单, 1: 中等， 2: 困难)',
    create_time          datetime comment '创建时间',
