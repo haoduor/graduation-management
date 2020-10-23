@@ -32,7 +32,7 @@ public class SubjectController {
     private TagService tagService;
 
     @PostMapping("/add")
-    public BaseMessage add(SubjectForm subjectForm) {
+    public BaseMessage add(@RequestBody SubjectForm subjectForm) {
         SubjectDto dto = null;
 
         try {
