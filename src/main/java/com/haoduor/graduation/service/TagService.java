@@ -10,4 +10,6 @@ public interface TagService {
     public Tag getTagById(long id);
     public Tag getOrAddTagByName(String name);
     public List<Tag> getTagsBySubjectId(long id);
+    public boolean addTagLinkToSubject(String tagName, long subjectId);
+    public boolean deleteTagLinkToSubject(long tagId, long subjectId);
 }

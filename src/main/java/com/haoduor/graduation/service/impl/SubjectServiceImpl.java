@@ -76,5 +76,18 @@ public class SubjectServiceImpl implements SubjectService {
         return subjectMapper.selectByExample(se);
     }
 
+    @Override
+    public Subject getSubjectById(long id) {
+        SubjectExample se = new SubjectExample();
+        se.createCriteria().andIdEqualTo(id);
+
+        List<Subject> list = subjectMapper.selectByExample(se);
+
+        if (list.size() == 1) {
+            return list.get(0);
+        }
+
+        return null;
+    }
 
 }

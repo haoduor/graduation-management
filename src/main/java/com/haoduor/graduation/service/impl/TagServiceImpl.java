@@ -1,10 +1,14 @@
 package com.haoduor.graduation.service.impl;
 
 import cn.hutool.core.lang.Snowflake;
+import com.haoduor.graduation.dao.SubjectToTagMapper;
 import com.haoduor.graduation.dao.TagMapper;
+import com.haoduor.graduation.model.SubjectToTag;
+import com.haoduor.graduation.model.SubjectToTagExample;
 import com.haoduor.graduation.model.Tag;
 import com.haoduor.graduation.model.TagExample;
 import com.haoduor.graduation.service.TagService;
+import org.apache.poi.ss.formula.functions.Subtotal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +19,9 @@ public class TagServiceImpl implements TagService {
 
     @Autowired
     private TagMapper tagMapper;
+
+    @Autowired
+    private SubjectToTagMapper subjectToTagMapper;
 
     @Autowired
     private Snowflake snowflake;
@@ -72,5 +79,32 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<Tag> getTagsBySubjectId(long id) {
         return tagMapper.selectBySubjectId(id);
+    }
+
+    @Override
+    public boolean addTagLinkToSubject(String tagName, long subjectId) {
+        Tag t = getOrAddTagByName(tagName);
+        if (t == null) {
+            return false;
+        }
+
+        SubjectToTag stt = new SubjectToTag();
+        stt.setTagId(t.getId());
+        stt.setSubjectId(subjectId);
+
+        int res = subjectToTagMapper.insert(stt);
+
+        return res == 1;
+    }
+
+    @Override
+    public boolean deleteTagLinkToSubject(long tagId, long subjectId) {
+        SubjectToTagExample stte = new SubjectToTagExample();
+        stte.createCriteria()
+            .andSubjectIdEqualTo(subjectId)
+            .andTagIdEqualTo(tagId);
+
+        int res = subjectToTagMapper.deleteByExample(stte);
+        return res == 1;
     }
 }

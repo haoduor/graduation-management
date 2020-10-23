@@ -10,4 +10,5 @@ import java.util.List;
 public interface SubjectService {
     public boolean addSubject(SubjectDto subjectDto);
     public List<Subject> getSubject();
+    public Subject getSubjectById(long id);
 }
