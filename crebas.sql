@@ -1,31 +1,39 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     2020/10/14 9:53:49                           */
+/* Created on:     2020/10/21 13:29:19                          */
 /*==============================================================*/
 
+
+drop table if exists chosen_subject;
+
 drop table if exists department;
+
+drop table if exists final_subject;
+
+drop table if exists period;
 
 drop table if exists role;
 
 drop table if exists student;
 
+drop table if exists subject;
+
+drop table if exists subject_to_tag;
+
+drop table if exists tag;
+
 drop table if exists teacher;
 
 drop table if exists user;
 
-drop table if exists templet;
-
 /*==============================================================*/
-/* Table: template                                               */
+/* Table: chosen_subject                                        */
 /*==============================================================*/
-create table template
+create table chosen_subject
 (
-   id                   bigint comment 'id',
-   file_name            varchar(64) comment 'Ñù°åÎÄ¼şÃû³Æ',
-   sha256               varchar(256) comment 'ÎÄ¼şµÄ256Ğ£ÑéÖµ',
-   upload_time          datetime comment 'ÉÏ´«Ê±¼ä',
-   is_delete            bool comment 'ÊÇ·ñ±»É¾³ı',
-   delete_time          datetime comment 'É¾³ıÊ±¼ä'
+   student_id           bigint comment 'å­¦ç”Ÿid',
+   subject_id           bigint comment 'é€‰é¢˜id',
+   chosen_time          datetime comment 'é€‰é¢˜æ—¶é—´'
 );
 
 /*==============================================================*/
@@ -34,8 +42,29 @@ create table template
 create table department
 (
    id                   bigint not null comment 'id',
-   name                 varchar(32) comment 'Ïµ²¿Ãû³Æ',
+   name                 varchar(32) comment 'ç³»éƒ¨åç§°',
    primary key (id)
+);
+
+/*==============================================================*/
+/* Table: final_subject                                         */
+/*==============================================================*/
+create table final_subject
+(
+   student_id           bigint comment 'å­¦ç”Ÿid',
+   subject_id           bigint comment 'é€‰é¢˜id',
+   final_chosen_time    datetime comment 'æœ€ç»ˆé€‰ä¸­æ—¶é—´'
+);
+
+/*==============================================================*/
+/* Table: period                                                */
+/*==============================================================*/
+create table period
+(
+   id                   bigint comment 'id',
+   name                 varchar(64) comment 'åŒºé—´åç§°',
+   start_time           datetime comment 'å¼€å§‹æ—¶é—´',
+   end_time             datetime comment 'ç»“æŸæ—¶é—´'
 );
 
 /*==============================================================*/
@@ -44,7 +73,7 @@ create table department
 create table role
 (
    id                   bigint not null comment 'id',
-   name                 varchar(32) comment '½ÇÉ«Ãû³Æ',
+   name                 varchar(32) comment 'è§’è‰²åç§°',
    primary key (id)
 );
 
@@ -53,10 +82,43 @@ create table role
 /*==============================================================*/
 create table student
 (
-   user_id              bigint comment 'ÓÃ»§id',
-   class_name           varchar(32) comment '°à¼¶',
-   name                 varchar(16) comment 'ĞÕÃû',
-   department_id        bigint comment 'Ïµ²¿id'
+   user_id              bigint comment 'ç”¨æˆ·id',
+   class_name           varchar(32) comment 'ç­çº§',
+   name                 varchar(16) comment 'å§“å',
+   department_id        bigint comment 'ç³»éƒ¨id'
+);
+
+/*==============================================================*/
+/* Table: subject                                               */
+/*==============================================================*/
+create table subject
+(
+   id                   bigint not null comment 'id',
+   title                varchar(255) comment 'é€‰é¢˜æ ‡é¢˜',
+   teacherId            bigint comment 'åˆ›å»ºæ•™å¸ˆid',
+   content              varchar(255) comment 'é€‰é¢˜å†…å®¹',
+   source               varchar(32) comment 'é€‰é¢˜æ¥æº',
+   difficult            int comment 'é€‰é¢˜éš¾åº¦(0: ç®€å•, 1: ä¸­ç­‰ï¼Œ 2: å›°éš¾)',
+   create_time          datetime comment 'åˆ›å»ºæ—¶é—´',
+   primary key (id)
+);
+
+/*==============================================================*/
+/* Table: subject_to_tag                                        */
+/*==============================================================*/
+create table subject_to_tag
+(
+   subject_id           bigint comment 'è¯¾é¢˜id',
+   tag_id               bigint comment 'æ ‡ç­¾id'
+);
+
+/*==============================================================*/
+/* Table: tag                                                   */
+/*==============================================================*/
+create table tag
+(
+   id                   bigint comment 'id',
+   name                 varchar(32) comment 'æ ‡ç­¾å'
 );
 
 /*==============================================================*/
@@ -64,9 +126,9 @@ create table student
 /*==============================================================*/
 create table teacher
 (
-   user_id              bigint comment 'ÓÃ»§id',
-   department_id        bigint comment 'Ïµ²¿id',
-   name                 varchar(16) comment 'ĞÕÃû'
+   user_id              bigint comment 'ç”¨æˆ·id',
+   department_id        bigint comment 'ç³»éƒ¨id',
+   name                 varchar(16) comment 'å§“å'
 );
 
 /*==============================================================*/
@@ -75,10 +137,10 @@ create table teacher
 create table user
 (
    id                   bigint not null comment 'id',
-   username             varchar(32) comment 'ÓÃ»§Ãû',
-   password             varchar(128) comment 'ÃÜÂë',
-   salt                 varchar(32) comment 'ÃÜÂëÑÎ',
-   role_id              bigint comment '½ÇÉ«id',
+   username             varchar(32) comment 'ç”¨æˆ·å',
+   password             varchar(128) comment 'å¯†ç ',
+   salt                 varchar(32) comment 'å¯†ç ç›',
+   role_id              bigint comment 'è§’è‰²id',
    primary key (id)
 );
 

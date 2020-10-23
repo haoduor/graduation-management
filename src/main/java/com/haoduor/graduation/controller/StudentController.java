@@ -89,7 +89,7 @@ public class StudentController {
      * @return
      */
     @PostMapping("/add")
-    public BaseMessage add(@Valid @RequestBody StudentVo vo) {
+    public BaseMessage add(@RequestBody StudentVo vo) {
         if (vo != null) {
             StudentDto tmp = null;
             try {
