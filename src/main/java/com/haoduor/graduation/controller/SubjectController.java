@@ -31,6 +31,25 @@ public class SubjectController {
     @Autowired
     private TagService tagService;
 
+    @PostMapping("/set")
+    public BaseMessage set(@RequestBody SubjectForm subjectForm) {
+        SubjectDto dto = null;
+
+        try {
+            dto = SubjectAdapter.SubjectFormToDto(subjectForm);
+        } catch (NumberFormatException e) {
+            return new BaseMessage(2, "格式化错误");
+        }
+
+        boolean res = subjectService.setSubjectById(1L, dto);
+
+        if (res) {
+            return new BaseMessage(1, "新增成功");
+        } else {
+            return new BaseMessage(3, "数据库出错");
+        }
+    }
+
     @PostMapping("/add")
     public BaseMessage add(@RequestBody SubjectForm subjectForm) {
         SubjectDto dto = null;

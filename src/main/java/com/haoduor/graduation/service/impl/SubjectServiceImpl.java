@@ -1,5 +1,6 @@
 package com.haoduor.graduation.service.impl;
 
+import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Snowflake;
 import com.haoduor.graduation.adapter.SubjectAdapter;
@@ -14,6 +15,7 @@ import com.haoduor.graduation.service.SubjectService;
 import com.haoduor.graduation.service.TagService;
 import com.haoduor.graduation.vo.SubjectForm;
 import com.haoduor.graduation.vo.SubjectVo;
+import org.apache.commons.beanutils.ConvertUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -88,6 +90,29 @@ public class SubjectServiceImpl implements SubjectService {
         }
 
         return null;
+    }
+
+    @Override
+    public boolean setSubjectById(long id, SubjectDto subjectDto) {
+        Subject s = Convert.convert(Subject.class, subjectDto);
+        s.setId(id);
+
+        SubjectExample se = new SubjectExample();
+        se.createCriteria().andIdEqualTo(id);
+
+        int res = subjectMapper.updateByExample(s, se);
+
+        return res == 1;
+    }
+
+    @Override
+    public boolean deleteSubjectById(long id) {
+        SubjectExample se = new SubjectExample();
+        se.createCriteria().andIdEqualTo(id);
+
+        int res = subjectMapper.deleteByExample(se);
+
+        return res == 1;
     }
 
 }
