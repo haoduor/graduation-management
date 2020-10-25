@@ -1,5 +1,7 @@
 package com.haoduor.graduation.vo;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
 import com.haoduor.graduation.model.Tag;
 import lombok.Data;
 
@@ -8,6 +10,7 @@ import java.util.List;
 
 @Data
 public class SubjectVo {
+    @JSONField(serializeUsing = ToStringSerializer.class)
     private long      id;
     private String    title;
     private String    source;
@@ -16,5 +19,7 @@ public class SubjectVo {
     private Date      createTime;
     private List<Tag> tags;
     private String    teacherName;
+
+    @JSONField(serializeUsing = ToStringSerializer.class)
     private long      teacherId;
 }
