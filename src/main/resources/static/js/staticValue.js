@@ -2,7 +2,11 @@ const staticValue = (()=>{
     let choseId = '1';//选中的id
     let currentPageName = '1'; //当前选中页面,默认1
     let chosePageNumber = '1';//当前选中的页数,默认1
-    let that = window; //??
+    let that = window; //入口this
+    let mainContentThis = window;  //主页this
+    let listToolThis = window; //工具栏this
+    let editMainThis = window; //编辑添加删除页this
+
     return{
         //设置当前选中的页面
         setCurrentPage(pageName = 1) {
@@ -44,6 +48,38 @@ const staticValue = (()=>{
                 return 1;
             }
             return that;
+        },
+        //主页this
+        setMainContentThis(_this = '1') {
+            mainContentThis = _this;
+        },
+        getMainContentThis() {
+            if (mainContentThis == undefined) {
+                return 1;
+            }
+            return mainContentThis;
+        },
+
+        //工具栏this
+        setListToolThis(_this = '1') {
+            listToolThis = _this;
+        },
+        getListToolThis() {
+            if (listToolThis == undefined) {
+                return 1;
+            }
+            return listToolThis;
+        },
+
+        //编辑页this
+        setEditMainThis(_this = '1') {
+            editMainThis = _this;
+        },
+        getEditMainThis() {
+            if (editMainThis == undefined) {
+                return 1;
+            }
+            return editMainThis;
         },
     }
 })();

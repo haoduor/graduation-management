@@ -9,9 +9,9 @@
         <el-select v-model="topicAdd.topicTeacher" placeholder="请选择老师">
             <el-option
                     v-for="item in topicSelect.teacher"
-                    :key="item.value"
+                    :key="item.key"
                     :label="item.value"
-                    :value="item.value">
+                    :value="item.key">
             </el-option>
         </el-select>
     </el-form-item>
@@ -27,7 +27,7 @@
     </el-form-item>
     <el-form-item prop="topicOneTag" style="position: relative;width: calc(100% - 56px)" label="选题标签:" label-position="left">
             <el-input maxlength="10" show-word-limit id="topicOneTag" v-model="topicAdd.topicOneTag"></el-input>
-            <el-button type="primary"style="position: absolute;right: -56px" @click="addTags" icon="el-icon-plus"></el-button>
+            <el-button type="primary"style="position: absolute;right: -56px" @click="addTags('topicTags','topicAdd')" icon="el-icon-plus"></el-button>
     </el-form-item>
     <el-form-item style="margin-bottom: 2rem" prop="topicTags" label="当前标签:" label-position="left">
              <div id="topicTags" class="tagBox">

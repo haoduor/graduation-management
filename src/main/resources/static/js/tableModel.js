@@ -82,9 +82,9 @@ const tableModel = (() =>{
                         flex-flow: row wrap;
                         justify-content: center;
                         width: 200px;">
-                            <el-button @click="showEdit('${items['id']}')" type="text" icon="el-icon-edit">编辑选题</el-button>
-                            <el-button @click="showEdit('${items['id']}')" type="text" icon="el-icon-edit">编辑标签</el-button>
-                            <el-button @click="showEdit('${items['id']}')" type="text" icon="el-icon-edit">编辑指导老师</el-button>
+                            <el-button @click="showEdit('${items['id']}',1)" type="text" icon="el-icon-edit">编辑选题</el-button>
+                            <el-button @click="showEdit('${items['id']}',2)" type="text" icon="el-icon-edit">编辑标签</el-button>
+                            <el-button @click="showEdit('${items['id']}',3)" type="text" icon="el-icon-edit">编辑指导老师</el-button>
                             <el-button @click="deleteList('${items['id']}')" type="text" icon="el-icon-delete">删除</el-button>
                         </div>
                      </div>
