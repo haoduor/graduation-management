@@ -8,8 +8,10 @@ import com.haoduor.graduation.adapter.SubjectAdapter;
 import com.haoduor.graduation.dto.SubjectDto;
 import com.haoduor.graduation.model.Subject;
 import com.haoduor.graduation.model.Tag;
+import com.haoduor.graduation.model.Teacher;
 import com.haoduor.graduation.service.SubjectService;
 import com.haoduor.graduation.service.TagService;
+import com.haoduor.graduation.service.TeacherService;
 import com.haoduor.graduation.vo.BaseMessage;
 import com.haoduor.graduation.vo.PageMessage;
 import com.haoduor.graduation.vo.SubjectForm;
@@ -29,6 +31,9 @@ public class SubjectController {
 
     @Autowired
     private TagService tagService;
+
+    @Autowired
+    private TeacherService teacherService;
 
     @PostMapping("/set")
     public BaseMessage set(@RequestBody SubjectForm subjectForm) {
@@ -88,8 +93,13 @@ public class SubjectController {
             String json = JSONObject.toJSONString(s);
             SubjectVo vo = JSON.parseObject(json, SubjectVo.class);
 
-            vo.setTags(tags);
+            Teacher t = teacherService.getTeacherById(s.getTeacherid());
 
+            if (t != null) {
+                vo.setTeacherName(t.getName());
+            }
+
+            vo.setTags(tags);
             vos.add(vo);
         }
 
