@@ -7,16 +7,24 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Slf4j
 @Controller
 public class MainController {
+
+    @Autowired
+    private HttpServletRequest request;
+
 
     @GetMapping("/")
     public String login() {
@@ -55,6 +63,9 @@ public class MainController {
                     // shiro 用户登录
                     currentUser.login(new UsernamePasswordToken(username, password));
                     log.info("{} 用户成功登录", username);
+                    Session se = currentUser.getSession();
+                    se.setAttribute("username", username);
+
                     return new BaseMessage(1, "登录成功");
                 } catch (IncorrectCredentialsException e) {
                     return new BaseMessage(5, "密码错误");
