@@ -1,12 +1,11 @@
 package com.haoduor.graduation.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.haoduor.graduation.dao.TeacherMapper;
 import com.haoduor.graduation.dao.UserMapper;
-import com.haoduor.graduation.model.Department;
-import com.haoduor.graduation.model.Teacher;
-import com.haoduor.graduation.model.TeacherExample;
-import com.haoduor.graduation.model.UserExample;
+import com.haoduor.graduation.model.*;
 import com.haoduor.graduation.service.DepartmentService;
+import com.haoduor.graduation.service.StudentService;
 import com.haoduor.graduation.service.TeacherService;
 import com.haoduor.graduation.vo.TeacherVo;
 import org.apache.poi.ss.formula.functions.T;
@@ -60,4 +59,15 @@ public class TeacherServiceImpl implements TeacherService {
         int res = teacherMapper.updateByExample(t, te);
         return res == 1;
     }
+
+    @Override
+    public Teacher getTeacherById(long id) {
+        TeacherExample te = new TeacherExample();
+        te.createCriteria().andUserIdEqualTo(id);
+
+        List<Teacher> res = teacherMapper.selectByExample(te);
+
+        return CollectionUtil.getFirst(res);
+    }
+
 }

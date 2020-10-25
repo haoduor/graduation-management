@@ -1,5 +1,6 @@
 package com.haoduor.graduation.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.lang.Validator;
 import com.haoduor.graduation.dao.StudentMapper;
 import com.haoduor.graduation.dao.UserMapper;
@@ -71,4 +72,12 @@ public class StudentServiceImpl implements StudentService {
         return false;
     }
 
+
+    @Override
+    public Student getStudentById(long id) {
+        StudentExample se = new StudentExample();
+        se.createCriteria().andUserIdEqualTo(id);
+        List<Student> res = studentMapper.selectByExample(se);
+        return CollectionUtil.getFirst(res);
+    }
 }

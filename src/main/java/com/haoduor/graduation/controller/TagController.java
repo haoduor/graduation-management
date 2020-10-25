@@ -2,14 +2,16 @@ package com.haoduor.graduation.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.haoduor.graduation.model.Subject;
+import com.haoduor.graduation.model.Tag;
 import com.haoduor.graduation.service.SubjectService;
 import com.haoduor.graduation.service.TagService;
 import com.haoduor.graduation.vo.BaseMessage;
+import com.haoduor.graduation.vo.DataMessage;
+import com.haoduor.graduation.vo.PageMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/tag")
@@ -21,6 +23,22 @@ public class TagController {
     @Autowired
     private SubjectService subjectService;
 
+    @GetMapping("/list")
+    public DataMessage list(@RequestParam String subjectId) {
+        long _subjectId = -1;
+
+        try {
+            _subjectId = Long.parseLong(subjectId);
+        } catch (NumberFormatException e) {
+            return new DataMessage(2, "格式化错误");
+        }
+
+        List<Tag> tags = tagService.getTagsBySubjectId(_subjectId);
+
+        DataMessage dm = new DataMessage(1, "获取成功");
+        dm.setData(tags);
+        return dm;
+    }
 
     @PostMapping("/add")
     public BaseMessage add(@RequestParam String tagName, @RequestParam String subjectId) {

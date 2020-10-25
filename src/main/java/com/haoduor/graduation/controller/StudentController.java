@@ -109,4 +109,10 @@ public class StudentController {
             return new BaseMessage(3, "字段不能为空");
         }
     }
+
+    @PostMapping("")
+    public BaseMessage choseSubject(@RequestParam String subjectId) {
+        return null;
+    }
+
 }

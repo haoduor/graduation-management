@@ -1,15 +1,22 @@
 package com.haoduor.graduation.controller;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.SecureUtil;
+import com.haoduor.graduation.model.Role;
 import com.haoduor.graduation.model.User;
+import com.haoduor.graduation.service.RoleService;
 import com.haoduor.graduation.service.UserService;
+import com.haoduor.graduation.util.InfoFactory;
 import com.haoduor.graduation.vo.BaseMessage;
+import com.haoduor.graduation.vo.DataMessage;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+
+import javax.imageio.plugins.bmp.BMPImageWriteParam;
 
 @Controller
 @RequestMapping("/user")
@@ -17,6 +24,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private InfoFactory infoFactory;
 
     // 管理员设置(更改)密码
     @ResponseBody
@@ -43,5 +56,37 @@ public class UserController {
     @PostMapping("/repass")
     public BaseMessage resetPassword(String oldPassword, String password) {
         return null;
+    }
+
+    /**
+     * 获取用户的个人信息
+     * 必须登录之后才能访问
+     * @param username
+     * @return
+     */
+    @ResponseBody
+    @GetMapping("/info/{username}")
+    public DataMessage getUserInfo(@PathVariable String username) {
+        Subject cu = SecurityUtils.getSubject();
+        Session se = cu.getSession();
+        String seUsername = (String) se.getAttribute("username");
+        if (StrUtil.isEmpty(seUsername)) {
+            return new DataMessage(2, "未知错误");
+        }
+
+        if (seUsername.equals(username) || cu.hasRole("admin")) {
+            User user = userService.getUserByName(username);
+            if (user == null) {
+                return new DataMessage(4, "用户名不存在");
+            }
+
+            Role r = roleService.getRoleById(user.getRoleId());
+            DataMessage dm = new DataMessage(1, "获取成功");
+            dm.setData(infoFactory.getDataByRoleAndId(r.getName(), user.getId()));
+
+            return dm;
+        } else {
+            return new DataMessage(3, "权限不足");
+        }
     }
 }
