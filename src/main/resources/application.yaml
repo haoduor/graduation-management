@@ -1,5 +1,5 @@
 server:
-  port: 9999
+  port: 80
 
 spring:
   http:
@@ -9,9 +9,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1/graduation?serverTimezone=UTC
-    username: root
-    password: root
+    url: jdbc:mysql://192.168.224.132/graduation?serverTimezone=UTC
+    username: haoduor
+    password: qwe123
   # thymeleaf 模板引擎配置
   thymeleaf:
     cache: false

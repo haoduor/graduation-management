@@ -1,8 +1,12 @@
 package com.haoduor.graduation.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
+
 import java.io.Serializable;
 
 public class Tag implements Serializable {
+    @JSONField(serializeUsing = ToStringSerializer.class)
     private Long id;
 
     private String name;
