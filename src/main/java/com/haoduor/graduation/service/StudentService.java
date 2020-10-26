@@ -10,4 +10,5 @@ public interface StudentService {
     public boolean deleteStudentById(long id);
     public boolean updateStudentByVo(StudentVo vo);
     public Student getStudentById(long id);
+    public boolean hasStudent(long id);
 }

@@ -110,9 +110,4 @@ public class StudentController {
         }
     }
 
-    @PostMapping("")
-    public BaseMessage choseSubject(@RequestParam String subjectId) {
-        return null;
-    }
-
 }

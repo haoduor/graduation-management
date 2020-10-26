@@ -80,4 +80,9 @@ public class StudentServiceImpl implements StudentService {
         List<Student> res = studentMapper.selectByExample(se);
         return CollectionUtil.getFirst(res);
     }
+
+    @Override
+    public boolean hasStudent(long id) {
+        return getStudentById(id) == null;
+    }
 }

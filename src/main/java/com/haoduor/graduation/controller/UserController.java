@@ -82,6 +82,11 @@ public class UserController {
 
             Role r = roleService.getRoleById(user.getRoleId());
             DataMessage dm = new DataMessage(1, "获取成功");
+
+            if (!cu.hasRole("admin")) {
+                se.setAttribute("id", user.getId());
+            }
+
             dm.setData(infoFactory.getDataByRoleAndId(r.getName(), user.getId()));
 
             return dm;

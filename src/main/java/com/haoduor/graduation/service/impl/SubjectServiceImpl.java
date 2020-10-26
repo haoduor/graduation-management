@@ -4,13 +4,11 @@ import cn.hutool.core.convert.Convert;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Snowflake;
 import com.haoduor.graduation.adapter.SubjectAdapter;
+import com.haoduor.graduation.dao.ChosenSubjectMapper;
 import com.haoduor.graduation.dao.SubjectMapper;
 import com.haoduor.graduation.dao.SubjectToTagMapper;
 import com.haoduor.graduation.dto.SubjectDto;
-import com.haoduor.graduation.model.Subject;
-import com.haoduor.graduation.model.SubjectExample;
-import com.haoduor.graduation.model.SubjectToTag;
-import com.haoduor.graduation.model.Tag;
+import com.haoduor.graduation.model.*;
 import com.haoduor.graduation.service.SubjectService;
 import com.haoduor.graduation.service.TagService;
 import com.haoduor.graduation.vo.SubjectForm;
@@ -30,6 +28,9 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Autowired
     private SubjectToTagMapper subjectToTagMapper;
+
+    @Autowired
+    private ChosenSubjectMapper chosenSubjectMapper;
 
     @Autowired
     private TagService tagService;
@@ -111,6 +112,31 @@ public class SubjectServiceImpl implements SubjectService {
         se.createCriteria().andIdEqualTo(id);
 
         int res = subjectMapper.deleteByExample(se);
+
+        return res == 1;
+    }
+
+    @Override
+    public boolean hasSubject(long id) {
+        return getSubjectById(id) == null;
+    }
+
+    @Override
+    public int countStudentChoseSubject(long id) {
+        ChosenSubjectExample cse = new ChosenSubjectExample();
+        cse.createCriteria().andStudentIdEqualTo(id);
+
+        return chosenSubjectMapper.countByExample(cse);
+    }
+
+    @Override
+    public boolean choseSubject(long subjectId, long studentId) {
+        ChosenSubject cs = new ChosenSubject();
+        cs.setChosenTime(DateUtil.date());
+        cs.setStudentId(studentId);
+        cs.setSubjectId(subjectId);
+
+        int res = chosenSubjectMapper.insert(cs);
 
         return res == 1;
     }

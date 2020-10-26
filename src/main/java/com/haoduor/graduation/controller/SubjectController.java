@@ -9,13 +9,14 @@ import com.haoduor.graduation.dto.SubjectDto;
 import com.haoduor.graduation.model.Subject;
 import com.haoduor.graduation.model.Tag;
 import com.haoduor.graduation.model.Teacher;
-import com.haoduor.graduation.service.SubjectService;
-import com.haoduor.graduation.service.TagService;
-import com.haoduor.graduation.service.TeacherService;
+import com.haoduor.graduation.service.*;
+import com.haoduor.graduation.util.UserUtil;
 import com.haoduor.graduation.vo.BaseMessage;
 import com.haoduor.graduation.vo.PageMessage;
 import com.haoduor.graduation.vo.SubjectForm;
 import com.haoduor.graduation.vo.SubjectVo;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,12 @@ public class SubjectController {
 
     @Autowired
     private TeacherService teacherService;
+
+    @Autowired
+    private StudentService studentService;
+
+    @Autowired
+    private UserUtil userUtil;
 
     @PostMapping("/set")
     public BaseMessage set(@RequestBody SubjectForm subjectForm) {
@@ -107,4 +114,47 @@ public class SubjectController {
         return pm;
     }
 
+    @PostMapping("/chose")
+    public BaseMessage choseSubject(@RequestParam String subjectId, @RequestParam String studentId) {
+        org.apache.shiro.subject.Subject currentUser = SecurityUtils.getSubject();
+        userUtil.cacheId(currentUser);
+
+        Session se = currentUser.getSession();
+
+        long _subjectId;
+        long _studentId;
+        try {
+            _subjectId = Long.parseLong(subjectId);
+            _studentId = Long.parseLong(studentId);
+        } catch (NumberFormatException e) {
+            return new BaseMessage(2, "格式化错误");
+        }
+
+        Long id = (Long) se.getAttribute("id");
+        if (currentUser.hasRole("student")) {
+            if (id.equals(_studentId)) {
+                return new BaseMessage(5, "用户不符合");
+            }
+        }
+
+        if (subjectService.hasSubject(_subjectId)) {
+            return new BaseMessage(3, "课题不存在");
+        }
+
+        if (studentService.hasStudent(_studentId)) {
+            return new BaseMessage(4, "学生不存在");
+        }
+
+        int count = subjectService.countStudentChoseSubject(_studentId);
+        if (count == 3) {
+            return new BaseMessage(7, "选题不能超过3个");
+        }
+
+        boolean res = subjectService.choseSubject(_subjectId, _studentId);
+        if (res) {
+            return new BaseMessage(1, "选择成功");
+        } else {
+            return new BaseMessage(8, "数据库出错");
+        }
+    }
 }
