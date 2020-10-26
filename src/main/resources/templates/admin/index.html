@@ -366,27 +366,39 @@
                                 new app().$mount('#editMain');
 
                                 //初始化
-                                let tipData = await tools.getAxiosData(`http://127.0.0.1:9999/tag/list?subjectId=${data.toString()}`);
+                                let tipData = await tools.getAxiosData(`/tag/list?subjectId=${staticValue.getChoseId()}`);
                                 staticValue.getThat().$set(staticValue.getThat().topicTagEdit,'topicTags',tipData['data']['data'])
-                                console.log(staticValue.getThat().topicTagEdit);
                                 let tagsArr = staticValue.getThat().topicTagEdit['topicTags'];//标签数组
                                 staticValue.getThat().topicTagEdit['topicTags'].forEach((items, index)=>{
                                     //添加小标签
                                     let tagDiv=document.createElement("div");
                                     tagDiv.className = 'nmTag';
                                     tagDiv.innerHTML = `${items['name']}
-                                                <div id="removeTag_${items['name']}" class="nmTagDelete" val="${items['name']}">
+                                                <div id="removeTag_${items['id'].toString()}" class="nmTagDelete" val="${items['name']}">
                                                     <i class="el-icon-close"></i>
                                                 </div>`;
                                     tools.$(`#topicTagsExit`).appendChild(tagDiv);
-                                    tools.$(`#removeTag_${items['name']}`).addEventListener('click',function () {
-                                        //删除数组的值
-                                        tagsArr.forEach((items,index)=>{
-                                            if(items['value'] == this.getAttribute('val')){
-                                                delete tagsArr[index];
+                                    //添加标签删除功能
+                                    tools.$(`#removeTag_${items['id'].toString()}`).addEventListener('click',function(){
+                                        axios.post('/tag/delete',tools.buildFormData({tagId:items['id'].toString(),subjectId:staticValue.getChoseId()})).then(val=>{
+                                            let id = val['data']['id'];
+                                            if(id == 1){
+                                                staticValue.getThat().$message.success("删除成功");
+                                                //删除数组的值
+                                                tagsArr.forEach((items,index)=>{
+                                                    if(items['value'] == this.getAttribute('val') || items['name'] == this.getAttribute('val') ){
+                                                        delete tagsArr[index];
+                                                    }
+                                                });
+                                                this.parentNode.parentNode.removeChild(this.parentNode);//删除节点
                                             }
-                                        })
-                                        this.parentNode.parentNode.removeChild(this.parentNode);//删除节点
+                                            if(id == 2){
+                                                this.$message.error("格式化错误");
+                                            }
+                                            if(id == 3){
+                                                this.$message.error("数据库错误");
+                                            }
+                                        });
                                     });
                                 });
                             }
@@ -451,7 +463,7 @@
 
                             //初始化表单数据
                             let teacherList = [];
-                            let teacherData = await tools.getAxiosData('http://127.0.0.1:9999/teacher/list');
+                            let teacherData = await tools.getAxiosData('/teacher/list');
                             teacherData['data']['data'].forEach((items,index)=>{
                                 teacherList.push({
                                     value:`${items['teacherId']}--${items['name']}`,
@@ -747,10 +759,11 @@
                                 axios.post('/tag/add',tools.buildFormData({tagName:tagValue,subjectId:staticValue.getChoseId()})).then(async val=>{
                                    let id = val['data']['id'];
                                     if(id == 1){
+                                        this.$message.success("插入成功");
                                         tools.$(`#topicTagsExit`).innerHTML = '';//清空
                                         console.log('asd');
                                         //初始化
-                                        let tipData = await tools.getAxiosData(`http://127.0.0.1:9999/tag/list?subjectId=${staticValue.getChoseId()}`);
+                                        let tipData = await tools.getAxiosData(`/tag/list?subjectId=${staticValue.getChoseId()}`);
                                         staticValue.getThat().$set(staticValue.getThat().topicTagEdit,'topicTags',tipData['data']['data'])
                                         let tagsArr = staticValue.getThat().topicTagEdit['topicTags'];//标签数组
                                         staticValue.getThat().topicTagEdit['topicTags'].forEach((items, index)=>{
@@ -763,11 +776,11 @@
                                                 </div>`;
                                             tools.$(`#topicTagsExit`).appendChild(tagDiv);
                                             //添加标签删除功能
-                                            tools.$(`#removeTag_${items['id'].toString()}`).addEventListener('click',() => {
+                                            tools.$(`#removeTag_${items['id'].toString()}`).addEventListener('click',function(){
                                                 axios.post('/tag/delete',tools.buildFormData({tagId:items['id'].toString(),subjectId:staticValue.getChoseId()})).then(val=>{
                                                     let id = val['data']['id'];
                                                     if(id == 1){
-                                                        this.$message.success("删除成功");
+                                                        staticValue.getThat().$message.success("删除成功");
                                                         //删除数组的值
                                                         tagsArr.forEach((items,index)=>{
                                                             if(items['value'] == this.getAttribute('val') || items['name'] == this.getAttribute('val') ){
@@ -785,43 +798,7 @@
                                                 });
                                             });
                                         });
-                                        // this.$message.success("插入成功");
-                                        // //数组插入标签
-                                        // let tagsArr =staticValue.getThat()[tagValueSource].topicTags;
-                                        // tagsArr.push({
-                                        //     value:tagValue
-                                        // });
-                                        // //添加小标签
-                                        // let tagDiv=document.createElement("div");
-                                        // tagDiv.className = 'nmTag';
-                                        // tagDiv.innerHTML = `${tagValue}
-                                        //             <div id="removeTag_${tagValue}" class="nmTagDelete" val="${tagValue}">
-                                        //                 <i class="el-icon-close"></i>
-                                        //             </div>`;
-                                        // tools.$(`#${elementId}`).appendChild(tagDiv);
-                                        //
-                                        // //添加标签删除功能
-                                        // tools.$(`#removeTag_${tagValue}`).addEventListener('click',() => {
-                                        //     axios.post('/tag/delete',tools.buildFormData({tagId:tagValue,subjectId:staticValue.getChoseId()})).then(val=>{
-                                        //         let id = val['data']['id'];
-                                        //         if(id == 1){
-                                        //             this.$message.success("删除成功");
-                                        //             //删除数组的值
-                                        //             tagsArr.forEach((items,index)=>{
-                                        //                 if(items['value'] == this.getAttribute('val') || items['name'] == this.getAttribute('val') ){
-                                        //                     delete tagsArr[index];
-                                        //                 }
-                                        //             });
-                                        //             this.parentNode.parentNode.removeChild(this.parentNode);//删除节点
-                                        //         }
-                                        //         if(id == 2){
-                                        //             this.$message.error("格式化错误");
-                                        //         }
-                                        //         if(id == 3){
-                                        //             this.$message.error("数据库错误");
-                                        //         }
-                                        //     });
-                                        // });
+
                                     }
                                     if(id == 2){
                                         this.$message.error("id格式化错误");
