@@ -97,6 +97,7 @@ public class SubjectServiceImpl implements SubjectService {
     public boolean setSubjectById(long id, SubjectDto subjectDto) {
         Subject s = Convert.convert(Subject.class, subjectDto);
         s.setId(id);
+        s.setTeacherid(subjectDto.getTeacherId());
 
         SubjectExample se = new SubjectExample();
         se.createCriteria().andIdEqualTo(id);

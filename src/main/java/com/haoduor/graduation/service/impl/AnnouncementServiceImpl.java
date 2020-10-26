@@ -7,9 +7,11 @@ import com.haoduor.graduation.model.Announcement;
 import com.haoduor.graduation.model.AnnouncementExample;
 import com.haoduor.graduation.service.AnnouncementService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class AnnouncementServiceImpl implements AnnouncementService {
 
     @Autowired
