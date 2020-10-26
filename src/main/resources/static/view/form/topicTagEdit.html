@@ -1,7 +1,7 @@
 <el-form style="margin-right: 2rem" :model="topicTagEdit" status-icon ref="topicTagEdit" label-width="100px" class="demo-ruleForm">
     <el-form-item prop="topicOneTag" style="position: relative;width: calc(100% - 56px)" label="选题标签:" label-position="left">
         <el-input maxlength="10" show-word-limit id="topicOneTag" v-model="topicTagEdit.topicOneTag"></el-input>
-        <el-button type="primary"style="position: absolute;right: -56px" @click="addTags('topicTagsExit','topicTagEdit')" icon="el-icon-plus"></el-button>
+        <el-button type="primary"style="position: absolute;right: -56px" @click="addTags('topicTagsExit','topicTagEdit',true)" icon="el-icon-plus"></el-button>
     </el-form-item>
     <el-form-item style="margin-bottom: 2rem" prop="topicTags" label="当前标签:" label-position="left">
         <div id="topicTagsExit" class="tagBox">

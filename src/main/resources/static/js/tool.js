@@ -87,6 +87,24 @@ const tools = (() => {
                 }, time);
             });
         },
+        //格式化日期
+        dateFormat(thisDate, dataType) {
+            let o = {
+                "M+": thisDate.getMonth() + 1,
+                "d+": thisDate.getDate(),
+                "h+": thisDate.getHours(),
+                "m+": thisDate.getMinutes(),
+                "s+": thisDate.getSeconds(),
+                "q+": Math.floor((thisDate.getMonth() + 3) / 3),
+                "S": thisDate.getMilliseconds()
+            };
+            if (/(y+)/.test(dataType))
+                dataType = dataType.replace(RegExp.$1, (thisDate.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (let k in o)
+                if (new RegExp("(" + k + ")").test(dataType))
+                    dataType = dataType.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return dataType;
+        },
         //axios获取
         getAxiosData(url){
             return new Promise( (resolve,reject)=>{
