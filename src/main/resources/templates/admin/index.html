@@ -72,7 +72,7 @@
             <div class="mainContent" id="mainContent">
             </div>
             <!-- 分页 -->
-            <el-pagination class="listPagination" background
+            <el-pagination id="pagination" class="listPagination" background
                            @current-change="handleCurrentChange"  :current-page="pageInfo.nowPage" :page-size="pageInfo.pageSize" :total="pageInfo.totalData"
                            layout="prev, pager, next, jumper">
             </el-pagination>
@@ -226,6 +226,18 @@
                         topicDifficult:'',
                         topicSource:'',
                     },
+                    //公告
+                    noticeAdd:{
+                        noticeContent:''
+                    },
+                    noticeAddRule:{
+                        noticeContent:[
+                            { required: true, message: '请输入公告内容', trigger: 'blur' }
+                        ]
+                    },
+                    noticeEdit:{
+                        noticeContent:''
+                    }
                 }
             },
             mounted:function(){
@@ -250,6 +262,7 @@
                 //左栏选择
                 handleSelect(key, keyPath) {
                     staticValue.setCurrentPage(key);//设置当前页面
+                    tools.$('#pagination').style.display = 'block';//翻页初始存在
                     //学生用户列表
                     if (key == 1) {
                         tools.setTimeOutP(300, async () => {
@@ -310,12 +323,14 @@
                     if (key == 5) {
                         tools.setTimeOutP(300, async () => {
                             tools.$('#mainContent').style.opacity = '0';
+                            tools.$('#pagination').style.display = 'none';//翻页隐藏
                         }).then(async val => {
                             await tools.setPage('listTool', '/view/listTool.html', {title: '公告管理'});
                             await tools.setPage('mainContent', '/view/data/noticeManage.html');
                             new app().$mount("#mainContent");
                             new app().$mount("#listTool");
                             tools.$('#mainContent').style.opacity = '1';
+                            this.refreshTables(0,0,0);
                         });
                     }
                 },
@@ -434,8 +449,18 @@
                         }
                         //公告页面编辑一项
                         if (staticValue.getCurrentPage() == 5) {
-                            await tools.setPage('editMain', '/view/form/noticeEdit.html');
+                            await tools.setPage('editMain', '/view/form/noticeOneEdit.html');
                             new app().$mount('#editMain');
+
+                            //数据为默认选中的数据
+                            let noticeData = await tools.getAxiosData(`/announcement/list`);
+                            noticeData['data']['data'].forEach((items,index)=>{
+                                if(items['id'] === data){
+                                    tools.$('#noticeContent').value = items['content'];
+                                    tools.inputIsNull('#noticeContent','blur');//判空校验
+                                    staticValue.setChoseId(items['id']);
+                                }
+                            });
                         }
                     }).then(val => {
                         tools.$('#editMark').style.opacity = '1';
@@ -539,6 +564,12 @@
                         //选题页面删除
                         if (staticValue.getCurrentPage() == 3) {
                             await tools.setPage('editMain', '/view/form/topicDelete.html');
+                            new app().$mount("#editMain");
+                        }
+
+                        //公告页面删除
+                        if (staticValue.getCurrentPage() == 5) {
+                            await tools.setPage('editMain', '/view/form/noticeDelete.html');
                             new app().$mount("#editMain");
                         }
                     }).then(val => {
@@ -693,12 +724,12 @@
                             this.closeEdit();//关闭表单页面
                         }
                         if(val['data']['id'] == 2){
-                            this.$message.success("删除失败,数据库出错");
+                            this.$message.error("删除失败,数据库出错");
 
                             this.closeEdit();//关闭表单页面
                         }
                     }).catch(err=>{
-                        this.$message.error("删除失败");
+                        this.$message.error("删除失败，网络错误");
                     });
                 },
                 //选题添加表单
@@ -744,7 +775,6 @@
                         }
                     });
                 },
-
                 //编辑选题标签
                 topicTagEditForm(){
                     this.$message.success("修改没用,关了吧")
@@ -801,6 +831,72 @@
                         }
                     }).catch(err=>{
                         this.$message.error("删除失败");
+                    });
+                },
+                //添加公告
+                noticeAddForm(formName){
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            axios.post('/announcement/add',tools.buildFormData({content:staticValue.getEditMainThis().noticeAdd.noticeContent})).then(val=>{
+                                let id = val['data']['id'];
+                                if(id == 1){
+                                    this.$message.success('公告创建成功');
+                                    this.closeEditAndRefresh();//关闭并刷新
+                                }
+                                if(id == 2){
+                                    this.$message.error('公告内容不能为空');
+                                }
+                                if(id == 3){
+                                    this.$message.error('公告内容不能大于500字');
+                                }
+                                if(id == 4){
+                                    this.$message.error('数据库错误');
+                                }
+                            }).catch(err=>{
+                                this.$message.error('网络错误');
+                            })
+                        }
+                    });
+                },
+                //编辑公告
+                noticeEditForm(){
+                    if(tools.inputIsNullValue('#noticeContent')){
+                        let postData = {
+                            content: tools.$('#noticeContent').value,
+                            id:staticValue.getChoseId()
+                        };
+                        axios.post('/announcement/set',tools.buildFormData(postData)).then(val=>{
+                            let id = val['data']['id'];
+                            if(id == '1'){
+                                this.$message.success("修改成功");
+                                this.refreshTableItems();
+                                this.closeEdit();
+                            }
+                        }).catch(err=>{
+                            this.$message.error("修改失败,网络错误");
+                        });
+                    }else{
+                        this.$message.error("请填写完整信息");
+                    }
+                },
+                //删除公告
+                deleteNotice(){
+                    console.log(staticValue.getChoseId())
+                    axios.post('/announcement/delete',tools.buildFormData({id:staticValue.getChoseId()})).then(async val=>{
+                        let id = val['data']['id'];
+                        if(id == 1){
+                            this.$message.success("删除成功");
+                            this.refreshBtn();//刷新
+                            this.closeEdit();//关闭表单页面
+                        }
+                        if(id == 2){
+                            this.$message.error("删除失败,格式化错误");
+                        }
+                        if(id == 3){
+                            this.$message.error("删除失败,数据库出错");
+                        }
+                    }).catch(err=>{
+                        this.$message.error("删除失败,网络错误");
                     });
                 },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
@@ -948,6 +1044,11 @@
                         let subjectData = await tools.getAxiosData('/subject/list?page=1&pageSize=4');
                         staticValue.getThat().refreshTables(1,subjectData['data']['total'],4);
                     }
+                    //公告页刷新
+                    if(staticValue.getCurrentPage() == '5'){
+
+                        staticValue.getThat().refreshTables(0,0,0);
+                    }
                     this.$message('刷新成功');
                     new app().$mount("#mainContent");
                 },
@@ -967,6 +1068,11 @@
                     if(staticValue.getCurrentPage() == '3'){
                         let subjectData = await tools.getAxiosData(`/subject/list?page=${staticValue.getPageNumber()}&pageSize=4`);
                         tools.$('#tableDate').innerHTML = await tableModel.getTopicTableData(subjectData['data']['data']);
+                    }
+                    //公告页刷新
+                    if(staticValue.getCurrentPage() == '5'){
+                        let noticeData = await tools.getAxiosData('/announcement/list');
+                        tools.$('#currentNotices').innerHTML = await tableModel.getNoticeData(noticeData['data']['data']);
                     }
                     new app().$mount("#mainContent");
                 },

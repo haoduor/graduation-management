@@ -96,7 +96,37 @@ const tableModel = (() =>{
                     resolve('空页面');
                 }
             });
-        }
+        },
+        //公告单个模块
+        getNoticeData(data){
+            let html = '';
+            return new Promise((resolve,reject)=> {
+                data.forEach((items, index) => {
+                    let dataTime =tools.dateFormat(new Date(parseInt(items['createTime'])),'yyyy-MM-dd');//时间
+                    let dataColumn = `
+                             <div class="noticeItems">
+                                <p class="noticeHead">
+                                     <span class="title">公告${index+1}</span>
+                                     <span class="data">${dataTime}</span>
+                                </p>
+                                <p class="noticeMessage">
+                                   ${items['content']}
+                                </p>
+                                <div class="noticeFooter">
+                                     <el-button @click="showEdit('${items['id']}')" type="text" icon="el-icon-edit">编辑</el-button>
+                                     <el-button @click="deleteList('${items['id']}')" type="text" icon="el-icon-delete">删除</el-button>
+                                </div>
+                            </div>
+                    `;
+                    html += dataColumn;
+                });
+                if(html != null){
+                    resolve(html);
+                }else{
+                    resolve('空页面');
+                }
+            });
+        },
     }
 })();
 
