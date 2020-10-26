@@ -75,7 +75,7 @@ const tableModel = (() =>{
                         <p class="nmDate">${dataTime}</p>
                         <div class="nmDate" 
                         style="display: flex;
-                        flex-flow: column nowrap;">${dataTag}</div>
+                        flex-flow: row wrap;">${dataTag}</div>
                         <p class="nmDate">${items['teacherName']}</p>                        
                         <div class="staticDate" 
                         style="display: flex;

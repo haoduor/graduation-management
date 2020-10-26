@@ -210,13 +210,22 @@
                     topicAddRule:{
 
                     },
+                    //教师下拉列表
                     topicSelect:{
                         teacher:[],
                     },
                     topicTagEdit:{
                         topicTags:[],
                         topicOneTag:''
-                    }
+                    },
+                    // 编辑选题
+                    topicEdit:{
+                        topicId:'',
+                        topicContent:'',
+                        topicTeacher:'',
+                        topicDifficult:'',
+                        topicSource:'',
+                    },
                 }
             },
             mounted:function(){
@@ -358,7 +367,27 @@
                             staticValue.setChoseId(data);//设置id
                             //编辑选题
                             if(index == 1){
-
+                                await tools.setPage('editMain', '/view/form/topicOneEdit.html');
+                                new app().$mount('#editMain');
+                                // 初始化数据,数据为默认选中的数据
+                                this.teacherSelectList();//初始化教师列表
+                                let subjectData = await tools.getAxiosData(`/subject/list?page=${staticValue.getPageNumber()}&pageSize=4`);
+                                console.log(subjectData['data']['data']);
+                                subjectData['data']['data'].forEach((items,index)=>{
+                                    if(items['id'] === staticValue.getChoseId()){
+                                        let dataDifficulty = items['difficult'] == '0'?'容易':items['difficult'] == '1'?'普通':items['difficult'] == '2'?'困难':'?';//难度
+                                        tools.$('#topicId').value = items['title'];
+                                        tools.$('#topicContent').value =  items['content'];
+                                        tools.$('#topicSource').value =  items['source'];
+                                        tools.$('#topicTeacher').value =  items['teacherName'];
+                                        tools.$('#topicTeacher').setAttribute('defaultTeacherId',items['teacherId']);//设置默认teacherId
+                                        tools.$('#topicDifficult').value =  dataDifficulty;
+                                        tools.$('#topicDifficult').setAttribute('defaultDifficult',items['difficult']);//设置默认难度
+                                        tools.inputIsNull('#topicId','blur');//判空校验
+                                        tools.inputIsNull('#topicContent','blur');//判空校验
+                                        tools.inputIsNull('#topicSource','blur');//判空校验
+                                    }
+                                });
                             }
                             //编辑标签
                             if(index == 2){
@@ -401,10 +430,6 @@
                                         });
                                     });
                                 });
-                            }
-                            //编辑指导老师
-                            if(index == 3){
-
                             }
                         }
                         //公告页面编辑一项
@@ -460,17 +485,7 @@
                         if (staticValue.getCurrentPage() == 3) {
                             await tools.setPage('editMain', '/view/form/topicOneImport.html');
                             new app().$mount("#editMain");
-
-                            //初始化表单数据
-                            let teacherList = [];
-                            let teacherData = await tools.getAxiosData('/teacher/list');
-                            teacherData['data']['data'].forEach((items,index)=>{
-                                teacherList.push({
-                                    value:`${items['teacherId']}--${items['name']}`,
-                                    key:items['id']
-                                })
-                            });
-                            staticValue.getEditMainThis().$set(staticValue.getEditMainThis().topicSelect,'teacher',teacherList);
+                            this.teacherSelectList();//初始化教师列表
                         }
                         //公告添加页面
                         if (staticValue.getCurrentPage() == 5) {
@@ -520,14 +535,17 @@
                             await tools.setPage('editMain', '/view/form/teacherDelete.html');
                             new app().$mount("#editMain");
                         }
+
+                        //选题页面删除
+                        if (staticValue.getCurrentPage() == 3) {
+                            await tools.setPage('editMain', '/view/form/topicDelete.html');
+                            new app().$mount("#editMain");
+                        }
                     }).then(val => {
                         tools.$('#editMark').style.opacity = '1';
                     })
                 },
-                //公告删除
-                deleteNotice(id) {
-                    // console.log(this);
-                },
+
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                    表单提交                    //
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
@@ -633,7 +651,7 @@
                                 this.$message.error("修改失败,数据库错误");
                             }
                         }).catch(err=>{
-                            this.$message.error("修改失败");
+                            this.$message.error("修改失败,网络错误");
                         });
                     }else{
                         this.$message.error("请填写完整信息");
@@ -711,8 +729,7 @@
                                 const id = val['data']['id'];
                                 if(id == 1){
                                     this.$message.success("选题添加成功");
-                                    this.refreshTableItems();
-                                    this.closeEdit();//关闭表单页面
+                                    this.closeEditAndRefresh();//关闭并刷新
                                 }
                                 if(id == 2){
                                     this.$message.error("格式化错误");
@@ -730,7 +747,61 @@
 
                 //编辑选题标签
                 topicTagEditForm(){
+                    this.$message.success("修改没用,关了吧")
                     console.log(staticValue.getThat().topicTagEdit['topicTags']);
+                },
+                //编辑选题
+                topicEditForm(){
+                    console.log(staticValue.getEditMainThis().topicEdit);
+                    let teacherId = staticValue.getEditMainThis().topicEdit['topicTeacher']?staticValue.getEditMainThis().topicEdit['topicTeacher']:tools.$('#topicTeacher').getAttribute('defaultTeacherId');
+                    let difficult = staticValue.getEditMainThis().topicEdit['topicDifficult']?staticValue.getEditMainThis().topicEdit['topicDifficult']:tools.$('#topicDifficult').getAttribute('defaultDifficult');
+
+                    if(tools.inputIsNullValue('#topicId')
+                        &&tools.inputIsNullValue('#topicContent')
+                        &&tools.inputIsNullValue('#topicSource')){
+                        let postData = {
+                            title:tools.$('#topicId').value,
+                            content:tools.$('#topicContent').value,
+                            teacherId:teacherId,
+                            source:tools.$('#topicSource').value,
+                            difficult:parseInt(difficult)
+                        };
+                        axios.post(`/subject/set?id=${staticValue.getChoseId()}`, postData).then(val=>{
+                            let id = val['data']['id'];
+                            if(id == '1'){
+                                this.$message.success("修改成功");
+                                this.refreshTableItems();
+                                this.closeEdit();
+                            }
+                            if(id == '2'){
+                                this.$message.error("修改失败,格式化错误");
+                            }
+                            if(id == '3'){
+                                this.$message.error("修改失败,数据库错误");
+                            }
+                        }).catch(err=>{
+                            this.$message.error("修改失败,网络错误");
+                        });
+                    }else{
+                        this.$message.error("请填写完整信息");
+                    }
+                },
+                //删除选题
+                deleteTopic(){
+                    axios.post('/subject/delete',tools.buildFormData({id:staticValue.getChoseId()})).then(async val=>{
+                        if(val['data']['id'] == 1){
+                            this.$message.success("删除成功");
+                            this.refreshBtn();//刷新
+                            this.closeEdit();//关闭表单页面
+                        }
+                        if(val['data']['id'] == 2){
+                            this.$message.success("删除失败,数据库出错");
+
+                            this.closeEdit();//关闭表单页面
+                        }
+                    }).catch(err=>{
+                        this.$message.error("删除失败");
+                    });
                 },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                    查询功能                    //
@@ -741,6 +812,18 @@
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                      杂                       //
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //初始化教师下拉框数据
+                async teacherSelectList(){
+                    let teacherList = [];
+                    let teacherData = await tools.getAxiosData('/teacher/list');
+                    teacherData['data']['data'].forEach((items,index)=>{
+                        teacherList.push({
+                            value:`${items['teacherId']}--${items['name']}`,
+                            key:items['id']
+                        })
+                    });
+                    staticValue.getEditMainThis().$set(staticValue.getEditMainThis().topicSelect,'teacher',teacherList);
+                },
                 //选题和编辑标题添加标签
                 addTags(elementId,tagValueSource,isEdit = false){
                     let tagValue =  this[tagValueSource].topicOneTag;
