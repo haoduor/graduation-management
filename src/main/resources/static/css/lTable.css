@@ -4,6 +4,7 @@
     height: 100%;
     display: flex;
     flex-flow: column nowrap;
+    overflow-y: auto;
 }
 
 .lTable .tableHead{
@@ -57,7 +58,7 @@
     justify-content: center;
 }
 /*表格tag*/
-.lTable .tableDate .dateColumn .nmDate .nmTag{
+.nmTag{
     display: inline-block;
     height: 32px;
     margin: 4px 0;
@@ -70,4 +71,11 @@
     border-radius: 4px;
     box-sizing: border-box;
     white-space: nowrap;
+}
+
+.nmTagDelete{
+    border-radius: 50%;
+    display: inline-block;
+    position: absolute;
+    right: 1rem;
 }

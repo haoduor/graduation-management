@@ -1,3 +1,4 @@
+import {tools} from '/js/tool.js';
 const tableModel = (() =>{
     return{
         //学生表行
@@ -56,12 +57,12 @@ const tableModel = (() =>{
             let html = '';
             return new Promise((resolve,reject)=> {
                 data.forEach((items, index) => {
-                    let dataDifficulty = items['difficulty'] == 1?'容易':items['difficulty'] == 2?'普通':items['difficulty'] == 3?'困难':'?';
-                    let dataTime = new Date(parseInt(items['createTime']));
-                    let dataTag = ``;
+                    let dataDifficulty = items['difficult'] == '0'?'容易':items['difficult'] == '1'?'普通':items['difficult'] == '2'?'困难':'?';//难度
+                    let dataTime =tools.dateFormat(new Date(parseInt(items['createTime'])),'yyyy-MM-dd hh:mm:ss');//时间
+                    let dataTag = ``;//标签
                     items['tags'].forEach((items, index)=>{
                         dataTag += `
-                            <div class="nmTag">${items}</div>
+                            <div class="nmTag">${items['name']}</div>
                         `;
                     });
 
@@ -71,20 +72,18 @@ const tableModel = (() =>{
                         <p class="nmDate">${items['source']}</p>
                         <p class="nmDate">${items['content']}</p>
                         <p class="nmDate">${dataDifficulty}</p>
-                        <p class="nmDate">2008-12-21</p>
+                        <p class="nmDate">${dataTime}</p>
                         <div class="nmDate" 
                         style="display: flex;
                         flex-flow: column nowrap;">${dataTag}</div>
-                        <p class="nmDate">${items['teacherId']}</p>
                         <p class="nmDate">${items['teacherName']}</p>                        
                         <div class="staticDate" 
                         style="display: flex;
                         flex-flow: row wrap;
                         justify-content: center;
                         width: 200px;">
-                            <el-button @click="showEdit('${items['id']}')" type="text" icon="el-icon-edit">编辑选题</el-button>
-                            <el-button @click="showEdit('${items['id']}')" type="text" icon="el-icon-edit">编辑标签</el-button>
-                            <el-button @click="showEdit('${items['id']}')" type="text" icon="el-icon-edit">编辑指导老师</el-button>
+                            <el-button @click="showEdit('${items['id']}',1)" type="text" icon="el-icon-edit">编辑选题</el-button>
+                            <el-button @click="showEdit('${items['id']}',2)" type="text" icon="el-icon-edit">编辑标签</el-button>
                             <el-button @click="deleteList('${items['id']}')" type="text" icon="el-icon-delete">删除</el-button>
                         </div>
                      </div>
@@ -92,7 +91,6 @@ const tableModel = (() =>{
                     html += dataColumn;
                 });
                 if(html != null){
-                    console.log(html)
                     resolve(html);
                 }else{
                     resolve('空页面');

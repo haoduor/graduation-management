@@ -1,0 +1,41 @@
+<el-form style="margin-right: 2rem" :model="topicAdd" status-icon ref="topicAdd" :rules="topicAddRule"  label-width="100px" class="demo-ruleForm">
+    <el-form-item prop="topicId" label="选题标题:" label-position="left">
+        <el-input id="topicId" v-model="topicAdd.topicId" clearable></el-input>
+    </el-form-item>
+    <el-form-item prop="topicContent" label="选题内容:" label-position="left">
+        <el-input id="topicContent"  type="textarea" v-model="topicAdd.topicContent" clearable></el-input>
+    </el-form-item>
+    <el-form-item prop="topicTeacher" label="指导老师:" label-position="left">
+        <el-select v-model="topicAdd.topicTeacher" placeholder="请选择老师">
+            <el-option
+                    v-for="item in topicSelect.teacher"
+                    :key="item.key"
+                    :label="item.value"
+                    :value="item.key">
+            </el-option>
+        </el-select>
+    </el-form-item>
+    <el-form-item prop="topicDifficult" label="难度选择:" label-position="left">
+        <el-select v-model="topicAdd.topicDifficult" placeholder="请选择难度">
+            <el-option label="简单" value="0"></el-option>
+            <el-option label="普通" value="1"></el-option>
+            <el-option label="困难" value="2"></el-option>
+        </el-select>
+    </el-form-item>
+    <el-form-item prop="topicSource" label="选题来源:" label-position="left">
+                <el-input id="topicSource" v-model="topicAdd.topicSource" clearable></el-input>
+    </el-form-item>
+    <el-form-item prop="topicOneTag" style="position: relative;width: calc(100% - 56px)" label="选题标签:" label-position="left">
+            <el-input maxlength="10" show-word-limit id="topicOneTag" v-model="topicAdd.topicOneTag"></el-input>
+            <el-button type="primary"style="position: absolute;right: -56px" @click="addTags('topicTags','topicAdd')" icon="el-icon-plus"></el-button>
+    </el-form-item>
+    <el-form-item style="margin-bottom: 2rem" prop="topicTags" label="当前标签:" label-position="left">
+             <div id="topicTags" class="tagBox">
+             </div>
+    </el-form-item>
+
+    <el-form-item>
+        <el-button type="primary" @click="topicAddForm('topicAdd')" icon="el-icon-edit">添加</el-button>
+        <el-button class="editClose" @click="closeEdit" type="primary" icon="el-icon-switch-button">关闭</el-button>
+    </el-form-item>
+</el-form>
