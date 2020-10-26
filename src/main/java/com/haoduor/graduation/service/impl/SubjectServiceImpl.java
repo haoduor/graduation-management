@@ -102,7 +102,7 @@ public class SubjectServiceImpl implements SubjectService {
         SubjectExample se = new SubjectExample();
         se.createCriteria().andIdEqualTo(id);
 
-        int res = subjectMapper.updateByExample(s, se);
+        int res = subjectMapper.updateByExampleSelective(s, se);
 
         return res == 1;
     }

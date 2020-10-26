@@ -58,7 +58,7 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         a.setId(id);
         a.setContent(content);
 
-        int res = announcementMapper.updateByExample(a, ae);
+        int res = announcementMapper.updateByExampleSelective(a, ae);
         return res == 1;
     }
 }
