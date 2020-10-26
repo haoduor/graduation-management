@@ -43,16 +43,18 @@ public class SubjectController {
     private UserUtil userUtil;
 
     @PostMapping("/set")
-    public BaseMessage set(@RequestBody SubjectForm subjectForm) {
+    public BaseMessage set(@RequestBody SubjectForm subjectForm, @RequestParam String id) {
         SubjectDto dto = null;
+        long _subjectId;
 
         try {
             dto = SubjectAdapter.SubjectFormToDto(subjectForm);
+            _subjectId = Long.parseLong(id);
         } catch (NumberFormatException e) {
             return new BaseMessage(2, "格式化错误");
         }
 
-        boolean res = subjectService.setSubjectById(1L, dto);
+        boolean res = subjectService.setSubjectById(_subjectId, dto);
 
         if (res) {
             return new BaseMessage(1, "新增成功");
