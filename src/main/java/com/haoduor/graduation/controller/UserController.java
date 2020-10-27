@@ -6,7 +6,9 @@ import com.haoduor.graduation.model.Role;
 import com.haoduor.graduation.model.User;
 import com.haoduor.graduation.service.RoleService;
 import com.haoduor.graduation.service.UserService;
+import com.haoduor.graduation.util.EncryptedUtil;
 import com.haoduor.graduation.util.InfoFactory;
+import com.haoduor.graduation.util.UserUtil;
 import com.haoduor.graduation.vo.BaseMessage;
 import com.haoduor.graduation.vo.DataMessage;
 import org.apache.shiro.SecurityUtils;
@@ -31,6 +33,9 @@ public class UserController {
     @Autowired
     private InfoFactory infoFactory;
 
+    @Autowired
+    private UserUtil userUtil;
+
     // 管理员设置(更改)密码
     @ResponseBody
     @PostMapping("/pass")
@@ -40,8 +45,13 @@ public class UserController {
         }
 
         User u = userService.getUserById(id);
+        Role admin = roleService.getAdminRole();
         if (u == null) {
             return new BaseMessage(3, "无效id");
+        }
+
+        if (u.getRoleId().equals(admin.getId())) {
+            return new BaseMessage(5, "无法更改管理员id");
         }
 
         if (userService.setUserPasswordById(id, password, u.getSalt())) {
@@ -54,8 +64,45 @@ public class UserController {
     // 用户更改密码
     @ResponseBody
     @PostMapping("/repass")
-    public BaseMessage resetPassword(String oldPassword, String password) {
-        return null;
+    public BaseMessage resetPassword(@RequestParam String id, @RequestParam String oldPassword,
+                                     @RequestParam String newPassword) {
+        if (StrUtil.isEmpty(oldPassword) || StrUtil.isEmpty(newPassword)) {
+            return new BaseMessage(3, "参数不能为空");
+        }
+
+        Subject cu = SecurityUtils.getSubject();
+        userUtil.cacheId(cu);
+
+        Long dbId = (Long) cu.getSession().getAttribute("id");
+
+        long _id;
+        try {
+            _id = Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            return new BaseMessage(2, "id格式化失败");
+        }
+
+        if (!dbId.equals(_id)) {
+            return new BaseMessage(4, "不能更改其他人的密码");
+        }
+
+        User u = userService.getUserById(dbId);
+        String dbpass = u.getPassword();
+        String salt = u.getSalt();
+        String tdbpass = EncryptedUtil.encryptedPassword(dbpass, salt);
+        String inpass = EncryptedUtil.encryptedPassword(oldPassword, salt);
+
+        if (!tdbpass.equals(inpass)) {
+            return new BaseMessage(5, "旧密码不符合");
+        }
+
+        u.setPassword(EncryptedUtil.encryptedPassword(newPassword, salt));
+
+        if (userService.setUserPasswordByUser(dbId, u)) {
+            return new BaseMessage(1, "更改密码成功");
+        } else {
+            return new BaseMessage(6, "数据库错误");
+        }
     }
 
     /**

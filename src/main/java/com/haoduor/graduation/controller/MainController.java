@@ -1,6 +1,7 @@
 package com.haoduor.graduation.controller;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.haoduor.graduation.vo.BaseMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
@@ -80,5 +81,13 @@ public class MainController {
         } else {
             return new BaseMessage(3, "验证码错误");
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout() {
+        Subject currentUser = SecurityUtils.getSubject();
+        currentUser.logout();
+
+        return "redirect:/";
     }
 }
