@@ -81,14 +81,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean setUserPasswordById(long id, String password) {
-        User u = this.getUserById(id);
+    public boolean setUserPasswordByUser(long id, User user) {
+        UserExample ue = new UserExample();
+        ue.createCriteria().andIdEqualTo(id);
 
-        if (u == null) {
-            return false;
-        }
+        int res = userMapper.updateByExampleSelective(user, ue);
 
-        return setUserPasswordById(id, password, u.getSalt());
+        return res == 1;
     }
 
     @Override
