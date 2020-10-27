@@ -23,8 +23,8 @@
     <div class="adminNav">
         <p class="navTitle"><i class="el-icon-user-solid"></i> 管理端</p>
         <div class="userInformation">
-            <p>当前用户:gugu</p>
-            <el-button class="userLoginOut" @click="" type="text" icon="el-icon-switch-button">登出</el-button>
+            <p id="nowUser">当前用户:</p>
+            <el-button class="userLoginOut" @click="loginOut" type="text" icon="el-icon-switch-button">登出</el-button>
         </div>
     </div>
     <div class="adminBody">
@@ -105,6 +105,7 @@
         await tools.setPage('listTool', '/view/listTool.html', {title: '学生用户管理', listToolAddAll: 'block'});
         let studentData = await tools.getAxiosData('/student/list?page=1&pageSize=8');//获取数据
         tools.$('#tableDate').innerHTML = await tableModel.getStudentTableData(studentData['data']['data']);//绑定数据
+
         var app = Vue.extend({
             data() {
                 return {
@@ -241,6 +242,16 @@
                 }
             },
             mounted:function(){
+                //获取当前登录的用户
+                if(tools.getCookie("loginUserName") != ''){
+                    tools.$('#nowUser').innerHTML = '当前用户:' + tools.getCookie("loginUserName");
+                }else{
+                    tools.setTimeOutP(3000,()=>{
+                        this.$message.error('请登录,3秒后跳转至登录页');
+                    }).then(()=>{
+                        tools.jump('/');
+                    });
+                }
                 //入口this
                 if(this['$el'].getAttribute('id') == 'app'){
                      staticValue.setThat(this);
@@ -908,6 +919,18 @@
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                      杂                       //
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //登出
+                loginOut(){
+                    if(tools.getCookie('loginUserName') != ''){
+                        tools.setTimeOutP(0,()=>{
+                            tools.clearCookie('loginUserName');
+                        }).then(()=>{
+                            tools.jump('/');
+                        });
+                    }else{
+                        this.$message.warning('您已登出该账号,请刷新页面');
+                    }
+                },
                 //初始化教师下拉框数据
                 async teacherSelectList(){
                     let teacherList = [];

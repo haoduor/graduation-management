@@ -21,7 +21,7 @@
     margin: 0 5rem;
     padding: 2rem 3em 1rem 3em;
     border-radius: 0.25rem;
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: rgba(255, 255, 255, 1);
     display: flex;
     flex-flow: column nowrap;
     box-sizing: border-box;
@@ -88,10 +88,11 @@
 /* 公告 */
 
 .loginMsg {
+    width:30rem;
     margin: 0 5rem;
-    padding: 2rem 3em 1rem 3em;
+    padding: 2rem 1em 1rem 1em;
     border-radius: 0.25rem;
-    background-color: rgba(255, 255, 255, 0.85);
+    background-color: rgba(255, 255, 255, 1);
     overflow-x: hidden;
     overflow-y: auto;
     box-shadow: 4px 4px 5px rgba(0,0,0,0.2), -4px 0px 5px rgba(0,0,0,0.2);
@@ -102,7 +103,7 @@
 }
 
 .loginMsg .msgBody{
-    width: 20rem;
+    width: 100%;
 }
 
 /* 验证码行 */  
@@ -122,4 +123,39 @@
     position: absolute;
     top: 50%;     
     right: 0rem;
+}
+
+/*公告*/
+.msgBody{
+    width: 100%;
+    height: 435px;
+    padding-right: 1rem;
+    overflow-y: auto;
+}
+.loginNoticeItem{
+    width: 100%;
+    height: 5rem;
+    margin: 4px 0rem;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 3px;
+    transition: all 0.3s;
+}
+/*.msgBody .loginNoticeItem:nth-last-child(1){*/
+/*    border:none;*/
+/*}*/
+.loginNoticeItem .loginNoticeTitle{
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s;
+}
+.loginNoticeItem .loginNoticeContent{
+    font-size: 0.9rem;
+    padding-left: 1rem;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+.loginNoticeItem:hover .loginNoticeTitle{
+    font-weight: 600;
 }

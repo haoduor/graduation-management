@@ -6,6 +6,9 @@ const tools = (() => {
         $(id) {
             return document.querySelector(id);
         },
+        jump(uri){
+            window.location.href =uri;
+        },
         loadData(url, cfunc) {
             if (window.XMLHttpRequest) {
                 // code for IE7+, Firefox, Chrome, Opera, Safari
@@ -104,6 +107,28 @@ const tools = (() => {
                 if (new RegExp("(" + k + ")").test(dataType))
                     dataType = dataType.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
             return dataType;
+        },
+        //设置cookie
+        setCookie(name, value, days) {
+                let d = new Date();
+                d.setTime(d.getTime() + (days*24*60*60*1000));
+                let expires = "expires="+d.toUTCString();
+                document.cookie = name + "=" + value + "; " + expires+"; path=/ ;domain=127.0.0.1";
+        },
+        //获取cookie
+         getCookie(cname) {
+            let name = cname + "=";
+            let ca = document.cookie.split(';');
+            for(let i=0; i<ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1);
+                if (c.indexOf(name) != -1) return c.substring(name.length, c.length);
+            }
+            return "";
+        },
+        //清除cookie
+        clearCookie(name) {
+            this.setCookie(name, "", -1);
         },
         //axios获取
         getAxiosData(url){

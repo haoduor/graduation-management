@@ -127,6 +127,26 @@ const tableModel = (() =>{
                 }
             });
         },
+        //登录页公告单个模块
+        getLoginNoticeData(data){
+            let html = '';
+            return new Promise((resolve,reject)=> {
+                data.forEach((items, index) => {
+                    let dataColumn = `                           
+                                <el-collapse-item title="公告${index+1}" name="${index+1}">
+                                    <div>${items['content']}</div>
+                                </el-collapse-item>                                                          
+                    `;
+                    html += dataColumn;
+                });
+                if(html != null){
+                    let lastHtml = ` <el-collapse>${html}</el-collapse>`
+                    resolve(lastHtml);
+                }else{
+                    resolve('空页面');
+                }
+            });
+        },
     }
 })();
 
