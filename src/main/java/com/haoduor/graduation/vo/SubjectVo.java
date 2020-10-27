@@ -18,8 +18,8 @@ public class SubjectVo {
     private int       difficult;
     private Date      createTime;
     private List<Tag> tags;
-    private String    teacherName;
 
     @JSONField(serializeUsing = ToStringSerializer.class)
     private long      teacherId;
+    private String    teacherName;
 }

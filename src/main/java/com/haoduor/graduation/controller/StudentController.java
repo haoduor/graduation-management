@@ -91,6 +91,11 @@ public class StudentController {
     @PostMapping("/add")
     public BaseMessage add(@RequestBody StudentVo vo) {
         if (vo != null) {
+            String id = vo.getStudentId();
+            if (studentFilter.contains(id)) {
+                return new BaseMessage(5, "学号重复");
+            }
+
             StudentDto tmp = null;
             try {
                 tmp = StudentAdapter.studentVoToDto(vo);
@@ -101,6 +106,7 @@ public class StudentController {
             boolean res = userService.addStudentDto(tmp);
 
             if (res) {
+                studentFilter.add(id);
                 return new BaseMessage(1, "添加成功");
             } else {
                 return new BaseMessage(4, "数据库错误");

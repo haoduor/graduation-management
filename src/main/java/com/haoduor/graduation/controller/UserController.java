@@ -54,7 +54,8 @@ public class UserController {
     // 用户更改密码
     @ResponseBody
     @PostMapping("/repass")
-    public BaseMessage resetPassword(String oldPassword, String password) {
+    public BaseMessage resetPassword(@RequestParam String id, @RequestParam String oldPassword,
+                                     @RequestParam String password) {
         return null;
     }
 
