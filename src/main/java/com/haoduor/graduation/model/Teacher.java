@@ -1,10 +1,15 @@
 package com.haoduor.graduation.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
+
 import java.io.Serializable;
 
 public class Teacher implements Serializable {
+    @JSONField(serializeUsing = ToStringSerializer.class)
     private Long userId;
 
+    @JSONField(serializeUsing = ToStringSerializer.class)
     private Long departmentId;
 
     private String name;

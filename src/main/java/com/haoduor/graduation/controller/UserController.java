@@ -1,9 +1,11 @@
 package com.haoduor.graduation.controller;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.crypto.SecureUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.haoduor.graduation.model.Department;
 import com.haoduor.graduation.model.Role;
 import com.haoduor.graduation.model.User;
+import com.haoduor.graduation.service.DepartmentService;
 import com.haoduor.graduation.service.RoleService;
 import com.haoduor.graduation.service.UserService;
 import com.haoduor.graduation.util.EncryptedUtil;
@@ -18,8 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.imageio.plugins.bmp.BMPImageWriteParam;
-
 @Controller
 @RequestMapping("/user")
 public class UserController {
@@ -29,6 +29,9 @@ public class UserController {
 
     @Autowired
     private RoleService roleService;
+
+    @Autowired
+    private DepartmentService departmentService;
 
     @Autowired
     private InfoFactory infoFactory;
@@ -118,7 +121,7 @@ public class UserController {
         Session se = cu.getSession();
         String seUsername = (String) se.getAttribute("username");
         if (StrUtil.isEmpty(seUsername)) {
-            return new DataMessage(2, "未知错误");
+            return new DataMessage(2, "用户未登录");
         }
 
         if (seUsername.equals(username) || cu.hasRole("admin")) {
@@ -134,7 +137,18 @@ public class UserController {
                 se.setAttribute("id", user.getId());
             }
 
-            dm.setData(infoFactory.getDataByRoleAndId(r.getName(), user.getId()));
+            Object tmpData = infoFactory.getDataByRoleAndId(r.getName(), user.getId());
+
+            JSONObject jo = (JSONObject) JSONObject.toJSON(tmpData);
+            Long departmentId = (Long) jo.get("departmentId");
+
+            Department tmpD = departmentService.getDepartmentById(departmentId);
+            if (tmpD != null) {
+                return new DataMessage(4, "数据库出错");
+            }
+
+            jo.put("departmentName", tmpD.getName());
+            dm.setData(jo);
 
             return dm;
         } else {

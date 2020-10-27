@@ -25,7 +25,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         department.setId(snowflake.nextId());
         department.setName(name);
 
-        Department tmp = getDepartment(name);
+        Department tmp = getDepartmentByName(name);
         if (tmp != null) {
             return tmp;
         }
@@ -36,7 +36,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public Department getOrAddDepartment(String name) {
-        Department department = getDepartment(name);
+        Department department = getDepartmentByName(name);
         if (department == null) {
             return addDepartment(name);
         }
@@ -45,9 +45,23 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
-    public Department getDepartment(String name) {
+    public Department getDepartmentByName(String name) {
         DepartmentExample de = new DepartmentExample();
         de.createCriteria().andNameEqualTo(name);
+
+        List<Department> res = departmentMapper.selectByExample(de);
+
+        if (res.size() == 1) {
+            return res.get(0);
+        }
+
+        return null;
+    }
+
+    @Override
+    public Department getDepartmentById(long id) {
+        DepartmentExample de = new DepartmentExample();
+        de.createCriteria().andIdEqualTo(id);
 
         List<Department> res = departmentMapper.selectByExample(de);
 
