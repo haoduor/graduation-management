@@ -143,7 +143,7 @@ public class UserController {
             Long departmentId = (Long) jo.get("departmentId");
 
             Department tmpD = departmentService.getDepartmentById(departmentId);
-            if (tmpD != null) {
+            if (tmpD == null) {
                 return new DataMessage(4, "数据库出错");
             }
 
