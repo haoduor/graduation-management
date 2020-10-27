@@ -1,14 +1,19 @@
 package com.haoduor.graduation.model;
 
+import com.alibaba.fastjson.annotation.JSONField;
+import com.alibaba.fastjson.serializer.ToStringSerializer;
+
 import java.io.Serializable;
 
 public class Student implements Serializable {
+    @JSONField(serializeUsing = ToStringSerializer.class)
     private Long userId;
 
     private String className;
 
     private String name;
 
+    @JSONField(serializeUsing = ToStringSerializer.class)
     private Long departmentId;
 
     private static final long serialVersionUID = -7285024712971552809L;
