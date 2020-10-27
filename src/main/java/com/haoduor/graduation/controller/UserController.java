@@ -45,8 +45,13 @@ public class UserController {
         }
 
         User u = userService.getUserById(id);
+        Role admin = roleService.getAdminRole();
         if (u == null) {
             return new BaseMessage(3, "无效id");
+        }
+
+        if (u.getRoleId().equals(admin.getId())) {
+            return new BaseMessage(5, "无法更改管理员id");
         }
 
         if (userService.setUserPasswordById(id, password, u.getSalt())) {
