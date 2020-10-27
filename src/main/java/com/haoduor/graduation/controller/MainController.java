@@ -90,4 +90,14 @@ public class MainController {
 
         return "redirect:/";
     }
+
+    @GetMapping("/student")
+    public String studentPage() {
+        return "student";
+    }
+
+    @GetMapping("/teacher")
+    public String teacherPage() {
+        return "teacher";
+    }
 }
