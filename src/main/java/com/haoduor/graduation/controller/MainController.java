@@ -88,6 +88,6 @@ public class MainController {
         Subject currentUser = SecurityUtils.getSubject();
         currentUser.logout();
 
-        return "logout";
+        return "redirect:/";
     }
 }
