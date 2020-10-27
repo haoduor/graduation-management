@@ -102,7 +102,7 @@
         });
         await tools.setPage('editMain', '/view/form/none.html');//初始加载页
         await tools.setPage('mainContent', '/view/data/studentTable.html');
-        await tools.setPage('listTool', '/view/listTool.html', {title: '学生用户管理', listToolAddAll: 'block'});
+        await tools.setPage('listTool', '/view/listTool/listTool.html', {title: '学生用户管理', listToolAddAll: 'block'});
         let studentData = await tools.getAxiosData('/student/list?page=1&pageSize=8');//获取数据
         tools.$('#tableDate').innerHTML = await tableModel.getStudentTableData(studentData['data']['data']);//绑定数据
 
@@ -279,7 +279,7 @@
                         tools.setTimeOutP(300, async () => {
                             tools.$('#mainContent').style.opacity = '0';
                         }).then(async val => {
-                            await tools.setPage('listTool', '/view/listTool.html', {
+                            await tools.setPage('listTool', '/view/listTool/listTool.html', {
                                 title: '学生用户管理',
                                 listToolAddAll: 'block'
                             });
@@ -298,7 +298,7 @@
                         tools.setTimeOutP(300, async () => {
                             tools.$('#mainContent').style.opacity = '0';
                         }).then(async val => {
-                            await tools.setPage('listTool', '/view/listTool.html', {
+                            await tools.setPage('listTool', '/view/listTool/listTool.html', {
                                 title: '教师用户管理',
                                 listToolAddAll: 'block'
                             });
@@ -317,7 +317,7 @@
                         tools.setTimeOutP(300, async () => {
                             tools.$('#mainContent').style.opacity = '0';
                         }).then(async val => {
-                            await tools.setPage('listTool', '/view/listTool.html', {
+                            await tools.setPage('listTool', '/view/listTool/listTool.html', {
                                 title: '选题管理',
                                 topicSelect: ['block', 'block']
                             });
@@ -336,7 +336,7 @@
                             tools.$('#mainContent').style.opacity = '0';
                             tools.$('#pagination').style.display = 'none';//翻页隐藏
                         }).then(async val => {
-                            await tools.setPage('listTool', '/view/listTool.html', {title: '公告管理'});
+                            await tools.setPage('listTool', '/view/listTool/listTool.html', {title: '公告管理'});
                             await tools.setPage('mainContent', '/view/data/noticeManage.html');
                             new app().$mount("#mainContent");
                             new app().$mount("#listTool");
@@ -521,6 +521,7 @@
                         if (staticValue.getCurrentPage() == 3) {
                             await tools.setPage('editMain', '/view/form/topicOneImport.html');
                             new app().$mount("#editMain");
+                            staticValue.getThat().$set(staticValue.getThat().topicAdd,'topicTags',[]);//初始化标签列表
                             this.teacherSelectList();//初始化教师列表
                         }
                         //公告添加页面
@@ -925,7 +926,7 @@
                         tools.setTimeOutP(0,()=>{
                             tools.clearCookie('loginUserName');
                         }).then(()=>{
-                            tools.jump('/');
+                            tools.jump('/logout');
                         });
                     }else{
                         this.$message.warning('您已登出该账号,请刷新页面');

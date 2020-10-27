@@ -93,11 +93,11 @@ public class MainController {
 
     @GetMapping("/student")
     public String studentPage() {
-        return "student";
+        return "student/index";
     }
 
     @GetMapping("/teacher")
     public String teacherPage() {
-        return "teacher";
+        return "teacher/index";
     }
 }

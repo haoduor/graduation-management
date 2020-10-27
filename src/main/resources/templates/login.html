@@ -67,8 +67,13 @@
             },
             mounted:function(){
                 //是否登录
-                if(tools.getCookie('loginUserName')!=''){
-                    tools.jump('/admin/manager');
+                let username = tools.getCookie('loginUserName');
+                if(username !=''){
+                    if(username.substr(0,1) == 'A'){
+                        tools.jump('/teacher');
+                    }else{
+                        tools.jump('/student');
+                    }
                 }
             },
             methods: {
@@ -88,11 +93,11 @@
                                         this.$message.success("3秒后将跳转");
                                         tools.setCookie('loginUserName',this.loginForm.username,1);
                                     }).then(val=>{
-                                        if(window.location.href.includes('admin')){
-                                            tools.jump('/manager');
-                                            return;
+                                        if(this.loginForm.username.substr(0,1) == 'A'){
+                                            tools.jump('/teacher');
+                                        }else{
+                                            tools.jump('/student');
                                         }
-                                        tools.jump('/admin/manager');
                                     });
                                 }
                                 if(loginResult['data']['id'] == 3){
