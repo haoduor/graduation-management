@@ -16,6 +16,7 @@ import com.haoduor.graduation.vo.PageMessage;
 import com.haoduor.graduation.vo.SubjectForm;
 import com.haoduor.graduation.vo.SubjectVo;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -64,6 +65,7 @@ public class SubjectController {
     }
 
     @PostMapping("/add")
+    @RequiresRoles("admin")
     public BaseMessage add(@RequestBody SubjectForm subjectForm) {
         SubjectDto dto = null;
 
@@ -73,9 +75,32 @@ public class SubjectController {
             return new BaseMessage(2, "格式化错误");
         }
 
-        boolean res = subjectService.addSubject(dto);
+        if (subjectService.addSubject(dto)) {
+            return new BaseMessage(1, "新增成功");
+        } else {
+            return new BaseMessage(3, "数据库出错");
+        }
+    }
 
-        if (res) {
+    @PostMapping("/teacher/add")
+    @RequiresRoles("teacher")
+    public BaseMessage teacherAdd(@RequestBody SubjectForm subjectForm) {
+        org.apache.shiro.subject.Subject currentUser = SecurityUtils.getSubject();
+
+        SubjectDto dto = null;
+
+        try {
+            dto = SubjectAdapter.SubjectFormToDto(subjectForm);
+        } catch (NumberFormatException e) {
+            return new BaseMessage(2, "格式化错误");
+        }
+
+        Long _id = dto.getTeacherId();
+        if (userUtil.isMe(_id, currentUser)) {
+            return new BaseMessage(3, "无法为其他教师添加课题");
+        }
+
+        if (subjectService.addSubject(dto)) {
             return new BaseMessage(1, "新增成功");
         } else {
             return new BaseMessage(3, "数据库出错");
