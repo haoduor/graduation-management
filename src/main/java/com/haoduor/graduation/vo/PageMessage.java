@@ -1,5 +1,7 @@
 package com.haoduor.graduation.vo;
 
+import com.github.pagehelper.PageInfo;
+import com.sun.org.apache.bcel.internal.classfile.PMGClass;
 import lombok.Data;
 
 /**
@@ -13,4 +15,12 @@ public class PageMessage {
     long totalPage;
     long total;
     Object data;
+
+    public static PageMessage instance(PageInfo pages) {
+        PageMessage pm = new PageMessage();
+        pm.setTotal(pages.getTotal());
+        pm.setNowPage(pages.getPageNum());
+        pm.setTotalPage(pages.getPages());
+        return pm;
+    }
 }
