@@ -1,5 +1,6 @@
 package com.haoduor.graduation.controller;
 
+import cn.hutool.core.convert.Convert;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
@@ -16,6 +17,7 @@ import com.haoduor.graduation.vo.PageMessage;
 import com.haoduor.graduation.vo.SubjectForm;
 import com.haoduor.graduation.vo.SubjectVo;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,17 +117,13 @@ public class SubjectController {
         PageInfo<Subject> pages = new PageInfo<>(subs);
         PageHelper.clearPage();
 
-        PageMessage pm = new PageMessage();
-        pm.setTotal(pages.getTotal());
-        pm.setNowPage(pages.getPageNum());
-        pm.setTotalPage(pages.getPages());
+        PageMessage pm = PageMessage.instance(pages);
 
         List<SubjectVo> vos = new LinkedList<>();
         for (Subject s: subs) {
             List<Tag> tags = tagService.getTagsBySubjectId(s.getId());
 
-            String json = JSONObject.toJSONString(s);
-            SubjectVo vo = JSON.parseObject(json, SubjectVo.class);
+            SubjectVo vo = Convert.convert(SubjectVo.class, s);
 
             Teacher t = teacherService.getTeacherById(s.getTeacherid());
 
@@ -140,6 +138,46 @@ public class SubjectController {
         pm.setData(vos);
         return pm;
     }
+
+    @GetMapping("/teacher/list")
+    public PageMessage teacherSubject(@RequestParam(defaultValue = "1") int page,
+                                      @RequestParam(defaultValue = "30") int pageSize,
+                                      @RequestParam String teacherId) {
+        Long id;
+        try {
+            id = Long.parseLong(teacherId);
+        } catch (NumberFormatException e) {
+            return new PageMessage(2, "教师id格式化错误");
+        }
+
+        PageHelper.startPage(page, pageSize);
+        List<Subject> subs = subjectService.getTeacherSubject(id);
+        PageInfo<Subject> pages = new PageInfo<>(subs);
+        PageHelper.clearPage();
+
+        PageMessage pm = PageMessage.instance(pages);
+
+        List<SubjectVo> vos = new LinkedList<>();
+        for (Subject s: subs) {
+            List<Tag> tags = tagService.getTagsBySubjectId(s.getId());
+
+            SubjectVo vo = Convert.convert(SubjectVo.class, s);
+
+            Teacher t = teacherService.getTeacherById(s.getTeacherid());
+
+            if (t != null) {
+                vo.setTeacherName(t.getName());
+            }
+
+            vo.setTags(tags);
+            vos.add(vo);
+        }
+
+        pm.setData(vos);
+
+        return pm;
+    }
+
 
     @PostMapping("/chose")
     public BaseMessage choseSubject(@RequestParam String subjectId, @RequestParam String studentId) {
