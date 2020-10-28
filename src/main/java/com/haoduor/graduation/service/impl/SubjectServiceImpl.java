@@ -77,6 +77,14 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public List<Subject> getTeacherSubject(long teacherId) {
+        SubjectExample se = new SubjectExample();
+        se.createCriteria().andTeacheridEqualTo(teacherId);
+
+        return subjectMapper.selectByExample(se);
+    }
+
+    @Override
     public Subject getSubjectById(long id) {
         SubjectExample se = new SubjectExample();
         se.createCriteria().andIdEqualTo(id);
