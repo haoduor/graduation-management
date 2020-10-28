@@ -10,6 +10,7 @@ import java.util.List;
 public interface SubjectService {
     public boolean addSubject(SubjectDto subjectDto);
     public List<Subject> getSubject();
+    public List<Subject> getTeacherSubject(long teacherId);
     public Subject getSubjectById(long id);
     public boolean setSubjectById(long id, SubjectDto subjectDto);
     public boolean deleteSubjectById(long id);

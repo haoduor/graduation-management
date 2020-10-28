@@ -43,6 +43,7 @@ public class ShiroConfig {
 
         filterChainDefinitionMap.put("/student", "auth");
         filterChainDefinitionMap.put("/teacher", "auth");
+        filterChainDefinitionMap.put("/user/*", "auth");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 

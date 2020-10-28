@@ -14,6 +14,7 @@ import com.haoduor.graduation.util.UserUtil;
 import com.haoduor.graduation.vo.BaseMessage;
 import com.haoduor.graduation.vo.DataMessage;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,7 @@ public class UserController {
     // 管理员设置(更改)密码
     @ResponseBody
     @PostMapping("/pass")
+    @RequiresRoles("admin")
     public BaseMessage renewPassword(@RequestParam long id, @RequestParam String password) {
         if (StrUtil.isEmpty(password)) {
             return new BaseMessage(2, "密码不能为空");
@@ -90,12 +92,16 @@ public class UserController {
         }
 
         User u = userService.getUserById(dbId);
+
+        if (u == null) {
+            return new BaseMessage(7, "用户不存在");
+        }
+
         String dbpass = u.getPassword();
         String salt = u.getSalt();
-        String tdbpass = EncryptedUtil.encryptedPassword(dbpass, salt);
         String inpass = EncryptedUtil.encryptedPassword(oldPassword, salt);
 
-        if (!tdbpass.equals(inpass)) {
+        if (!dbpass.equals(inpass)) {
             return new BaseMessage(5, "旧密码不符合");
         }
 
