@@ -21,7 +21,7 @@
             </div>
         </div>
         <div class="adminNav">
-            <p class="navTitle"><i class="el-icon-user-solid"></i> 管理端</p>
+            <p class="navTitle"><i class="el-icon-user-solid"></i> 学生端</p>
             <div class="userInformation">
                 <p id="nowUser">当前用户:</p>
                 <el-button class="userLoginOut" @click="loginOut" type="text" icon="el-icon-switch-button">登出</el-button>
@@ -36,12 +36,16 @@
                         <span slot="title">用户信息</span>
                     </el-menu-item>
                     <el-menu-item index="2">
-                        <i class="el-icon-suitcase-1"></i>
+                        <i class="el-icon-document-copy"></i>
                         <span slot="title">课题选择</span>
                     </el-menu-item>
                     <el-menu-item index="3">
-                        <i class="el-icon-suitcase-1"></i>
+                        <i class="el-icon-document-checked"></i>
                         <span slot="title">已选课题</span>
+                    </el-menu-item>
+                    <el-menu-item index="4">
+                        <i class="el-icon-edit-outline"></i>
+                        <span slot="title">修改密码</span>
                     </el-menu-item>
                 </el-menu>
             </el-row>
@@ -94,19 +98,33 @@
             console.log(e);
         }
         await tools.setPage('listTool', './view/listTool/listToolStu.html', { title: '用户信息' });
+        tools.$('#pagination').style.display = 'none';//翻页初始不存在
         var app = Vue.extend({
             data() {
                 return {
+                    //用户信息
                     userInfo:{
-                        data:{
-
-                        }
+                        data:{}
                     },
+                    //分页
                     pageInfo:{
                         pageSize: 8,
                         nowPage:1,
                         totalData: 16,
                     },
+                    //修改密码
+                    changePwd: {
+                        oldPwd:'',
+                        newPwd:''
+                    },
+                    changePwdRule:{
+                        oldPwd:[
+                            { required: true, message: '请输入旧密码', trigger: 'blur' }
+                        ],
+                        newPwd: [
+                            { required: true, message: '请输入新密码', trigger: 'blur' }
+                        ],
+                    }
                 }
             },
             mounted:async function(){
@@ -148,9 +166,10 @@
                 //左栏选择
                 handleSelect(key, keyPath) {
                     staticValue.setCurrentPage(key);//设置当前页面
-                    // tools.$('#pagination').style.display = 'block';//翻页初始存在
+                    tools.$('#pagination').style.display = 'none';//翻页初始不存在
 
                     if (key == 1) {
+                        tools.$('#pagination').style.display = 'none';
                         tools.setTimeOutP(300, async () => {
                             tools.$('#mainContent').style.opacity = '0';
                         }).then(async val => {
@@ -166,9 +185,11 @@
                             new app().$mount("#mainContent");
                             new app().$mount("#listTool");
                             tools.$('#mainContent').style.opacity = '1';
+
                         });
                     }
                     if (key == 2) {
+                        tools.$('#pagination').style.display = 'block';//翻页初始存在
                         tools.setTimeOutP(300, async () => {
                             tools.$('#mainContent').style.opacity = '0';
                         }).then(async val => {
@@ -181,6 +202,28 @@
                             new app().$mount("#listTool");
                             tools.$('#mainContent').style.opacity = '1';
                             this.refreshBtn();
+
+                        });
+                    }
+                    //已选课题
+                    if(key == 3){
+
+                    }
+                    //修改密码
+                    if(key == 4){
+                        tools.$('#pagination').style.display = 'none';
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#mainContent').style.opacity = '0';
+                        }).then(async val => {
+                            await tools.setPage('listTool', './view/listTool/listToolStu.html', { title: '修改密码' });
+
+                            await tools.setPage('mainContent', '/view/data/changePassword.html');
+
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                            this.refreshBtn();
+
                         });
                     }
                 },
@@ -287,7 +330,7 @@
                             studentId: staticValue.getThat().userInfo['data']['userId'],
                         };
                         axios.post('/subject/chose',tools.buildFormData(postData)).then(async val=>{
-                           let id = val['data']['data'];
+                           let id = val['data']['id'];
                            if(id == '1'){
                                this.$message.success('选题成功');
                                let subjectData = await tools.getAxiosData('/subject/list?page=1&pageSize=8');
@@ -302,6 +345,32 @@
                     }else{
                         this.$message.error('id不完整');
                     }
+                },
+                //修改密码
+                changePwdForm(formName){
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            let postData = {
+                                id:staticValue.getThat().userInfo['data']['userId'],
+                                oldPassword:this.changePwd['oldPwd'],
+                                newPassword:this.changePwd['newPwd']
+                            };
+
+                            axios.post('/user/repass',tools.buildFormData(postData)).then(val=>{
+                                let id = val['data']['id'];
+                                if(id == '1'){
+                                    this.$message.success('更改密码成功');
+                                    this.$set(this.changePwd,'oldPwd','');
+                                    this.$set(this.changePwd,'newPwd','');
+                                }else{
+                                    this.$message.error(val['data']['message']);
+                                }
+                            }).catch(err=>{
+                                console.log(err);
+                                this.$message.error('网络错误');
+                            });
+                        }
+                    });
                 },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                      杂                       //
@@ -341,7 +410,7 @@
                     console.log(pageSize)
                     staticValue.getThat().$set(staticValue.getThat().pageInfo,'nowPage',nowPage);
                     staticValue.getThat().$set(staticValue.getThat().pageInfo,'pageSize',pageSize);
-                    staticValue.getThat().$set(staticValue.getThat().pageInfo,'totalData',totalData);
+                    staticValue.getThat().$set(staticValue.getThat().pageInfo,'totalData',parseInt(totalData));
                     staticValue.setPageNumber(nowPage);
                     this.refreshTableItems();
                 },

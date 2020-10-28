@@ -22,3 +22,9 @@
     margin-right: 5rem;
     text-align: right;
 }
+
+/*修改密码*/
+.changePwdDiv{
+    width: 30rem;
+    margin-top: 3rem;
+}

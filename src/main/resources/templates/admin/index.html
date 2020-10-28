@@ -114,7 +114,7 @@
                     pageInfo:{
                         pageSize: 8,
                         nowPage:1,
-                        totalData: studentData['data']['total'],
+                        totalData: parseInt(studentData['data']['total']),
                     },
                     topicTeachers: [
                         {
@@ -648,7 +648,9 @@
                                 if(val['data']['id'] == 4){
                                     this.$message.error("数据库错误");
                                 }
-
+                                if(val['data']['id'] == 5){
+                                    this.$message.error("学号重复");
+                                }
                             }).catch(err=>{
                                 this.$message.error("添加失败");
                             });
@@ -1104,8 +1106,8 @@
                 refreshTables(nowPage,totalData,pageSize){
                     console.log(pageSize)
                     staticValue.getThat().$set(staticValue.getThat().pageInfo,'nowPage',nowPage);
-                    staticValue.getThat().$set(staticValue.getThat().pageInfo,'pageSize',pageSize);
-                    staticValue.getThat().$set(staticValue.getThat().pageInfo,'totalData',totalData);
+                    staticValue.getThat().$set(staticValue.getThat().pageInfo,'pageSize', pageSize);
+                    staticValue.getThat().$set(staticValue.getThat().pageInfo,'totalData',parseInt(totalData));
                     staticValue.setPageNumber(nowPage);
                     this.refreshTableItems();
                 },
