@@ -10,11 +10,21 @@ import lombok.Data;
  * data 数据
  */
 @Data
-public class PageMessage {
+public class PageMessage{
+    long id;
+    String message;
+
     long nowPage;
     long totalPage;
     long total;
     Object data;
+
+    public PageMessage() { }
+
+    public PageMessage(long id, String message) {
+        this.id = id;
+        this.message = message;
+    }
 
     public static PageMessage instance(PageInfo pages) {
         PageMessage pm = new PageMessage();

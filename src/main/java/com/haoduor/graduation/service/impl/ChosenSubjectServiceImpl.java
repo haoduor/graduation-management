@@ -34,9 +34,10 @@ public class ChosenSubjectServiceImpl implements ChosenSubjectService {
     }
 
     @Override
-    public List<ChosenSubject> getTeacherChosen(long teacherId) {
+    public List<ChosenSubject> getChosenByIds(List<Long> subjectIdList) {
         ChosenSubjectExample cse = instance();
-        cse.createCriteria().andSubjectIdEqualTo(teacherId);
+        cse.createCriteria().andSubjectIdIn(subjectIdList);
         return chosenSubjectMapper.selectByExample(cse);
     }
+
 }
