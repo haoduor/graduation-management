@@ -29,7 +29,7 @@ public class TestController {
     }
 
     @ResponseBody
-    @GetMapping("/getURL")
+    @GetMapping("/url")
     public Object getAllUrl() {
         Map<RequestMappingInfo, HandlerMethod> map = mapping.getHandlerMethods();
         List<Map<String, String>> list = new ArrayList<>();
@@ -44,7 +44,8 @@ public class TestController {
             }
 
 //            map1.put("className", method.getMethod().getDeclaringClass().getName()); // 类名
-            mapT.put("method", method.getMethod().getName()); // 方法名
+            // 方法名
+            mapT.put("method", method.getMethod().getName());
 
             RequestMethodsRequestCondition methodsCondition = info.getMethodsCondition();
             for (RequestMethod requestMethod : methodsCondition.getMethods()) {

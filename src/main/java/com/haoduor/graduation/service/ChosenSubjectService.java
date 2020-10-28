@@ -7,5 +7,5 @@ import java.util.List;
 public interface ChosenSubjectService {
     public List<ChosenSubject> getAllChosen();
     public List<ChosenSubject> getStudentChosen(long studentId);
-    public List<ChosenSubject> getTeacherChosen(long teacherId);
+    public List<ChosenSubject> getChosenByIds(List<Long> subjectIdList);
 }

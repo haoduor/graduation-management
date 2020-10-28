@@ -30,4 +30,15 @@ public class UserUtil {
             se.setAttribute("id", u.getId());
         }
     }
+
+    public boolean isMe(Long id, Subject subject) {
+        Session se = subject.getSession();
+        if (se.getAttribute("id") == null) {
+            cacheId(subject);
+        }
+
+        Long seId = (Long) se.getAttribute("id");
+
+        return seId.equals(id);
+    }
 }

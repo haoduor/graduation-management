@@ -37,7 +37,7 @@ public class DruidConfig {
         //建议配置为true，不影响性能，并且保证安全性。
         dataSource.setTestWhileIdle(true);
         //是否缓存preparedStatement，也就是PSCache
-        dataSource.setPoolPreparedStatements(false);
+        dataSource.setPoolPreparedStatements(true);
 
         return dataSource;
     }
