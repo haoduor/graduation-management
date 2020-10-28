@@ -139,12 +139,8 @@
                         let studentInfoData = await tools.getAxiosData(`/user/info/${tools.getCookie("loginUserName")}`);
                         staticValue.getThat().$set(staticValue.getThat().userInfo,'data',studentInfoData['data']['data']);
                         //app this绑定用户已选课题信息
-                        let choseSubjectId = [];
-                        let stuSubjectData = await tools.getAxiosData(`/chosen/student?studentId=${staticValue.getThat().userInfo['data']['userId']}`);
-                        stuSubjectData['data']['data'].forEach(items=>{
-                            choseSubjectId.push(items['id']);
-                        });
-                        staticValue.getThat().$set(staticValue.getThat().userInfo,'choseSubjectId',choseSubjectId);
+                        this.stuChoseSubjectId();
+
                     }else{
                         tools.setTimeOutP(3000,()=>{
                             this.$message.error('请登录,3秒后跳转至登录页');
@@ -350,6 +346,7 @@
                            let id = val['data']['id'];
                            if(id == '1'){
                                this.$message.success('选题成功');
+                               await this.stuChoseSubjectId();
                                let subjectData = await tools.getAxiosData('/subject/list?page=1&pageSize=8');
                                staticValue.getThat().refreshTables(staticValue.getPageNumber(),parseInt(subjectData['data']['total']),8);
                                this.closeEdit();
@@ -403,6 +400,18 @@
                     }else{
                         this.$message.warning('您已登出该账号,请刷新页面');
                     }
+                },
+                //app this绑定用户已选课题信息
+                stuChoseSubjectId(){
+                    return new Promise(async (resolve,reject)=>{
+                        let choseSubjectId = [];
+                        let stuSubjectData = await tools.getAxiosData(`/chosen/student?studentId=${staticValue.getThat().userInfo['data']['userId']}`);
+                        stuSubjectData['data']['data'].forEach(items=>{
+                            choseSubjectId.push(items['id']);
+                        });
+                        staticValue.getThat().$set(staticValue.getThat().userInfo,'choseSubjectId',choseSubjectId);
+                        resolve('获取结束');
+                    });
                 },
                 //刷新按钮
                 async refreshBtn(){

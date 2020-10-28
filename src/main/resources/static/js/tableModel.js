@@ -164,7 +164,6 @@ const tableModel = (() =>{
                     });
                     //是否选中
                     let choseBtn = `<el-button @click="showEdit('${items['id']}')" type="text" icon="el-icon-s-order">选择课题</el-button>`;
-                    console.log(choseId);
                     choseId.forEach(id=>{
 
                         if(items['id'] == id){
