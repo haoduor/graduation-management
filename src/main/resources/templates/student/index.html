@@ -104,7 +104,8 @@
                 return {
                     //用户信息
                     userInfo:{
-                        data:{}
+                        data:{},
+                        choseSubjectId:[]
                     },
                     //分页
                     pageInfo:{
@@ -131,6 +132,26 @@
                 //入口this
                 if(this['$el'].getAttribute('id') == 'app'){
                     staticValue.setThat(this);
+                    //获取当前登录的用户
+                    if(tools.getCookie("loginUserName") != ''){
+                        tools.$('#nowUser').innerHTML = '当前用户:' + tools.getCookie("loginUserName");
+                        //app this绑定用户信息
+                        let studentInfoData = await tools.getAxiosData(`/user/info/${tools.getCookie("loginUserName")}`);
+                        staticValue.getThat().$set(staticValue.getThat().userInfo,'data',studentInfoData['data']['data']);
+                        //app this绑定用户已选课题信息
+                        let choseSubjectId = [];
+                        let stuSubjectData = await tools.getAxiosData(`/chosen/student?studentId=${staticValue.getThat().userInfo['data']['userId']}`);
+                        stuSubjectData['data']['data'].forEach(items=>{
+                            choseSubjectId.push(items['id']);
+                        });
+                        staticValue.getThat().$set(staticValue.getThat().userInfo,'choseSubjectId',choseSubjectId);
+                    }else{
+                        tools.setTimeOutP(3000,()=>{
+                            this.$message.error('请登录,3秒后跳转至登录页');
+                        }).then(()=>{
+                            tools.jump('/');
+                        });
+                    }
                 }
                 //主页this
                 if(this['$el'].getAttribute('id') == 'mainContent'){
@@ -144,23 +165,6 @@
                 if(this['$el'].getAttribute('id') == 'editMain'){
                     staticValue.setEditMainThis(this);
                 }
-
-
-                //获取当前登录的用户
-                if(tools.getCookie("loginUserName") != ''){
-                    tools.$('#nowUser').innerHTML = '当前用户:' + tools.getCookie("loginUserName");
-                    //app this绑定信息
-                    let studentInfoData = await tools.getAxiosData(`/user/info/${tools.getCookie("loginUserName")}`);
-                    staticValue.getThat().$set(staticValue.getThat().userInfo,'data',studentInfoData['data']['data']);
-                }else{
-                    tools.setTimeOutP(3000,()=>{
-                        this.$message.error('请登录,3秒后跳转至登录页');
-                    }).then(()=>{
-                        tools.jump('/');
-                    });
-                }
-
-
             },
             methods: {
                 //左栏选择
@@ -197,7 +201,7 @@
 
                             await tools.setPage('mainContent', '/view/data/student/choseSubject.html');
                             let subjectData = await tools.getAxiosData('/subject/list?page=1&pageSize=8');
-                            tools.$('#tableDate').innerHTML = await tableModel.getStuTopicTableData(subjectData['data']['data']);
+                            tools.$('#tableDate').innerHTML = await tableModel.getStuTopicTableData(subjectData['data']['data'],staticValue.getThat().userInfo['choseSubjectId']);
                             new app().$mount("#mainContent");
                             new app().$mount("#listTool");
                             tools.$('#mainContent').style.opacity = '1';
@@ -207,7 +211,20 @@
                     }
                     //已选课题
                     if(key == 3){
+                        tools.$('#pagination').style.display = 'none';
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#mainContent').style.opacity = '0';
+                        }).then(async val => {
+                            await tools.setPage('listTool', './view/listTool/listToolStu.html', { title: '已选课题' });
 
+                            await tools.setPage('mainContent', '/view/data/student/stuChoseSubject.html');
+                            let mySubjectData = await tools.getAxiosData(`/chosen/student?studentId=${staticValue.getThat().userInfo['data']['userId']}`);
+                            tools.$('#tableDate').innerHTML = await tableModel.getMyTopicTableData(mySubjectData['data']['data']);
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                            this.refreshBtn();
+                        });
                     }
                     //修改密码
                     if(key == 4){
@@ -401,7 +418,7 @@
                     //教师页刷新
                     if(staticValue.getCurrentPage() == '2'){
                         let subjectData = await tools.getAxiosData(`/subject/list?page=${staticValue.getPageNumber()}&pageSize=8`);
-                        tools.$('#tableDate').innerHTML = await tableModel.getStuTopicTableData(subjectData['data']['data']);
+                        tools.$('#tableDate').innerHTML = await tableModel.getStuTopicTableData(subjectData['data']['data'],staticValue.getThat().userInfo['choseSubjectId']);
                     }
                     new app().$mount("#mainContent");
                 },

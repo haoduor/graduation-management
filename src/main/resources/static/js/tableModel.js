@@ -75,7 +75,8 @@ const tableModel = (() =>{
                         <p class="nmDate">${dataTime}</p>
                         <div class="nmDate" 
                         style="display: flex;
-                        flex-flow: row wrap;">${dataTag}</div>
+                        flex-flow: row wrap;
+                        justify-content: center;">${dataTag}</div>
                         <p class="nmDate">${items['teacherName']}</p>                        
                         <div class="staticDate" 
                         style="display: flex;
@@ -149,12 +150,64 @@ const tableModel = (() =>{
         },
         //学生端
         //选题表行
-        getStuTopicTableData(data){
+        getStuTopicTableData(data,choseId){
             let html = '';
             return new Promise((resolve,reject)=> {
                 data.forEach((items, index) => {
                     let dataDifficulty = items['difficult'] == '0'?'容易':items['difficult'] == '1'?'普通':items['difficult'] == '2'?'困难':'?';//难度
                     let dataTime =tools.dateFormat(new Date(parseInt(items['createTime'])),'yyyy-MM-dd hh:mm:ss');//时间
+                    let dataTag = ``;//标签
+                    items['tags'].forEach((items, index)=>{
+                        dataTag += `
+                            <div class="nmTag">${items['name']}</div>
+                        `;
+                    });
+                    //是否选中
+                    let choseBtn = `<el-button @click="showEdit('${items['id']}')" type="text" icon="el-icon-s-order">选择课题</el-button>`;
+                    console.log(choseId);
+                    choseId.forEach(id=>{
+
+                        if(items['id'] == id){
+                            choseBtn = `<el-button @click="showEdit('${items['id']}')" type="text" disabled icon="el-icon-s-order">选择课题</el-button>`;
+                            return;
+                        }
+                    });
+                    let dataColumn = `
+                    <div class="dateColumn">
+                        <p class="nmDate">${items['title']}</p>
+                        <p class="nmDate">${items['source']}</p>
+                        <p class="nmDate">${items['content']}</p>
+                        <p class="nmDate">${dataDifficulty}</p>
+                        <p class="nmDate">${dataTime}</p>
+                        <div class="nmDate" 
+                        style="display: flex;
+                        flex-flow: row wrap;
+                        justify-content: center;">${dataTag}</div>
+                        <p class="nmDate">${items['teacherName']}</p>                        
+                        <div class="staticDate" 
+                        style="display: flex;
+                        flex-flow: row wrap;
+                        justify-content: center;
+                        width: 200px;">
+                                ${choseBtn}                    
+                        </div>
+                     </div>
+                    `;
+                    html += dataColumn;
+                });
+                if(html != null){
+                    resolve(html);
+                }else{
+                    resolve('空页面');
+                }
+            });
+        },
+        //我的选题表行
+        getMyTopicTableData(data){
+            let html = '';
+            return new Promise((resolve,reject)=> {
+                data.forEach((items, index) => {
+                    let dataDifficulty = items['difficult'] == '0'?'容易':items['difficult'] == '1'?'普通':items['difficult'] == '2'?'困难':'?';//难度
                     let dataTag = ``;//标签
                     items['tags'].forEach((items, index)=>{
                         dataTag += `
@@ -168,18 +221,11 @@ const tableModel = (() =>{
                         <p class="nmDate">${items['source']}</p>
                         <p class="nmDate">${items['content']}</p>
                         <p class="nmDate">${dataDifficulty}</p>
-                        <p class="nmDate">${dataTime}</p>
                         <div class="nmDate" 
                         style="display: flex;
-                        flex-flow: row wrap;">${dataTag}</div>
-                        <p class="nmDate">${items['teacherName']}</p>                        
-                        <div class="staticDate" 
-                        style="display: flex;
                         flex-flow: row wrap;
-                        justify-content: center;
-                        width: 200px;">
-                            <el-button @click="showEdit('${items['id']}')" type="text" icon="el-icon-s-order">选择课题</el-button>                          
-                        </div>
+                        justify-content: center;">${dataTag}</div>
+                        <p class="nmDate">${items['teacherName']}</p>                     
                      </div>
                     `;
                     html += dataColumn;
