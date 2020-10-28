@@ -1,6 +1,7 @@
 package com.haoduor.graduation.controller;
 
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
@@ -111,7 +112,12 @@ public class SubjectController {
 
     @GetMapping("/list")
     public PageMessage list(@RequestParam(defaultValue = "1") int page,
-                            @RequestParam(defaultValue = "30") int pageSize) {
+                            @RequestParam(defaultValue = "30") int pageSize,
+                            @RequestParam(required = false) String teacherId) {
+        if (!StrUtil.isEmpty(teacherId)) {
+            return teacherSubject(page, pageSize, teacherId);
+        }
+
         PageHelper.startPage(page, pageSize);
         List<Subject> subs = subjectService.getSubject();
         PageInfo<Subject> pages = new PageInfo<>(subs);
