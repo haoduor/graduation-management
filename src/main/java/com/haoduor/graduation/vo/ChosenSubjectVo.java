@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class ChosenSubjectVo extends SubjectVo {
-    @JSONField(serializeUsing = ToStringSerializer.class)
     private long studentId;
     private String studentName;
 }
