@@ -1,0 +1,26 @@
+<el-form style="margin-right: 2rem" :model="topicEdit" status-icon ref="topicEdit"  label-width="5rem" >
+    <el-form-item prop="topicId" label="选题标题:" label-position="left">
+        <el-input id="topicId" v-model="topicEdit.topicId" clearable></el-input>
+        <span class="inputRule" id="topicIdRule">请输入选题标题</span>
+    </el-form-item>
+    <el-form-item prop="topicContent" label="选题内容:" label-position="left">
+        <el-input id="topicContent"  type="textarea" v-model="topicEdit.topicContent" clearable></el-input>
+        <span class="inputRule" id="topicContentRule">请输入选题内容</span>
+    </el-form-item>
+    <el-form-item prop="topicDifficult" label="难度选择:" label-position="left">
+        <el-select id="topicDifficult" v-model="topicEdit.topicDifficult" placeholder="请选择难度">
+            <el-option label="容易" value="0"></el-option>
+            <el-option label="普通" value="1"></el-option>
+            <el-option label="困难" value="2"></el-option>
+        </el-select>
+    </el-form-item>
+    <el-form-item prop="topicSource" label="选题来源:" label-position="left">
+        <el-input id="topicSource" v-model="topicEdit.topicSource" clearable></el-input>
+        <span class="inputRule" id="topicSourceRule">请输入选题来源</span>
+    </el-form-item>
+
+    <el-form-item>
+        <el-button type="primary" @click="topicEditForm('topicEdit')" icon="el-icon-edit">编辑</el-button>
+        <el-button class="editClose" @click="closeEdit" type="primary" icon="el-icon-switch-button">关闭</el-button>
+    </el-form-item>
+</el-form>

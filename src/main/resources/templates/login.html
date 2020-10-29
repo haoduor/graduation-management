@@ -69,11 +69,7 @@
                 //是否登录
                 let username = tools.getCookie('loginUserName');
                 if(username !=''){
-                    if(username.substr(0,1) == 'A'){
-                        tools.jump('/teacher');
-                    }else{
-                        tools.jump('/student');
-                    }
+                    tools.jump('/');
                 }
             },
             methods: {
@@ -93,11 +89,7 @@
                                         this.$message.success("3秒后将跳转");
                                         tools.setCookie('loginUserName',this.loginForm.username,1);
                                     }).then(val=>{
-                                        if(this.loginForm.username.substr(0,1) == 'A'){
-                                            tools.jump('/teacher');
-                                        }else{
-                                            tools.jump('/student');
-                                        }
+                                        tools.jump('/');
                                     });
                                 }
                                 if(loginResult['data']['id'] == 3){

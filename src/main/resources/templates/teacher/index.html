@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="/css/teacher/index.css">
     <link rel="stylesheet" href="/css/student/index.css">
+    <link rel="stylesheet" href="/css/admin/index.css">
     <link rel="stylesheet" href="./css/globel.css">
     <link rel="stylesheet" href="./css/element.css">
     <link rel="stylesheet" href="./css/frame.css">
@@ -38,6 +40,10 @@
                 <el-menu-item index="2">
                     <i class="el-icon-document-copy"></i>
                     <span slot="title">拥有的选题</span>
+                </el-menu-item>
+                <el-menu-item index="5">
+                    <i class="el-icon-s-custom"></i>
+                    <span slot="title">学生选题审核</span>
                 </el-menu-item>
                 <el-menu-item index="3">
                     <i class="el-icon-s-custom"></i>
@@ -79,7 +85,8 @@
     //设置工具栏默认显示
     tools.setDefaultPage({
         title: '标题',
-        teacherInfo:['','','']
+        teacherInfo:['','',''],
+        addBtn:'none'
     });
 
     (async () => {
@@ -122,13 +129,51 @@
                         newPwd: [
                             { required: true, message: '请输入新密码', trigger: 'blur' }
                         ],
-                    }
+                    },
+
+                    //选题
+                    topicAdd:{
+                        topicId:'',
+                        topicContent:'',
+                        topicDifficult:'',
+                        topicSource:'',
+                        topicTags:[],
+                        topicOneTag:''
+                    },
+                    topicAddRule:{
+
+                    },
+                    topicTagEdit:{
+                        topicTags:[],
+                        topicOneTag:''
+                    },
+                    // 编辑选题
+                    topicEdit:{
+                        topicId:'',
+                        topicContent:'',
+                        topicDifficult:'',
+                        topicSource:'',
+                    },
                 }
             },
             mounted:async function(){
                 //入口this
                 if(this['$el'].getAttribute('id') == 'app'){
                     staticValue.setThat(this);
+                    //获取当前登录的用户
+                    if(tools.getCookie("loginUserName") != ''){
+                        tools.$('#nowUser').innerHTML = '当前用户:' + tools.getCookie("loginUserName");
+                        //app this绑定信息
+                        let teacherInfoData = await tools.getAxiosData(`/user/info/${tools.getCookie("loginUserName")}`);
+                        staticValue.getThat().$set(staticValue.getThat().userInfo,'data',teacherInfoData['data']['data']);
+                        tools.$('#pagination').style.display = 'none';//翻页初始不存在
+                    }else{
+                        tools.setTimeOutP(3000,()=>{
+                            this.$message.error('请登录,3秒后跳转至登录页');
+                        }).then(()=>{
+                            tools.jump('/');
+                        });
+                    }
                 }
                 //主页this
                 if(this['$el'].getAttribute('id') == 'mainContent'){
@@ -142,33 +187,15 @@
                 if(this['$el'].getAttribute('id') == 'editMain'){
                     staticValue.setEditMainThis(this);
                 }
-
-
-                //获取当前登录的用户
-                if(tools.getCookie("loginUserName") != ''){
-                    tools.$('#nowUser').innerHTML = '当前用户:' + tools.getCookie("loginUserName");
-                    //app this绑定信息
-                    let teacherInfoData = await tools.getAxiosData(`/user/info/${tools.getCookie("loginUserName")}`);
-                    staticValue.getThat().$set(staticValue.getThat().userInfo,'data',teacherInfoData['data']['data']);
-                }else{
-                    tools.setTimeOutP(3000,()=>{
-                        this.$message.error('请登录,3秒后跳转至登录页');
-                    }).then(()=>{
-                        tools.jump('/');
-                    });
-                }
-
-
             },
             methods: {
                 //左栏选择
                 handleSelect(key, keyPath) {
                     staticValue.setCurrentPage(key);//设置当前页面
-                    // tools.$('#pagination').style.display = 'block';//翻页初始存在
-
                     if (key == 1) {
                         tools.setTimeOutP(300, async () => {
                             tools.$('#mainContent').style.opacity = '0';
+                            tools.$('#pagination').style.display = 'none';
                         }).then(async val => {
                             await tools.setPage('listTool', './view/listTool/listToolTea.html', { title: '用户信息' });
                             await tools.setPage('mainContent', './view/data/teacher/teacherInfo.html',
@@ -184,16 +211,37 @@
                             tools.$('#mainContent').style.opacity = '1';
                         });
                     }
+                    //拥有的课题
                     if (key == 2) {
 
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#mainContent').style.opacity = '0';
+                            tools.$('#pagination').style.display = 'block';
+                        }).then(async val => {
+                            await tools.setPage('listTool', '/view/listTool/listToolTea.html', {
+                                title: '拥有的课题',
+                                addBtn:'block'
+                            });
+                            await tools.setPage('mainContent', '/view/data/teacher/teaTopicTable.html');
+                            let subjectData = await tools.getAxiosData(`/subject/list?page=1&pageSize=6&teacherId=${staticValue.getThat().userInfo['data']['userId']}`);
+                            tools.$('#tableDate').innerHTML = await tableModel.getTeaTopicTableData(subjectData['data']['data']);
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                            this.refreshTables(1,subjectData['data']['total'],6);
+
+                        });
                     }
+                    //我的学生
                     if(key == 3){
 
                     }
                     //修改密码
                     if(key == 4){
+
                         tools.setTimeOutP(300, async () => {
                             tools.$('#mainContent').style.opacity = '0';
+                            tools.$('#pagination').style.display = 'none';
                         }).then(async val => {
                             await tools.setPage('listTool', './view/listTool/listToolTea.html', { title: '修改密码' });
 
@@ -205,6 +253,25 @@
                             this.refreshBtn();
                         });
                     }
+                    //学生选题审核
+                    if(key == 5){
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#mainContent').style.opacity = '0';
+                            tools.$('#pagination').style.display = 'block';
+                        }).then(async val => {
+                            await tools.setPage('listTool', '/view/listTool/listToolTea.html', {
+                                title: '学生选题审核',
+                            });
+                            await tools.setPage('mainContent', '/view/data/teacher/stuAndSubject.html');
+                            let subjectData = await tools.getAxiosData(`/chosen/teacher?teacherId=${staticValue.getThat().userInfo['data']['userId']}&page=1&pageSize=6`);
+                            tools.$('#tableDate').innerHTML = await tableModel.getStuAndSubject(subjectData['data']['data']);
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                            this.refreshTables(1,subjectData['data']['total'],6);
+
+                        });
+                    }
                 },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                   编辑页面                     //
@@ -212,12 +279,83 @@
                 //编辑页面
                 showEdit(data = '',index = '1') {
                     staticValue.setChoseId(data);
+
                     tools.setTimeOutP(0, async () => {
                         tools.$('#editMark').style.display = 'block';
 
-                        //选择课题
+                        //教师的选题
                         if (staticValue.getCurrentPage() == 2) {
+                            staticValue.setChoseId(data);//设置id
+                            //编辑选题
+                            if(index == 1){
 
+                                await tools.setPage('editMain', '/view/form/teacher/topicOneEdit.html');
+                                new app().$mount('#editMain');
+                                // 初始化数据,数据为默认选中的数据
+                                let subjectData = await tools.getAxiosData(`/subject/list?page=${staticValue.getPageNumber()}&pageSize=6&teacherId=${staticValue.getThat().userInfo['data']['userId']}`);
+                                subjectData['data']['data'].forEach((items,index)=>{
+                                    if(items['id'] === staticValue.getChoseId()){
+                                        let dataDifficulty = items['difficult'] == '0'?'容易':items['difficult'] == '1'?'普通':items['difficult'] == '2'?'困难':'?';//难度
+                                        tools.$('#topicId').value = items['title'];
+                                        tools.$('#topicContent').value =  items['content'];
+                                        tools.$('#topicSource').value =  items['source'];
+                                        tools.$('#topicDifficult').value =  dataDifficulty;
+                                        tools.$('#topicDifficult').setAttribute('defaultDifficult',items['difficult']);//设置默认难度
+                                        tools.inputIsNull('#topicId','blur');//判空校验
+                                        tools.inputIsNull('#topicContent','blur');//判空校验
+                                        tools.inputIsNull('#topicSource','blur');//判空校验
+                                    }
+                                });
+                            }
+                            //编辑标签
+                            if(index == 2){
+                                await tools.setPage('editMain', '/view/form/topicTagEdit.html');
+                                new app().$mount('#editMain');
+
+                                //初始化
+                                let tipData = await tools.getAxiosData(`/tag/list?subjectId=${staticValue.getChoseId()}`);
+                                staticValue.getThat().$set(staticValue.getThat().topicTagEdit,'topicTags',tipData['data']['data'])
+                                let tagsArr = staticValue.getThat().topicTagEdit['topicTags'];//标签数组
+                                staticValue.getThat().topicTagEdit['topicTags'].forEach((items, index)=>{
+                                    //添加小标签
+                                    let tagDiv=document.createElement("div");
+                                    tagDiv.className = 'nmTag';
+                                    tagDiv.innerHTML = `${items['name']}
+                                                <div id="removeTag_${items['id'].toString()}" class="nmTagDelete" val="${items['name']}">
+                                                    <i class="el-icon-close"></i>
+                                                </div>`;
+                                    tools.$(`#topicTagsExit`).appendChild(tagDiv);
+                                    //添加标签删除功能
+                                    tools.$(`#removeTag_${items['id'].toString()}`).addEventListener('click',function(){
+                                        axios.post('/tag/delete',tools.buildFormData({tagId:items['id'].toString(),subjectId:staticValue.getChoseId()})).then(val=>{
+                                            let id = val['data']['id'];
+                                            if(id == 1){
+                                                staticValue.getThat().$message.success("删除成功");
+                                                //删除数组的值
+                                                tagsArr.forEach((items,index)=>{
+                                                    if(items['value'] == this.getAttribute('val') || items['name'] == this.getAttribute('val') ){
+                                                        delete tagsArr[index];
+                                                    }
+                                                });
+                                                this.parentNode.parentNode.removeChild(this.parentNode);//删除节点
+                                            }
+                                            if(id == 2){
+                                                this.$message.error("格式化错误");
+                                            }
+                                            if(id == 3){
+                                                this.$message.error("数据库错误");
+                                            }
+                                        });
+                                    });
+                                });
+                            }
+                        }
+
+                        //学生选题审核
+                        if(staticValue.getCurrentPage() == 5){
+                            console.log(data);
+                            await tools.setPage('editMain', '/view/form/teacher/stuAndSubject.html');
+                            new app().$mount("#editMain");
                         }
 
                     }).then(val => {
@@ -253,9 +391,11 @@
                     tools.setTimeOutP(0, async () => {
                         tools.$('#editMark').style.display = 'block';
 
-
+                        //添加教师的题目
                         if (staticValue.getCurrentPage() == 2) {
-
+                            await tools.setPage('editMain', '/view/form/teacher/topicOneImport.html');
+                            new app().$mount("#editMain");
+                            staticValue.getThat().$set(staticValue.getThat().topicAdd,'topicTags',[]);//初始化标签列表
                         }
 
                     }).then(val => {
@@ -295,7 +435,91 @@
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                    表单提交                    //
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //编辑教师的选题
+                topicEditForm(){
+                    console.log(staticValue.getThat().userInfo);
+                    console.log(staticValue.getEditMainThis().topicEdit);
+                    let teacherId = staticValue.getThat().userInfo['data']['userId'];
+                    let difficult = staticValue.getEditMainThis().topicEdit['topicDifficult']?staticValue.getEditMainThis().topicEdit['topicDifficult']:tools.$('#topicDifficult').getAttribute('defaultDifficult');
 
+                    if(tools.inputIsNullValue('#topicId')
+                        &&tools.inputIsNullValue('#topicContent')
+                        &&tools.inputIsNullValue('#topicSource')){
+                        let postData = {
+                            title:tools.$('#topicId').value,
+                            content:tools.$('#topicContent').value,
+                            teacherId:teacherId,
+                            source:tools.$('#topicSource').value,
+                            difficult:parseInt(difficult)
+                        };
+                        console.log(postData);
+                        axios.post(`/subject/set?id=${staticValue.getChoseId()}`, postData).then(val=>{
+                            let id = val['data']['id'];
+                            if(id == '1'){
+                                this.$message.success("修改成功");
+                                this.refreshTableItems();
+                                this.closeEdit();
+                            }
+                            if(id == '2'){
+                                this.$message.error("修改失败,格式化错误");
+                            }
+                            if(id == '3'){
+                                this.$message.error("修改失败,数据库错误");
+                            }
+                        }).catch(err=>{
+                            this.$message.error("修改失败,网络错误");
+                        });
+                    }else{
+                        this.$message.error("请填写完整信息");
+                    }
+                },
+                //编辑选题标签
+                topicTagEditForm(){
+                    this.$message.success("这个当然也没用,关了吧")
+                    console.log(staticValue.getThat().topicTagEdit['topicTags']);
+                },
+                //选题添加表单
+                topicAddForm(formName){
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            let tipArr = [];//所有的标签
+                            let teacherId = staticValue.getThat().userInfo['data']['userId'];
+                            console.log(staticValue.getThat().topicAdd.topicTags);
+                            for(let key in staticValue.getThat().topicAdd.topicTags)
+                            {
+                                tipArr.push( staticValue.getThat().topicAdd.topicTags[key]['value']);
+                            }
+                            let topicData={
+                                title:this.topicAdd['topicId'],
+                                content:this.topicAdd['topicContent'],
+                                teacherId:teacherId,
+                                difficult:this.topicAdd['topicDifficult'],
+                                source:this.topicAdd['topicSource'],
+                                tags:tipArr
+                            }
+                            axios.post('/subject/teacher/add', topicData).then(val=>{
+                                const id = val['data']['id'];
+                                if(id == 1){
+                                    this.$message.success("选题添加成功");
+                                    this.closeEditAndRefresh();//关闭并刷新
+                                }
+                                if(id == 2){
+                                    this.$message.error("格式化错误");
+                                    console.log(this.topicAdd.topicTags);
+                                }
+                                if(id == 3){
+                                    this.$message.error("数据库出错");
+                                }
+                            }).catch(err=>{
+                                this.$message.error("选题添加失败")
+                            });
+                        }
+                    });
+                },
+                //审核学生
+                choseStudent(){
+
+                },
                 //修改密码
                 changePwdForm(formName){
                     this.$refs[formName].validate((valid) => {
@@ -326,6 +550,114 @@
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                      杂                       //
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //选题和编辑标题添加标签
+                addTags(elementId,tagValueSource,isEdit = false){
+                    let tagValue =  this[tagValueSource].topicOneTag;
+                    if(tagValue){
+                        let isRepeat = false;//判断是否重复
+                        staticValue.getThat()[tagValueSource].topicTags.forEach((items,index)=>{
+                            if(items['value'] == tagValue || items['name'] == tagValue){
+                                this.$message.error("请不要添加重复的标签");
+                                isRepeat = true;
+                            }
+                        })
+                        if(!isRepeat){
+                            //如果是编辑页的添加
+                            if(isEdit){
+                                console.log(staticValue.getChoseId());
+                                axios.post('/tag/add',tools.buildFormData({tagName:tagValue,subjectId:staticValue.getChoseId()})).then(async val=>{
+                                    let id = val['data']['id'];
+                                    if(id == 1){
+                                        this.$message.success("插入成功");
+                                        tools.$(`#topicTagsExit`).innerHTML = '';//清空
+                                        console.log('asd');
+                                        //初始化
+                                        let tipData = await tools.getAxiosData(`/tag/list?subjectId=${staticValue.getChoseId()}`);
+                                        staticValue.getThat().$set(staticValue.getThat().topicTagEdit,'topicTags',tipData['data']['data'])
+                                        let tagsArr = staticValue.getThat().topicTagEdit['topicTags'];//标签数组
+                                        staticValue.getThat().topicTagEdit['topicTags'].forEach((items, index)=>{
+                                            //添加小标签
+                                            let tagDiv=document.createElement("div");
+                                            tagDiv.className = 'nmTag';
+                                            tagDiv.innerHTML = `${items['name']}
+                                                <div id="removeTag_${items['id'].toString()}" class="nmTagDelete" val="${items['name']}">
+                                                    <i class="el-icon-close"></i>
+                                                </div>`;
+                                            tools.$(`#topicTagsExit`).appendChild(tagDiv);
+                                            //添加标签删除功能
+                                            tools.$(`#removeTag_${items['id'].toString()}`).addEventListener('click',function(){
+                                                axios.post('/tag/delete',tools.buildFormData({tagId:items['id'].toString(),subjectId:staticValue.getChoseId()})).then(val=>{
+                                                    let id = val['data']['id'];
+                                                    if(id == 1){
+                                                        staticValue.getThat().$message.success("删除成功");
+                                                        //删除数组的值
+                                                        tagsArr.forEach((items,index)=>{
+                                                            if(items['value'] == this.getAttribute('val') || items['name'] == this.getAttribute('val') ){
+                                                                delete tagsArr[index];
+                                                            }
+                                                        });
+                                                        this.parentNode.parentNode.removeChild(this.parentNode);//删除节点
+                                                    }
+                                                    if(id == 2){
+                                                        this.$message.error("格式化错误");
+                                                    }
+                                                    if(id == 3){
+                                                        this.$message.error("数据库错误");
+                                                    }
+                                                });
+                                            });
+                                        });
+
+                                    }
+                                    if(id == 2){
+                                        this.$message.error("id格式化错误");
+                                    }
+                                    if(id == 3){
+                                        this.$message.error("无效课题id");
+                                    }
+                                    if(id == 4){
+                                        this.$message.error("标签名不能为空");
+                                    }
+                                    if(id == 5){
+                                        this.$message.error("数据库错误");
+                                    }
+
+                                }).catch(err=>{
+                                    console.log(err);
+                                    this.$message.error('网络异常');
+                                });
+                            }else{
+                                //数组插入标签
+                                let tagsArr =staticValue.getThat()[tagValueSource].topicTags;
+                                tagsArr.push({
+                                    value:tagValue
+                                });
+                                //添加小标签
+                                let tagDiv=document.createElement("div");
+                                tagDiv.className = 'nmTag';
+                                tagDiv.innerHTML = `${tagValue}
+                                                    <div id="removeTag_${tagValue}" class="nmTagDelete" val="${tagValue}">
+                                                        <i class="el-icon-close"></i>
+                                                    </div>`;
+                                tools.$(`#${elementId}`).appendChild(tagDiv);
+
+                                //添加标签删除功能
+                                tools.$(`#removeTag_${tagValue}`).addEventListener('click',function () {
+                                    //删除数组的值
+                                    tagsArr.forEach((items,index)=>{
+                                        if(items['value'] == this.getAttribute('val') || items['name'] == this.getAttribute('val') ){
+                                            delete tagsArr[index];
+                                        }
+                                    });
+                                    this.parentNode.parentNode.removeChild(this.parentNode);//删除节点
+                                });
+                            }
+                        }
+                        this.$set(this[tagValueSource],'topicOneTag','');
+                    }else{
+                        this.$message.error("添加的标签内容不能为空");
+                    }
+                },
                 //登出
                 loginOut(){
                     if(tools.getCookie('loginUserName') != ''){
@@ -340,12 +672,28 @@
                 },
                 //刷新按钮
                 async refreshBtn(){
-
+                    //教师题目页刷新
+                    if(staticValue.getCurrentPage() == '2'){
+                        let subjectData = await tools.getAxiosData(`/subject/list?page=1&pageSize=6&teacherId=${staticValue.getThat().userInfo['data']['userId']}`);
+                        staticValue.getThat().refreshTables(1,subjectData['data']['total'],6);
+                    }
+                    if(staticValue.getCurrentPage() == '5') {
+                        let subjectData = await tools.getAxiosData(`/chosen/teacher?teacherId=${staticValue.getThat().userInfo['data']['userId']}&page=1&pageSize=6`);
+                        staticValue.getThat().refreshTables(1,subjectData['data']['total'],6);
+                    }
                     this.$message('刷新成功');
                 },
                 //单页面刷新
                 async refreshTableItems() {
-
+                    //教师题目页刷新
+                    if(staticValue.getCurrentPage() == '2'){
+                        let subjectData = await tools.getAxiosData(`/subject/list?page=${staticValue.getPageNumber()}&pageSize=6&teacherId=${staticValue.getThat().userInfo['data']['userId']}`);
+                        tools.$('#tableDate').innerHTML = await tableModel.getTeaTopicTableData(subjectData['data']['data']);
+                    }
+                    if(staticValue.getCurrentPage() == '5') {
+                        let subjectData = await tools.getAxiosData(`/chosen/teacher?teacherId=${staticValue.getThat().userInfo['data']['userId']}&page=${staticValue.getPageNumber()}&pageSize=6`);
+                        tools.$('#tableDate').innerHTML = await tableModel.getStuAndSubject(subjectData['data']['data']);
+                    }
                     new app().$mount("#mainContent");
                 },
                 //切换页面刷新

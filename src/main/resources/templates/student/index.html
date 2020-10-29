@@ -134,6 +134,7 @@
                     staticValue.setThat(this);
                     //获取当前登录的用户
                     if(tools.getCookie("loginUserName") != ''){
+                        tools.$('#pagination').style.display = 'none';//翻页初始不存在
                         tools.$('#nowUser').innerHTML = '当前用户:' + tools.getCookie("loginUserName");
                         //app this绑定用户信息
                         let studentInfoData = await tools.getAxiosData(`/user/info/${tools.getCookie("loginUserName")}`);
@@ -166,11 +167,9 @@
                 //左栏选择
                 handleSelect(key, keyPath) {
                     staticValue.setCurrentPage(key);//设置当前页面
-                    tools.$('#pagination').style.display = 'none';//翻页初始不存在
-
                     if (key == 1) {
-                        tools.$('#pagination').style.display = 'none';
                         tools.setTimeOutP(300, async () => {
+                            tools.$('#pagination').style.display = 'none';
                             tools.$('#mainContent').style.opacity = '0';
                         }).then(async val => {
                             await tools.setPage('listTool', './view/listTool/listToolStu.html', { title: '用户信息' });
@@ -189,8 +188,8 @@
                         });
                     }
                     if (key == 2) {
-                        tools.$('#pagination').style.display = 'block';//翻页初始存在
                         tools.setTimeOutP(300, async () => {
+                            tools.$('#pagination').style.display = 'block';//翻页初始存在
                             tools.$('#mainContent').style.opacity = '0';
                         }).then(async val => {
                             await tools.setPage('listTool', './view/listTool/listToolStu.html', { title: '课题选择' });
@@ -207,8 +206,8 @@
                     }
                     //已选课题
                     if(key == 3){
-                        tools.$('#pagination').style.display = 'none';
                         tools.setTimeOutP(300, async () => {
+                            tools.$('#pagination').style.display = 'none';
                             tools.$('#mainContent').style.opacity = '0';
                         }).then(async val => {
                             await tools.setPage('listTool', './view/listTool/listToolStu.html', { title: '已选课题' });
@@ -224,8 +223,8 @@
                     }
                     //修改密码
                     if(key == 4){
-                        tools.$('#pagination').style.display = 'none';
                         tools.setTimeOutP(300, async () => {
+                            tools.$('#pagination').style.display = 'none';
                             tools.$('#mainContent').style.opacity = '0';
                         }).then(async val => {
                             await tools.setPage('listTool', './view/listTool/listToolStu.html', { title: '修改密码' });
