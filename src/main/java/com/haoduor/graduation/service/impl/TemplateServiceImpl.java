@@ -57,4 +57,14 @@ public class TemplateServiceImpl implements TemplateService {
         te.createCriteria().andIsDeleteEqualTo(false);
         return templateMapper.selectByExample(te);
     }
+
+    @Override
+    public boolean deleteTemplate(String sha256) {
+        TemplateExample te = new TemplateExample();
+        te.createCriteria().andSha256EqualTo(sha256);
+
+        int res = templateMapper.deleteByExample(te);
+
+        return res == 1;
+    }
 }

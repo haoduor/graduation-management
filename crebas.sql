@@ -28,6 +28,8 @@ drop table if exists teacher;
 
 drop table if exists user;
 
+drop table if exists template;
+
 /*==============================================================*/
 /* Table: announcement                                          */
 /*==============================================================*/
@@ -155,5 +157,18 @@ create table user
    salt                 varchar(32) comment '密码盐',
    role_id              bigint comment '角色id',
    primary key (id)
+);
+
+/*==============================================================*/
+/* Table: template                                                  */
+/*==============================================================*/
+create table template
+(
+    id          bigint       null comment 'id',
+    file_name   varchar(64)  null comment '样板文件名称',
+    sha256      varchar(256) null comment '文件的256校验值',
+    upload_time datetime     null comment '上传时间',
+    is_delete   tinyint(1)   null comment '是否被删除',
+    delete_time datetime     null comment '删除时间'
 );
 

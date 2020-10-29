@@ -143,6 +143,7 @@ public class TemplateController {
     }
 
     // 获取样板文档列表
+    @ResponseBody
     @GetMapping("/list")
     public PageMessage list(@RequestParam(defaultValue = "1") int page,
                             @RequestParam(defaultValue = "30") int pageSize) {
@@ -159,6 +160,20 @@ public class TemplateController {
         pm.setData(res);
 
         return pm;
+    }
+
+    @PostMapping("/delete")
+    @RequiresRoles("admin")
+    public BaseMessage delete(@RequestParam String sha256) {
+        if (StrUtil.isEmpty(sha256)) {
+            return new BaseMessage(2, "参数不能为空");
+        }
+
+        if (templateService.deleteTemplate(sha256)) {
+            return new BaseMessage(1, "删除成功");
+        } else {
+            return new BaseMessage(3, "数据库错误");
+        }
     }
 
     // 下载批量导入学生导入excel

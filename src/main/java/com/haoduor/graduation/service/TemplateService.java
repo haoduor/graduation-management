@@ -9,4 +9,5 @@ public interface TemplateService {
     public boolean addTemplate(File file);
     public Template getTemplateBySha256(String sha256);
     public List<Template> getTemplate();
+    public boolean deleteTemplate(String sha256);
 }
