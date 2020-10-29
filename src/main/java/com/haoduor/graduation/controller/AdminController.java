@@ -15,9 +15,4 @@ public class AdminController {
         return "admin/index";
     }
 
-    @GetMapping(value = {"", "/"})
-    public String adminLoginPage() {
-        return "";
-    }
-
 }

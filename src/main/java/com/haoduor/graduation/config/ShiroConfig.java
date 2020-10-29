@@ -38,12 +38,14 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/login", "anon");
         filterChainDefinitionMap.put("/", "anon");
         filterChainDefinitionMap.put("/admin/*", "anon");
-
-        filterChainDefinitionMap.put("/**", "anon");
+        // 公告获取匿名
+        filterChainDefinitionMap.put("/announcement/list", "anon");
 
         filterChainDefinitionMap.put("/student", "authc");
         filterChainDefinitionMap.put("/teacher", "authc");
         filterChainDefinitionMap.put("/user/*", "authc");
+
+        filterChainDefinitionMap.put("/**", "authc");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 

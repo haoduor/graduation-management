@@ -42,6 +42,7 @@ public class AnnouncementController {
 
 
     @PostMapping("/add")
+    @RequiresRoles("admin")
     public BaseMessage add(@RequestParam String content) {
         if (StrUtil.isEmpty(content)) {
             return new BaseMessage(2, "公告内容不能为空");
@@ -59,6 +60,7 @@ public class AnnouncementController {
     }
 
     @PostMapping("/delete")
+    @RequiresRoles("admin")
     public BaseMessage delete(@RequestParam String id) {
         long _id;
         try {
@@ -75,6 +77,7 @@ public class AnnouncementController {
     }
 
     @PostMapping("/set")
+    @RequiresRoles("admin")
     public BaseMessage set(@RequestParam String id, @RequestParam String content) {
         if (StrUtil.isEmpty(content)) {
             return new BaseMessage(2, "公告内容不能为空");

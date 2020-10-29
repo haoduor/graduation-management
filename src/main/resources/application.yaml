@@ -42,3 +42,6 @@ pagehelper:
 file:
   save-path: D:\nodeDemo\1014File\graduation_management\file\save\
   tmp-path: D:\nodeDemo\1014File\graduation_management\file\tmp\
+
+admin:
+  code: asdasd

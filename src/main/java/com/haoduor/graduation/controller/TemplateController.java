@@ -17,6 +17,7 @@ import com.haoduor.graduation.vo.BaseMessage;
 import com.haoduor.graduation.vo.PageMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,6 +51,7 @@ public class TemplateController {
 
     // 管理员上传样板文档
     @PostMapping("/upload")
+    @RequiresRoles("admin")
     public BaseMessage upload(MultipartFile file) {
         Subject currentUser = SecurityUtils.getSubject();
 

@@ -14,6 +14,7 @@ import com.haoduor.graduation.service.UserService;
 import com.haoduor.graduation.vo.BaseMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,6 +37,7 @@ import java.util.List;
 @Slf4j
 @Controller
 @RequestMapping("/import")
+@RequiresRoles("admin")
 public class UploadController {
 
     @Value("${file.save-path}")

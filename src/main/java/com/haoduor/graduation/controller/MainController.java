@@ -41,7 +41,7 @@ public class MainController {
             }
 
             if (currentUser.hasRole("admin")) {
-                return "redirect:/admin";
+                return "redirect:/admin/manager";
             }
         }
 

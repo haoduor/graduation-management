@@ -11,6 +11,6 @@ public class LoginCodeGenerator implements CodeGenerator {
 
     @Override
     public boolean verify(String code, String userInputCode) {
-        return false;
+        return code.equals(userInputCode);
     }
 }

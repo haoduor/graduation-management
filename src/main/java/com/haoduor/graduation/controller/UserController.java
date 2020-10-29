@@ -14,6 +14,7 @@ import com.haoduor.graduation.util.UserUtil;
 import com.haoduor.graduation.vo.BaseMessage;
 import com.haoduor.graduation.vo.DataMessage;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -69,6 +70,7 @@ public class UserController {
     // 用户更改密码
     @ResponseBody
     @PostMapping("/repass")
+    @RequiresRoles(value = {"student", "teacher"}, logical = Logical.OR)
     public BaseMessage resetPassword(@RequestParam String id, @RequestParam String oldPassword,
                                      @RequestParam String newPassword) {
         if (StrUtil.isEmpty(oldPassword) || StrUtil.isEmpty(newPassword)) {
@@ -76,9 +78,6 @@ public class UserController {
         }
 
         Subject cu = SecurityUtils.getSubject();
-        userUtil.cacheId(cu);
-
-        Long dbId = (Long) cu.getSession().getAttribute("id");
 
         long _id;
         try {
@@ -87,11 +86,11 @@ public class UserController {
             return new BaseMessage(2, "id格式化失败");
         }
 
-        if (!dbId.equals(_id)) {
+        if (!userUtil.isMe(_id, cu)) {
             return new BaseMessage(4, "不能更改其他人的密码");
         }
 
-        User u = userService.getUserById(dbId);
+        User u = userService.getUserById(_id);
 
         if (u == null) {
             return new BaseMessage(7, "用户不存在");
@@ -107,7 +106,7 @@ public class UserController {
 
         u.setPassword(EncryptedUtil.encryptedPassword(newPassword, salt));
 
-        if (userService.setUserPasswordByUser(dbId, u)) {
+        if (userService.setUserPasswordByUser(_id, u)) {
             return new BaseMessage(1, "更改密码成功");
         } else {
             return new BaseMessage(6, "数据库错误");

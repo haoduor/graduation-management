@@ -11,6 +11,7 @@ import com.haoduor.graduation.service.UserService;
 import com.haoduor.graduation.vo.BaseMessage;
 import com.haoduor.graduation.vo.PageMessage;
 import com.haoduor.graduation.vo.TeacherVo;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/teacher")
+@RequiresRoles("admin")
 public class TeacherController {
 
     @Autowired

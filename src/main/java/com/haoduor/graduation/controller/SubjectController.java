@@ -48,6 +48,7 @@ public class SubjectController {
     private UserUtil userUtil;
 
     @PostMapping("/set")
+    @RequiresRoles(value = {"admin", "teacher"}, logical = Logical.OR)
     public BaseMessage set(@RequestBody SubjectForm subjectForm, @RequestParam String id) {
         SubjectDto dto = null;
         long _subjectId;
@@ -158,6 +159,7 @@ public class SubjectController {
     }
 
     @PostMapping("/chose")
+    @RequiresRoles("student")
     public BaseMessage choseSubject(@RequestParam String subjectId, @RequestParam String studentId) {
         org.apache.shiro.subject.Subject currentUser = SecurityUtils.getSubject();
         userUtil.cacheId(currentUser);
