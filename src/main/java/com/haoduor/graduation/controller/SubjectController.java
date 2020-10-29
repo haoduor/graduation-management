@@ -99,7 +99,7 @@ public class SubjectController {
         }
 
         Long _id = dto.getTeacherId();
-        if (userUtil.isMe(_id, currentUser)) {
+        if (!userUtil.isMe(_id, currentUser)) {
             return new BaseMessage(3, "无法为其他教师添加课题");
         }
 
