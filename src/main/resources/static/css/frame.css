@@ -141,6 +141,23 @@
     text-align: center;
     font-size: 1.1rem;
 }
+.editMark .deleteMsg{
+    position: relative;
+    width: 100%;
+    height: 5rem;
+    line-height: 5rem;
+    text-align: center;
+    font-size: 1.1rem;
+}
+.editMark .deleteMsg span{
+    display: inline-block;
+    position: absolute;
+    top: 1.3rem;
+    left: 50%;
+    font-size: 0.9rem;
+    transform: translateX(-50%);
+    color: #e6a23c;
+}
 
 /*.editMark .editTool{*/
 /*    position: absolute;*/
@@ -159,7 +176,7 @@
 /* 主体 */
 .adminData .mainContent{
     flex: 1;
-    margin: 5rem 2rem 4rem 2rem;
+    margin: 5rem 0rem 4rem 2rem;
     opacity: 1;
     transition: opacity 0.3s;
 }

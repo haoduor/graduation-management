@@ -28,15 +28,18 @@
 <script src="/js/axios.js"></script>
 <script type="module">
     import { tools } from './js/tool.js';
+    import { tableModel } from './js/tableModel.js';
     let codeUrl = '/captcha/get?';
     (async () => {
         await tools.setPage('loginForm', './view/login/loginForm.html');
         await tools.setPage('loginMsg', './view/login/loginMsg.html');
 
-
-        tools.$('.loginBk').style.background = `url(/image/Sola.png)`
+        tools.$('.loginBk').style.background = `url(/image/Sola.png)`;
         //初始加载二维码
-        tools.$('.codeImg').src =`${codeUrl}${(Math.random()*100 + '').slice(0,2)}`
+        tools.$('.codeImg').src =`${codeUrl}${(Math.random()*100 + '').slice(0,2)}`;
+        //初始化公告
+        let noticeData = await tools.getAxiosData('/announcement/list');
+        tools.$('#msgBody').innerHTML = await tableModel.getLoginNoticeData(noticeData['data']['data']);
         var app = Vue.extend({
             data() {
                 return {
@@ -59,6 +62,14 @@
                     username: '',
                     password: '',
                     verificationCode: '',
+                    // noticeName: ['1']
+                }
+            },
+            mounted:function(){
+                //是否登录
+                let username = tools.getCookie('loginUserName');
+                if(username !=''){
+                    tools.jump('/');
                 }
             },
             methods: {
@@ -74,12 +85,11 @@
                             try {
                                 let loginResult = await axios.post('/login', tools.buildFormData(userData));
                                 if(loginResult['data']['id'] == 1 ||loginResult['data']['id'] == 0 ){
-                                    tools.setTimeOutP(3000,()=>this.$message.success("3秒后将跳转")).then(val=>{
-                                        if(window.location.href.includes('admin')){
-                                            tools.jump('/manager');
-                                            return;
-                                        }
-                                        tools.jump('/admin/manage');
+                                    tools.setTimeOutP(3000,()=>{
+                                        this.$message.success("3秒后将跳转");
+                                        tools.setCookie('loginUserName',this.loginForm.username,1);
+                                    }).then(val=>{
+                                        tools.jump('/');
                                     });
                                 }
                                 if(loginResult['data']['id'] == 3){

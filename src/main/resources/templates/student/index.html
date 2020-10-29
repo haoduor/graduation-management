@@ -5,26 +5,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="/css/student/index.css">
     <link rel="stylesheet" href="./css/globel.css">
     <link rel="stylesheet" href="./css/element.css">
     <link rel="stylesheet" href="./css/frame.css">
+    <link rel="stylesheet" href="/css/lTable.css">
 </head>
 
 <body>
     <div id="app">
         <!-- 遮罩数据操作 -->
         <div class="editMark" id="editMark">
-            <div class="tableEdit">
-                <el-button class="editSave" @click="editSave" type="primary" icon="el-icon-check">保存</el-button>
-                <el-button class="editClose" @click="editClose" type="primary" icon="el-icon-switch-button">关闭
-                </el-button>
+            <div class="tableEdit" id="tableEdit">
+                <div class="editMain" id="editMain"></div>
             </div>
         </div>
         <div class="adminNav">
             <p class="navTitle"><i class="el-icon-user-solid"></i> 学生端</p>
             <div class="userInformation">
-                <p>当前用户:gugu</p>
-                <el-button class="userLoginOut" @click="" type="text" icon="el-icon-switch-button">登出</el-button>
+                <p id="nowUser">当前用户:</p>
+                <el-button class="userLoginOut" @click="loginOut" type="text" icon="el-icon-switch-button">登出</el-button>
             </div>
         </div>
         <div class="adminBody">
@@ -33,65 +33,418 @@
                     background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
                     <el-menu-item index="1">
                         <i class="el-icon-user"></i>
-                        <span slot="title">XXXX</span>
+                        <span slot="title">用户信息</span>
                     </el-menu-item>
                     <el-menu-item index="2">
-                        <i class="el-icon-suitcase-1"></i>
-                        <span slot="title">XXXX</span>
+                        <i class="el-icon-document-copy"></i>
+                        <span slot="title">课题选择</span>
+                    </el-menu-item>
+                    <el-menu-item index="3">
+                        <i class="el-icon-document-checked"></i>
+                        <span slot="title">已选课题</span>
+                    </el-menu-item>
+                    <el-menu-item index="4">
+                        <i class="el-icon-edit-outline"></i>
+                        <span slot="title">修改密码</span>
                     </el-menu-item>
                 </el-menu>
             </el-row>
             <div class="adminData">
                 <div id="listTool" class="listTool"></div>
+                <!-- 主体 -->
+                <div class="mainContent" id="mainContent">
+                </div>
+                 分页
+                <el-pagination id="pagination" class="listPagination" background
+                               @current-change="handleCurrentChange"  :current-page="pageInfo.nowPage" :page-size="pageInfo.pageSize" :total="pageInfo.totalData"
+                               layout="prev, pager, next, jumper">
+                </el-pagination>
+
             </div>
         </div>
     </div>
 </body>
-<script src="./js/tool.js" type="module"></script>
-<script src="./js/vue.js" type="module"></script>
-<script src="./js/element.js" type="module"></script>
+<script src="/js/tool.js" type="module"></script>
+<script src="/js/staticValue.js" type="module"></script>
+<script src="/js/tableModel.js" type="module"></script>
+<script src="/js/vue.js" type="module"></script>
+<script src="/js/element.js" type="module"></script>
+<script src="/js/axios.js"></script>
 <script type="module">
 
-    import { tools } from './js/tool.js';
+    import {tools} from '/js/tool.js';
+    import {staticValue} from '/js/staticValue.js';
+    import {tableModel} from '/js/tableModel.js';
+
+    //设置工具栏默认显示
+    tools.setDefaultPage({
+        title: '标题',
+        studentInfo:['','','','']
+    });
+
     (async () => {
-        await tools.setPage('listTool', './view/listTool.html', { title: '学生列表' });
+        //首页显示用户信息
+        try {
+            let studentInfoData = await tools.getAxiosData(`/user/info/${tools.getCookie("loginUserName")}`);
+            await tools.setPage('mainContent', './view/data/student/studentInfo.html',
+                {studentInfo:[
+                        tools.getCookie("loginUserName"),
+                        studentInfoData['data']['data']['name'],
+                        studentInfoData['data']['data']['className'],
+                        studentInfoData['data']['data']['departmentName']
+                    ]
+                });
+        }catch (e) {
+            console.log(e);
+        }
+        await tools.setPage('listTool', './view/listTool/listToolStu.html', { title: '用户信息' });
+        tools.$('#pagination').style.display = 'none';//翻页初始不存在
         var app = Vue.extend({
             data() {
-                return {}
+                return {
+                    //用户信息
+                    userInfo:{
+                        data:{},
+                        choseSubjectId:[]
+                    },
+                    //分页
+                    pageInfo:{
+                        pageSize: 8,
+                        nowPage:1,
+                        totalData: 16,
+                    },
+                    //修改密码
+                    changePwd: {
+                        oldPwd:'',
+                        newPwd:''
+                    },
+                    changePwdRule:{
+                        oldPwd:[
+                            { required: true, message: '请输入旧密码', trigger: 'blur' }
+                        ],
+                        newPwd: [
+                            { required: true, message: '请输入新密码', trigger: 'blur' }
+                        ],
+                    }
+                }
+            },
+            mounted:async function(){
+                //入口this
+                if(this['$el'].getAttribute('id') == 'app'){
+                    staticValue.setThat(this);
+                    //获取当前登录的用户
+                    if(tools.getCookie("loginUserName") != ''){
+                        tools.$('#pagination').style.display = 'none';//翻页初始不存在
+                        tools.$('#nowUser').innerHTML = '当前用户:' + tools.getCookie("loginUserName");
+                        //app this绑定用户信息
+                        let studentInfoData = await tools.getAxiosData(`/user/info/${tools.getCookie("loginUserName")}`);
+                        staticValue.getThat().$set(staticValue.getThat().userInfo,'data',studentInfoData['data']['data']);
+                        //app this绑定用户已选课题信息
+                        this.stuChoseSubjectId();
+
+                    }else{
+                        tools.setTimeOutP(3000,()=>{
+                            this.$message.error('请登录,3秒后跳转至登录页');
+                        }).then(()=>{
+                            tools.jump('/');
+                        });
+                    }
+                }
+                //主页this
+                if(this['$el'].getAttribute('id') == 'mainContent'){
+                    staticValue.setMainContentThis(this);
+                }
+                //工具栏this
+                if(this['$el'].getAttribute('id') == 'listTool'){
+                    staticValue.setListToolThis(this);
+                }
+                //编辑添加删除页this
+                if(this['$el'].getAttribute('id') == 'editMain'){
+                    staticValue.setEditMainThis(this);
+                }
             },
             methods: {
                 //左栏选择
                 handleSelect(key, keyPath) {
+                    staticValue.setCurrentPage(key);//设置当前页面
                     if (key == 1) {
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#pagination').style.display = 'none';
+                            tools.$('#mainContent').style.opacity = '0';
+                        }).then(async val => {
+                            await tools.setPage('listTool', './view/listTool/listToolStu.html', { title: '用户信息' });
+                            await tools.setPage('mainContent', './view/data/student/studentInfo.html',
+                                {studentInfo:[
+                                        tools.getCookie("loginUserName"),
+                                        staticValue.getThat().userInfo['data']['name'],
+                                        staticValue.getThat().userInfo['data']['className'],
+                                        staticValue.getThat().userInfo['data']['departmentName']
+                                    ]
+                                });
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
 
+                        });
                     }
                     if (key == 2) {
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#pagination').style.display = 'block';//翻页初始存在
+                            tools.$('#mainContent').style.opacity = '0';
+                        }).then(async val => {
+                            await tools.setPage('listTool', './view/listTool/listToolStu.html', { title: '课题选择' });
 
+                            await tools.setPage('mainContent', '/view/data/student/choseSubject.html');
+                            let subjectData = await tools.getAxiosData('/subject/list?page=1&pageSize=8');
+                            tools.$('#tableDate').innerHTML = await tableModel.getStuTopicTableData(subjectData['data']['data'],staticValue.getThat().userInfo['choseSubjectId']);
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                            this.refreshBtn();
+
+                        });
+                    }
+                    //已选课题
+                    if(key == 3){
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#pagination').style.display = 'none';
+                            tools.$('#mainContent').style.opacity = '0';
+                        }).then(async val => {
+                            await tools.setPage('listTool', './view/listTool/listToolStu.html', { title: '已选课题' });
+
+                            await tools.setPage('mainContent', '/view/data/student/stuChoseSubject.html');
+                            let mySubjectData = await tools.getAxiosData(`/chosen/student?studentId=${staticValue.getThat().userInfo['data']['userId']}`);
+                            tools.$('#tableDate').innerHTML = await tableModel.getMyTopicTableData(mySubjectData['data']['data']);
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                            this.refreshBtn();
+                        });
+                    }
+                    //修改密码
+                    if(key == 4){
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#pagination').style.display = 'none';
+                            tools.$('#mainContent').style.opacity = '0';
+                        }).then(async val => {
+                            await tools.setPage('listTool', './view/listTool/listToolStu.html', { title: '修改密码' });
+
+                            await tools.setPage('mainContent', '/view/data/changePassword.html');
+
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                            this.refreshBtn();
+
+                        });
                     }
                 },
-                //关闭编辑
-                editClose() {
-                    tools.setTimeOutP(300, () => {
-                        tools.$('#editMark').style.opacity = '0';
-                    }).then(val => {
-                        tools.$('#editMark').style.display = 'none';
-                    })
-                },
-                //保存编辑
-                editSave() {
-
-                },
-                //刷新
-                refreshTableItems() {
-
-                },
-                //添加
-                addTableItems() {
-                    tools.setTimeOutP(0, () => {
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //                   编辑页面                     //
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //编辑页面
+                showEdit(data = '',index = '1') {
+                    staticValue.setChoseId(data);
+                    tools.setTimeOutP(0, async () => {
                         tools.$('#editMark').style.display = 'block';
+
+                        //选择课题
+                        if (staticValue.getCurrentPage() == 2) {
+                            await tools.setPage('editMain', '/view/form/student/choseSubject.html');
+                            new app().$mount('#editMain');
+                        }
+
                     }).then(val => {
                         tools.$('#editMark').style.opacity = '1';
                     })
+                },
+                //关闭编辑
+                closeEdit() {
+                    tools.setTimeOutP(300, () => {
+                        tools.$('#editMark').style.opacity = '0';
+                    }).then(async val => {
+                        tools.$('#editMark').style.display = 'none';
+                        await tools.setPage('editMain', '/view/form/none.html');
+                        new app().$mount("#editMain");
+                    })
+                },
+                //关闭编辑并刷新
+                closeEditAndRefresh(){
+                    tools.setTimeOutP(300, () => {
+                        tools.$('#editMark').style.opacity = '0';
+                    }).then(async val => {
+                        tools.$('#editMark').style.display = 'none';
+                        await tools.setPage('editMain', '/view/form/none.html');
+                        new app().$mount("#editMain");
+                        this.refreshBtn();
+                    })
+                },
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //                    添加页面                    //
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //添加或新建
+                addItems() {
+                    tools.setTimeOutP(0, async () => {
+                        tools.$('#editMark').style.display = 'block';
+                        //学生添加页面
+                        if (staticValue.getCurrentPage() == 1) {
+
+                        }
+                        //教师添加页面
+                        if (staticValue.getCurrentPage() == 2) {
+
+                        }
+                    }).then(val => {
+                        tools.$('#editMark').style.opacity = '1';
+                    });
+                },
+                //批量添加或新建
+                addItemsAll() {
+                    tools.setTimeOutP(0, async () => {
+                        tools.$('#editMark').style.display = 'block';
+                        if (staticValue.getCurrentPage() == 1) {
+
+                        }
+                        if (staticValue.getCurrentPage() == 2) {
+
+                        }
+
+                    }).then(val => {
+                        tools.$('#editMark').style.opacity = '1';
+                    });
+                },
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //                    删除功能                    //
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //表格删除
+                deleteList(data) {
+                    staticValue.setChoseId(data);
+                    tools.setTimeOutP(0, async () => {
+                        tools.$('#editMark').style.display = 'block';
+                        if (staticValue.getCurrentPage() == 1) {
+
+                        }
+                        if (staticValue.getCurrentPage() == 2) {
+
+                        }
+                    }).then(val => {
+                        tools.$('#editMark').style.opacity = '1';
+                    })
+                },
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //                    表单提交                    //
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //学生选择题目
+                choseSubject(){
+                    if(staticValue.getThat().userInfo['data']['userId'] != '' && staticValue.getChoseId() != ''){
+                        let postData = {
+                            subjectId: staticValue.getChoseId(),
+                            studentId: staticValue.getThat().userInfo['data']['userId'],
+                        };
+                        axios.post('/subject/chose',tools.buildFormData(postData)).then(async val=>{
+                           let id = val['data']['id'];
+                           if(id == '1'){
+                               this.$message.success('选题成功');
+                               await this.stuChoseSubjectId();
+                               let subjectData = await tools.getAxiosData('/subject/list?page=1&pageSize=8');
+                               staticValue.getThat().refreshTables(staticValue.getPageNumber(),parseInt(subjectData['data']['total']),8);
+                               this.closeEdit();
+                           }else {
+                               this.$message.error(val['data']['message']);
+                           }
+                        }).catch(()=>{
+                            this.$message.error('网络异常');
+                        });
+                    }else{
+                        this.$message.error('id不完整');
+                    }
+                },
+                //修改密码
+                changePwdForm(formName){
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            let postData = {
+                                id:staticValue.getThat().userInfo['data']['userId'],
+                                oldPassword:this.changePwd['oldPwd'],
+                                newPassword:this.changePwd['newPwd']
+                            };
+
+                            axios.post('/user/repass',tools.buildFormData(postData)).then(val=>{
+                                let id = val['data']['id'];
+                                if(id == '1'){
+                                    this.$message.success('更改密码成功');
+                                    this.$set(this.changePwd,'oldPwd','');
+                                    this.$set(this.changePwd,'newPwd','');
+                                }else{
+                                    this.$message.error(val['data']['message']);
+                                }
+                            }).catch(err=>{
+                                console.log(err);
+                                this.$message.error('网络错误');
+                            });
+                        }
+                    });
+                },
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //                      杂                       //
+                // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //登出
+                loginOut(){
+                    if(tools.getCookie('loginUserName') != ''){
+                        tools.setTimeOutP(0,()=>{
+                            tools.clearCookie('loginUserName');
+                        }).then(()=>{
+                            tools.jump('/logout');
+                        });
+                    }else{
+                        this.$message.warning('您已登出该账号,请刷新页面');
+                    }
+                },
+                //app this绑定用户已选课题信息
+                stuChoseSubjectId(){
+                    return new Promise(async (resolve,reject)=>{
+                        let choseSubjectId = [];
+                        let stuSubjectData = await tools.getAxiosData(`/chosen/student?studentId=${staticValue.getThat().userInfo['data']['userId']}`);
+                        stuSubjectData['data']['data'].forEach(items=>{
+                            choseSubjectId.push(items['id']);
+                        });
+                        staticValue.getThat().$set(staticValue.getThat().userInfo,'choseSubjectId',choseSubjectId);
+                        resolve('获取结束');
+                    });
+                },
+                //刷新按钮
+                async refreshBtn(){
+                    //选题刷新
+                    if(staticValue.getCurrentPage() == '2'){
+                        let subjectData = await tools.getAxiosData('/subject/list?page=1&pageSize=8');
+                        staticValue.getThat().refreshTables(1,parseInt(subjectData['data']['total']),8);
+                    }
+                    this.$message('刷新成功');
+                },
+                //单页面刷新
+                async refreshTableItems() {
+                    //教师页刷新
+                    if(staticValue.getCurrentPage() == '2'){
+                        let subjectData = await tools.getAxiosData(`/subject/list?page=${staticValue.getPageNumber()}&pageSize=8`);
+                        tools.$('#tableDate').innerHTML = await tableModel.getStuTopicTableData(subjectData['data']['data'],staticValue.getThat().userInfo['choseSubjectId']);
+                    }
+                    new app().$mount("#mainContent");
+                },
+                //切换页面刷新
+                refreshTables(nowPage,totalData,pageSize){
+                    console.log(pageSize)
+                    staticValue.getThat().$set(staticValue.getThat().pageInfo,'nowPage',nowPage);
+                    staticValue.getThat().$set(staticValue.getThat().pageInfo,'pageSize',pageSize);
+                    staticValue.getThat().$set(staticValue.getThat().pageInfo,'totalData',parseInt(totalData));
+                    staticValue.setPageNumber(nowPage);
+                    this.refreshTableItems();
+                },
+                //换页
+                async handleCurrentChange(val) {
+                    staticValue.getThat().$set(staticValue.getThat().pageInfo,'nowPage',val);
+                    staticValue.setPageNumber(staticValue.getThat().pageInfo['nowPage']);
+                    //学生换页
+                    this.refreshTableItems();
                 }
             }
         });

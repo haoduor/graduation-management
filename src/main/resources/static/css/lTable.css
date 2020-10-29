@@ -61,7 +61,7 @@
 .nmTag{
     display: inline-block;
     height: 32px;
-    margin: 4px 0;
+    margin: 4px 4px;
     padding: 0 10px;
     line-height: 30px;
     background-color: #ecf5ff;
