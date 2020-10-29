@@ -11,6 +11,7 @@ import com.haoduor.graduation.dto.SubjectDto;
 import com.haoduor.graduation.model.*;
 import com.haoduor.graduation.service.SubjectService;
 import com.haoduor.graduation.service.TagService;
+import com.haoduor.graduation.util.ConvertUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -100,7 +101,7 @@ public class SubjectServiceImpl implements SubjectService {
 
     @Override
     public boolean setSubjectById(long id, SubjectDto subjectDto) {
-        Subject s = Convert.convert(Subject.class, subjectDto);
+        Subject s = ConvertUtil.convert(Subject.class, subjectDto);
         s.setId(id);
         s.setTeacherid(subjectDto.getTeacherId());
 
