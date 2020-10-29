@@ -128,6 +128,55 @@ const tableModel = (() =>{
                 }
             });
         },
+        //模板文件表行
+        getTemplateTableData(data){
+            let html = '';
+            return new Promise((resolve,reject)=> {
+                data.forEach((items, index) => {
+                    let dataTime =tools.dateFormat(new Date(parseInt(items['uploadTime'])),'yyyy-MM-dd hh:mm:ss');//时间
+                    let dataColumn = `
+                    <div class="dateColumn">
+                        <p class="nmDate">${items['fileName']}</p>
+                        <p class="nmDate">${dataTime}</p>
+                        <div class="staticDate">
+                            <el-button @click="deleteList('${items['sha256']}')" type="text" icon="el-icon-delete">删除</el-button>
+                            <el-button @click="downLoadFile('${items['sha256']}')" type="text" icon="el-icon-download">下载</el-button>
+                        </div>
+                     </div>
+                    `;
+                    html += dataColumn;
+                });
+                if(html != null){
+                    resolve(html);
+                }else{
+                    resolve('空页面');
+                }
+            });
+        },
+        //模板文件表行2
+        getTemplateTableData2(data){
+            let html = '';
+            return new Promise((resolve,reject)=> {
+                data.forEach((items, index) => {
+                    let dataTime =tools.dateFormat(new Date(parseInt(items['uploadTime'])),'yyyy-MM-dd hh:mm:ss');//时间
+                    let dataColumn = `
+                    <div class="dateColumn">
+                        <p class="nmDate">${items['fileName']}</p>
+                        <p class="nmDate">${dataTime}</p>
+                        <div class="staticDate">
+                            <el-button @click="downLoadFile('${items['sha256']}')" type="text" icon="el-icon-download">下载</el-button>
+                        </div>
+                     </div>
+                    `;
+                    html += dataColumn;
+                });
+                if(html != null){
+                    resolve(html);
+                }else{
+                    resolve('空页面');
+                }
+            });
+        },
         //登录页公告单个模块
         getLoginNoticeData(data){
             let html = '';

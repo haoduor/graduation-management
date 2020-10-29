@@ -13,8 +13,12 @@
 <el-button class="listToolRefresh" @click="refreshBtn" type="primary" icon="el-icon-refresh">
     刷新
 </el-button>
-<el-button class="listToolAdd" @click="addItems" type="primary" icon="el-icon-document-add">
+<el-button style="display: $addBtn$;" class="listToolAdd" @click="addItems" type="primary" icon="el-icon-document-add">
     添加
+</el-button>
+<el-button style="display: $listToolAdd$;" class="listToolAddAll" @click="addFile" type="primary"
+           icon="el-icon-document-add">
+    上传
 </el-button>
 <el-button style="display: $listToolAddAll$;" class="listToolAddAll" @click="addItemsAll" type="primary"
     icon="el-icon-document-add">

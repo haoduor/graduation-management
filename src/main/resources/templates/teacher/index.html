@@ -49,6 +49,10 @@
                     <i class="el-icon-s-custom"></i>
                     <span slot="title">我的学生</span>
                 </el-menu-item>
+                <el-menu-item index="6">
+                    <i class="el-icon-s-custom"></i>
+                    <span slot="title">模板文件下载</span>
+                </el-menu-item>
                 <el-menu-item index="4">
                     <i class="el-icon-edit-outline"></i>
                     <span slot="title">修改密码</span>
@@ -269,6 +273,25 @@
                             new app().$mount("#listTool");
                             tools.$('#mainContent').style.opacity = '1';
                             this.refreshTables(1,subjectData['data']['total'],6);
+
+                        });
+                    }
+                    //模板文件下载
+                    if(key == 6){
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#mainContent').style.opacity = '0';
+                            tools.$('#pagination').style.display = 'block';
+                        }).then(async val => {
+                            await tools.setPage('listTool', '/view/listTool/listToolTea.html', {
+                                title: '模板文件下载',
+                            });
+                            await tools.setPage('mainContent', '/view/data/templateFileTable.html');
+                            let templateData = await tools.getAxiosData('/template/list?page=1&pageSize=8');
+                            tools.$('#tableDate').innerHTML = await tableModel.getTemplateTableData2(templateData['data']['data']);
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                            this.refreshTables(1,templateData['data']['total'],8);
 
                         });
                     }
@@ -547,6 +570,15 @@
                         }
                     });
                 },
+                //下载模板文件
+                downLoadFile(sha256){
+                    axios.get(`/template/download/${sha256}`).then(val=>{
+                        tools.jump(`/template/download/${sha256}`);
+                    }).catch(err=>{
+                        console.log(err);
+                        this.$message.error('网络错误');
+                    })
+                },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                      杂                       //
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
@@ -677,9 +709,15 @@
                         let subjectData = await tools.getAxiosData(`/subject/list?page=1&pageSize=6&teacherId=${staticValue.getThat().userInfo['data']['userId']}`);
                         staticValue.getThat().refreshTables(1,subjectData['data']['total'],6);
                     }
+                    //学生审核页刷新
                     if(staticValue.getCurrentPage() == '5') {
                         let subjectData = await tools.getAxiosData(`/chosen/teacher?teacherId=${staticValue.getThat().userInfo['data']['userId']}&page=1&pageSize=6`);
                         staticValue.getThat().refreshTables(1,subjectData['data']['total'],6);
+                    }
+                    //模板页刷新
+                    if(staticValue.getCurrentPage() == '6'){
+                        let templateData = await tools.getAxiosData('/template/list?page=1&pageSize=8');
+                        staticValue.getThat().refreshTables(1,templateData['data']['total'],8);
                     }
                     this.$message('刷新成功');
                 },
@@ -690,9 +728,15 @@
                         let subjectData = await tools.getAxiosData(`/subject/list?page=${staticValue.getPageNumber()}&pageSize=6&teacherId=${staticValue.getThat().userInfo['data']['userId']}`);
                         tools.$('#tableDate').innerHTML = await tableModel.getTeaTopicTableData(subjectData['data']['data']);
                     }
+                    //学生审核页刷新
                     if(staticValue.getCurrentPage() == '5') {
                         let subjectData = await tools.getAxiosData(`/chosen/teacher?teacherId=${staticValue.getThat().userInfo['data']['userId']}&page=${staticValue.getPageNumber()}&pageSize=6`);
                         tools.$('#tableDate').innerHTML = await tableModel.getStuAndSubject(subjectData['data']['data']);
+                    }
+                    //模板页刷新
+                    if(staticValue.getCurrentPage() == '6') {
+                        let templateData = await tools.getAxiosData(`/template/list?page=${staticValue.getPageNumber()}&pageSize=8`);
+                        tools.$('#tableDate').innerHTML = await tableModel.getTemplateTableData2(templateData['data']['data']);
                     }
                     new app().$mount("#mainContent");
                 },
