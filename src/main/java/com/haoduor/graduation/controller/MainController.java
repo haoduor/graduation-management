@@ -8,6 +8,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,21 @@ public class MainController {
 
     @GetMapping("/")
     public String login() {
+        Subject currentUser = SecurityUtils.getSubject();
+        if (currentUser.isAuthenticated()) {
+            if (currentUser.hasRole("student")) {
+                return "redirect:/student";
+            }
+
+            if (currentUser.hasRole("teacher")) {
+                return "redirect:/teacher";
+            }
+
+            if (currentUser.hasRole("admin")) {
+                return "redirect:/admin";
+            }
+        }
+
         return "login";
     }
 
@@ -41,7 +57,9 @@ public class MainController {
      */
     @ResponseBody
     @PostMapping("/login")
-    public BaseMessage login(@RequestParam String username, @RequestParam String password, @RequestParam String code) {
+    public BaseMessage login(@RequestParam String username,
+                             @RequestParam String password,
+                             @RequestParam String code) {
         Subject currentUser = SecurityUtils.getSubject();
 
         // 用户是否登录校验
@@ -83,6 +101,7 @@ public class MainController {
         }
     }
 
+    // 登出接口
     @GetMapping("/logout")
     public String logout() {
         Subject currentUser = SecurityUtils.getSubject();

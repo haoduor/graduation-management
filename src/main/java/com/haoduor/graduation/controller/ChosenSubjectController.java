@@ -5,6 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.haoduor.graduation.model.*;
 import com.haoduor.graduation.service.*;
+import com.haoduor.graduation.util.ConvertUtil;
 import com.haoduor.graduation.util.UserUtil;
 import com.haoduor.graduation.vo.ChosenSubjectVo;
 import com.haoduor.graduation.vo.DataMessage;
@@ -161,7 +162,7 @@ public class ChosenSubjectController {
     public ChosenSubjectVo toChosenSubjectVo(ChosenSubject cs, Subject s) {
         long subjectId = cs.getSubjectId();
 
-        ChosenSubjectVo vo = Convert.convert(ChosenSubjectVo.class, s);
+        ChosenSubjectVo vo = ConvertUtil.convert(ChosenSubjectVo.class, s);
 
         List<Tag> tags = tagService.getTagsBySubjectId(subjectId);
         vo.setTags(tags);

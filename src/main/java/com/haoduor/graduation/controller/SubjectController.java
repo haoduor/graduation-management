@@ -12,6 +12,7 @@ import com.haoduor.graduation.model.Subject;
 import com.haoduor.graduation.model.Tag;
 import com.haoduor.graduation.model.Teacher;
 import com.haoduor.graduation.service.*;
+import com.haoduor.graduation.util.ConvertUtil;
 import com.haoduor.graduation.util.UserUtil;
 import com.haoduor.graduation.vo.BaseMessage;
 import com.haoduor.graduation.vo.PageMessage;
@@ -140,7 +141,7 @@ public class SubjectController {
         for (Subject s: subs) {
             List<Tag> tags = tagService.getTagsBySubjectId(s.getId());
 
-            SubjectVo vo = Convert.convert(SubjectVo.class, s);
+            SubjectVo vo = ConvertUtil.convert(SubjectVo.class, s);
 
             Teacher t = teacherService.getTeacherById(s.getTeacherid());
 
