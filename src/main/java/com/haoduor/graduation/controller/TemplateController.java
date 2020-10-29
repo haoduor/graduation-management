@@ -50,6 +50,7 @@ public class TemplateController {
     private HttpServletRequest request;
 
     // 管理员上传样板文档
+    @ResponseBody
     @PostMapping("/upload")
     @RequiresRoles("admin")
     public BaseMessage upload(MultipartFile file) {
