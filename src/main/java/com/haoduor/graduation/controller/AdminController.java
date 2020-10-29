@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/admin")
 public class AdminController {
 
+    // 管理员页面
     @GetMapping("/manager")
     @RequiresRoles("admin")
     public String manager() {

@@ -21,6 +21,7 @@ public class AnnouncementController {
     @Autowired
     private AnnouncementService announcementService;
 
+    // 获取公告列表
     @GetMapping("/list")
     public PageMessage list(@RequestParam(defaultValue = "1") int page,
                             @RequestParam(defaultValue = "30") int pageSize) {
@@ -40,7 +41,7 @@ public class AnnouncementController {
         return pm;
     }
 
-
+    // 管理员添加公告
     @PostMapping("/add")
     @RequiresRoles("admin")
     public BaseMessage add(@RequestParam String content) {
@@ -59,6 +60,7 @@ public class AnnouncementController {
         }
     }
 
+    // 管理员删除公告
     @PostMapping("/delete")
     @RequiresRoles("admin")
     public BaseMessage delete(@RequestParam String id) {
@@ -76,6 +78,7 @@ public class AnnouncementController {
         }
     }
 
+    // 管理员修改公告
     @PostMapping("/set")
     @RequiresRoles("admin")
     public BaseMessage set(@RequestParam String id, @RequestParam String content) {

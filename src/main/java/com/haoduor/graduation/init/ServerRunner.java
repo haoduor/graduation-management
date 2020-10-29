@@ -17,6 +17,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -75,6 +76,8 @@ public class ServerRunner implements CommandLineRunner {
                 System.exit(-1);
             }
         }
+
+        log.info("初始化完成");
     }
 
     private User getDefaultAdmin() {
