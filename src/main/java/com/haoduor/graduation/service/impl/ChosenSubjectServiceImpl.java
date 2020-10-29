@@ -40,4 +40,19 @@ public class ChosenSubjectServiceImpl implements ChosenSubjectService {
         return chosenSubjectMapper.selectByExample(cse);
     }
 
+    @Override
+    public boolean deleteChosenById(long studentId, long subjectId) {
+        return false;
+    }
+
+    @Override
+    public boolean deleteChosenByStuId(long studentId) {
+        ChosenSubjectExample cse = instance();
+        cse.createCriteria().andStudentIdEqualTo(studentId);
+
+        int res = chosenSubjectMapper.deleteByExample(cse);
+
+        return res == 1;
+    }
+
 }

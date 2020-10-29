@@ -15,6 +15,7 @@ public interface SubjectService {
     public boolean setSubjectById(long id, SubjectDto subjectDto);
     public boolean deleteSubjectById(long id);
     public boolean hasSubject(long id);
+    public boolean teacherHasSubject(long teacherId, long subjectId);
     public int countStudentChoseSubject(long id);
     public boolean choseSubject(long subjectId, long studentId);
 }
