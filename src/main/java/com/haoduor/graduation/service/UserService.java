@@ -15,4 +15,6 @@ public interface UserService {
     public boolean setUserPasswordById(long id, String password, String salt);
     public boolean addStudentDto(StudentDto s);
     public boolean addTeacherDto(TeacherDto t);
+    public boolean hasAdmin();
+    public boolean addUser(User u);
 }

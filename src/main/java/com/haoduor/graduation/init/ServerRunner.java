@@ -8,6 +8,7 @@ import com.haoduor.graduation.model.RoleExample;
 import com.haoduor.graduation.model.User;
 import com.haoduor.graduation.service.RoleService;
 import com.haoduor.graduation.service.UserService;
+import com.haoduor.graduation.util.EncryptedUtil;
 import com.sun.org.apache.regexp.internal.RE;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,32 @@ public class ServerRunner implements CommandLineRunner {
         log.info("初始化教师库");
         List<User> teachers = userService.getUserByRole(teacher.getId());
         teachers.forEach(s -> teacherFilter.add(s.getUsername()));
+
+        if (!userService.hasAdmin()) {
+            log.info("添加初始化管理员");
+            User admin = getDefaultAdmin();
+
+            if (!userService.addUser(admin)) {
+                log.info("添加默认管理员失败, 请检查数据库");
+                System.exit(-1);
+            }
+        }
+    }
+
+    private User getDefaultAdmin() {
+        User u = new User();
+        u.setUsername("admin");
+        String salt = EncryptedUtil.getSalt();
+        String password = EncryptedUtil.encryptedPassword("123456", salt);
+
+        u.setSalt(salt);
+        u.setPassword(password);
+        u.setId(snowflake.nextId());
+        Role admin = roleService.getAdminRole();
+
+        u.setRoleId(admin.getId());
+
+        return u;
     }
 
     private List<Role> getAllRoles() {

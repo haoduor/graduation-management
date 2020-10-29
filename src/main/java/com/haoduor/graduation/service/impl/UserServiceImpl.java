@@ -149,4 +149,22 @@ public class UserServiceImpl implements UserService {
 
         return resT == 1 && resU == 1;
     }
+
+    @Override
+    public boolean hasAdmin() {
+        UserExample ue = new UserExample();
+        Role admin = roleService.getAdminRole();
+        ue.createCriteria().andRoleIdEqualTo(admin.getId());
+
+        int sum = userMapper.countByExample(ue);
+
+        return sum > 0;
+    }
+
+    @Override
+    public boolean addUser(User u) {
+        int res = userMapper.insert(u);
+
+        return res == 1;
+    }
 }
