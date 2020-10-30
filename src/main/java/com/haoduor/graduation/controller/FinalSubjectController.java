@@ -1,14 +1,24 @@
 package com.haoduor.graduation.controller;
 
+import cn.hutool.core.convert.Convert;
 import com.haoduor.graduation.model.FinalSubject;
+import com.haoduor.graduation.model.Student;
+import com.haoduor.graduation.model.Subject;
+import com.haoduor.graduation.model.Teacher;
 import com.haoduor.graduation.service.FinalSubjectService;
+import com.haoduor.graduation.service.StudentService;
 import com.haoduor.graduation.service.SubjectService;
+import com.haoduor.graduation.service.TeacherService;
+import com.haoduor.graduation.util.ConvertUtil;
 import com.haoduor.graduation.util.UserUtil;
 import com.haoduor.graduation.vo.BaseMessage;
+import com.haoduor.graduation.vo.DataMessage;
+import com.haoduor.graduation.vo.FinalSubjectVo;
+import com.haoduor.graduation.vo.SubjectVo;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.session.Session;
-import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,7 +28,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/final")
 public class FinalSubjectController {
 
-
     @Autowired
     private SubjectService subjectService;
 
@@ -26,16 +35,22 @@ public class FinalSubjectController {
     private FinalSubjectService finalSubjectService;
 
     @Autowired
+    private StudentService studentService;
+
+    @Autowired
+    private TeacherService teacherService;
+
+    @Autowired
     private UserUtil userUtil;
 
     @RequestMapping("/chose")
-    @RequiresRoles("teacher")
+    @RequiresRoles(value = {"teacher", "admin"}, logical = Logical.OR)
     public BaseMessage chose(@RequestParam String studentId,
                              @RequestParam String subjectId) {
         long _studentId;
         long _subjectId;
 
-        Subject currentUser = SecurityUtils.getSubject();
+        org.apache.shiro.subject.Subject currentUser = SecurityUtils.getSubject();
         userUtil.cacheId(currentUser);
 
         Session se = currentUser.getSession();
@@ -48,7 +63,7 @@ public class FinalSubjectController {
             return new BaseMessage(2, "格式化失败");
         }
 
-        if (!subjectService.teacherHasSubject(id, _subjectId)) {
+        if (!subjectService.teacherHasSubject(id, _subjectId) && !currentUser.hasRole("admin")) {
             return new BaseMessage(3, "不能选择非自己的选题");
         }
 
@@ -57,5 +72,73 @@ public class FinalSubjectController {
         } else {
             return new BaseMessage(4, "数据库错误");
         }
+    }
+
+    @RequestMapping("/student")
+    @RequiresRoles(value = {"student", "admin"}, logical = Logical.OR)
+    public DataMessage studentFinal(String studentId) {
+        org.apache.shiro.subject.Subject currentUser = SecurityUtils.getSubject();
+
+        Long id;
+        try {
+            id = Long.parseLong(studentId);
+        } catch (NumberFormatException e) {
+            return new DataMessage(2, "格式化失败");
+        }
+
+        if (!userUtil.isMe(id, currentUser) && !currentUser.hasRole("admin")) {
+            return new DataMessage(3, "不能查询其他用户的最终选题");
+        }
+
+        FinalSubject fs = finalSubjectService.getStudentFinalChosen(id);
+        if (fs !=  null) {
+            DataMessage dm = new DataMessage(1, "获取成功");
+            FinalSubjectVo finalSubjectVo = convertData(fs);
+            dm.setData(finalSubjectVo);
+            return dm;
+        } else {
+            return new DataMessage(4, "该学生没有最终选题");
+        }
+    }
+
+    private FinalSubjectVo convertData(FinalSubject fs) {
+        long subjectId = fs.getSubjectId();
+
+        Subject s = subjectService.getSubjectById(subjectId);
+
+        if (s == null) {
+            return null;
+        }
+
+        return toFinalSubjectVo(fs, s);
+    }
+
+    private FinalSubjectVo toFinalSubjectVo(FinalSubject fs, Subject subject) {
+        SubjectVo subjectVo = toSubjectVo(subject);
+        FinalSubjectVo finalSubjectVo = ConvertUtil.convert(FinalSubjectVo.class, subjectVo);
+
+        Student stu = studentService.getStudentById(fs.getStudentId());
+        if (stu != null) {
+            finalSubjectVo.setStudentId(stu.getUserId());
+            finalSubjectVo.setStudentName(stu.getName());
+        }
+
+        finalSubjectVo.setChosenTime(fs.getFinalChosenTime());
+
+        return finalSubjectVo;
+    }
+
+    private SubjectVo toSubjectVo(Subject subject) {
+        SubjectVo subjectVo = ConvertUtil.convert(SubjectVo.class, subject);
+
+        long teacherId = subject.getTeacherid();
+        Teacher t = teacherService.getTeacherById(teacherId);
+
+        if (t != null) {
+            subjectVo.setTeacherName(t.getName());
+            subjectVo.setTeacherId(t.getUserId());
+        }
+
+        return subjectVo;
     }
 }

@@ -144,7 +144,6 @@ public class ChosenSubjectController {
 
     private List<ChosenSubjectVo> convertData(List<ChosenSubject> chosenSubjectList,
                                               Map<Long, Subject> subjectMap) {
-
         List<ChosenSubjectVo> res = new LinkedList<>();
         for (ChosenSubject cs: chosenSubjectList) {
             long subjectId = cs.getSubjectId();
