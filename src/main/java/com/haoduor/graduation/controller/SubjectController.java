@@ -45,6 +45,9 @@ public class SubjectController {
     private StudentService studentService;
 
     @Autowired
+    private FinalSubjectService finalSubjectService;
+
+    @Autowired
     private UserUtil userUtil;
 
     @PostMapping("/set")
@@ -188,6 +191,10 @@ public class SubjectController {
 
         if (studentService.hasStudent(_studentId)) {
             return new BaseMessage(4, "学生不存在");
+        }
+
+        if (finalSubjectService.hasFinalSubject(_studentId)) {
+            return new BaseMessage(9, "该学生已有最终选题");
         }
 
         int count = subjectService.countStudentChoseSubject(_studentId);

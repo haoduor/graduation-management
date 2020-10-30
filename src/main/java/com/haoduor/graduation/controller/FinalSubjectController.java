@@ -62,6 +62,10 @@ public class FinalSubjectController {
             return new BaseMessage(2, "格式化失败");
         }
 
+        if (finalSubjectService.hasFinalSubject(_studentId)) {
+            return new BaseMessage(5, "该学生已有最终选题");
+        }
+
         if (!subjectService.teacherHasSubject(id, _subjectId) && !currentUser.hasRole("admin")) {
             return new BaseMessage(3, "不能选择非自己的选题");
         }
@@ -127,7 +131,6 @@ public class FinalSubjectController {
         pm.setData(convertData(finalSubjectList));
         return pm;
     }
-
 
     @RequestMapping("/all")
     @RequiresRoles("admin")
