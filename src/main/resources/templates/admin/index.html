@@ -52,6 +52,10 @@
                     <i class="el-icon-document"></i>
                     <span slot="title">模板文件管理</span>
                 </el-menu-item>
+                <el-menu-item index="10">
+                    <i class="el-icon-user"></i>
+                    <span slot="title">最终选题学生列表</span>
+                </el-menu-item>
                 <el-menu-item index="7">
                     <i class="el-icon-document"></i>
                     <span slot="title">学生提交文件管理</span>
@@ -347,6 +351,24 @@
                             new app().$mount("#listTool");
                             tools.$('#mainContent').style.opacity = '1';
                             this.refreshTables(1,templateData['data']['total'],8);
+                        });
+                    }
+                    //最终选题学生列表
+                    if(key == 10){
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#mainContent').style.opacity = '0';
+                        }).then(async val => {
+                            await tools.setPage('listTool', '/view/listTool/listTool.html', {
+                                title: '最终选题学生列表',
+                                addBtn:'none'
+                            });
+                            await tools.setPage('mainContent', '/view/data/finalStuTable.html');
+                            let finalStuData = await tools.getAxiosData('/final/all?page=1&pageSize=8');
+                            tools.$('#tableDate').innerHTML = await tableModel.getFinalStuData(finalStuData['data']['data']);
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                            this.refreshTables(1,finalStuData['data']['total'],8);
                         });
                     }
                 },
@@ -1146,6 +1168,11 @@
                         let templateData = await tools.getAxiosData(`/template/list?page=1&pageSize=8`);
                         staticValue.getThat().refreshTables(1,templateData['data']['total'],8);
                     }
+                    //最终学生页刷新
+                    if(staticValue.getCurrentPage() == '10'){
+                        let finalStuData = await tools.getAxiosData('/final/all?page=1&pageSize=8');
+                        staticValue.getThat().refreshTables(1,finalStuData['data']['total'],8);
+                    }
                     this.$message('刷新成功');
                     new app().$mount("#mainContent");
                 },
@@ -1179,6 +1206,11 @@
                     if(staticValue.getCurrentPage() == '6'){
                         let templateData = await tools.getAxiosData(`/template/list?page=${staticValue.getPageNumber()}&pageSize=8`);
                         tools.$('#tableDate').innerHTML = await tableModel.getTemplateTableData(templateData['data']['data']);
+                    }
+                    //最终学生页刷新
+                    if(staticValue.getCurrentPage() == '10'){
+                        let finalStuData = await tools.getAxiosData(`/final/all?page=${staticValue.getPageNumber()}&pageSize=8`);
+                        tools.$('#tableDate').innerHTML = await tableModel.getFinalStuData(finalStuData['data']['data']);
                     }
                     new app().$mount("#mainContent");
                 },

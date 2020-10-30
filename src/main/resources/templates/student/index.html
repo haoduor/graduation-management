@@ -43,6 +43,10 @@
                         <i class="el-icon-document-checked"></i>
                         <span slot="title">已选课题</span>
                     </el-menu-item>
+                    <el-menu-item index="6">
+                        <i class="el-icon-document-checked"></i>
+                        <span slot="title">我的最终选题</span>
+                    </el-menu-item>
                     <el-menu-item index="5">
                         <i class="el-icon-s-custom"></i>
                         <span slot="title">模板文件下载</span>
@@ -83,7 +87,8 @@
     //设置工具栏默认显示
     tools.setDefaultPage({
         title: '标题',
-        studentInfo:['','','','']
+        studentInfo:['','','',''],
+        finalSubjectInfo:['无','无','无','无','无','无']
     });
 
     (async () => {
@@ -258,6 +263,35 @@
                             new app().$mount("#listTool");
                             tools.$('#mainContent').style.opacity = '1';
                             this.refreshTables(1,templateData['data']['total'],8);
+
+                        });
+                    }
+
+                    //我的最终选题
+                    if(key == 6){
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#pagination').style.display = 'none';
+                            tools.$('#mainContent').style.opacity = '0';
+                        }).then(async val => {
+                            let myFinalSubjectData = await tools.getAxiosData(`/final/student?studentId=${staticValue.getThat().userInfo['data']['userId']}`);
+                            let symbolData = myFinalSubjectData['data']['data'];
+                            let dataTime =tools.dateFormat(new Date(parseInt(symbolData['chosenTime'])),'yyyy-MM-dd hh:mm:ss');//时间
+                            let dataDifficulty = symbolData['difficult'] == '0'?'容易':symbolData['difficult'] == '1'?'普通':symbolData['difficult'] == '2'?'困难':'?';//难度
+                            await tools.setPage('listTool', './view/listTool/listToolStu.html', { title: '我的最终选题' });
+                            await tools.setPage('mainContent', './view/data/student/stuFinalSubjectInfo.html',
+                                {
+                                    finalSubjectInfo:[
+                                        symbolData['teacherName'],
+                                        symbolData['title'],
+                                        symbolData['content'],
+                                        symbolData['source'],
+                                        dataDifficulty,
+                                        dataTime,
+                                    ]
+                                });
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
 
                         });
                     }

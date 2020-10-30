@@ -238,7 +238,22 @@
                     }
                     //我的学生
                     if(key == 3){
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#mainContent').style.opacity = '0';
+                            tools.$('#pagination').style.display = 'block';
+                        }).then(async val => {
+                            await tools.setPage('listTool', '/view/listTool/listToolTea.html', {
+                                title: '我的学生',
+                            });
+                            await tools.setPage('mainContent', '/view/data/teacher/myFinalStuTable.html');
+                            let myFinalStuData = await tools.getAxiosData(`/final/teacher?page=1&pageSize=8&teacherId=${staticValue.getThat().userInfo['data']['userId']}`);
+                            tools.$('#tableDate').innerHTML = await tableModel.getTeaFinalStuData(myFinalStuData['data']['data']);
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                            this.refreshTables(1,myFinalStuData['data']['total'],8);
 
+                        });
                     }
                     //修改密码
                     if(key == 4){
@@ -376,7 +391,7 @@
 
                         //学生选题审核
                         if(staticValue.getCurrentPage() == 5){
-                            console.log(data);
+                            // console.log(data);
                             await tools.setPage('editMain', '/view/form/teacher/stuAndSubject.html');
                             new app().$mount("#editMain");
                         }
@@ -541,7 +556,19 @@
                 },
                 //审核学生
                 choseStudent(){
-
+                    console.log(staticValue.getChoseId());
+                    axios.post('/final/chose',tools.buildFormData({studentId:staticValue.getChoseId()['stuId'],subjectId:staticValue.getChoseId()['sbjId']})).then(val=>{
+                        let id = val['data']['id'];
+                        if(id == 1){
+                            this.$message.success('选择成功');
+                            this.closeEditAndRefresh();//关闭并刷新
+                        }else{
+                            this.$message.error(val['data']['message']);
+                        }
+                    }).catch(err=>{
+                        console.log(err);
+                        this.$message.error("网络错误");
+                    });
                 },
                 //修改密码
                 changePwdForm(formName){
@@ -714,6 +741,12 @@
                         let subjectData = await tools.getAxiosData(`/chosen/teacher?teacherId=${staticValue.getThat().userInfo['data']['userId']}&page=1&pageSize=6`);
                         staticValue.getThat().refreshTables(1,subjectData['data']['total'],6);
                     }
+                    //我的学生
+                    if(staticValue.getCurrentPage() == '3'){
+                        let myFinalStuData = await tools.getAxiosData(`/final/teacher?page=1&pageSize=8&teacherId=${staticValue.getThat().userInfo['data']['userId']}`);
+                        // tools.$('#tableDate').innerHTML = await tableModel.getTeaFinalStuData(myFinalStuData['data']['data']);
+                        staticValue.getThat().refreshTables(1,myFinalStuData['data']['total'],8);
+                    }
                     //模板页刷新
                     if(staticValue.getCurrentPage() == '6'){
                         let templateData = await tools.getAxiosData('/template/list?page=1&pageSize=8');
@@ -732,6 +765,11 @@
                     if(staticValue.getCurrentPage() == '5') {
                         let subjectData = await tools.getAxiosData(`/chosen/teacher?teacherId=${staticValue.getThat().userInfo['data']['userId']}&page=${staticValue.getPageNumber()}&pageSize=6`);
                         tools.$('#tableDate').innerHTML = await tableModel.getStuAndSubject(subjectData['data']['data']);
+                    }
+                    //我的学生
+                    if(staticValue.getCurrentPage() == '3'){
+                        let myFinalStuData = await tools.getAxiosData(`/final/teacher?page=${staticValue.getPageNumber()}&pageSize=8&teacherId=${staticValue.getThat().userInfo['data']['userId']}`);
+                        tools.$('#tableDate').innerHTML = await tableModel.getTeaFinalStuData(myFinalStuData['data']['data']);
                     }
                     //模板页刷新
                     if(staticValue.getCurrentPage() == '6') {

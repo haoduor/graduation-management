@@ -177,6 +177,34 @@ const tableModel = (() =>{
                 }
             });
         },
+        //最终选题学生表行
+        getFinalStuData(data){
+            let html = '';
+            return new Promise((resolve,reject)=> {
+                data.forEach((items, index) => {
+                    let dataTime =tools.dateFormat(new Date(parseInt(items['chosenTime'])),'yyyy-MM-dd hh:mm:ss');//时间
+                    let dataDifficulty = items['difficult'] == '0'?'容易':items['difficult'] == '1'?'普通':items['difficult'] == '2'?'困难':'?';//难度
+                    let dataColumn = `
+                    <div class="dateColumn" style='padding:20px 0px' >
+                        <p class="nmDate">${items['studentName']}</p>
+                        <p class="nmDate">${items['teacherName']}</p>
+                        <p class="nmDate">${items['title']}</p>
+                        <p class="nmDate">${items['content']}</p>
+                        <p class="nmDate">${items['source']}</p>
+                        <p class="nmDate">${dataDifficulty}</p>   
+                        <p class="nmDate">${dataTime}</p>                      
+                     </div>
+                    `;
+                    html += dataColumn;
+                });
+                if(html != null){
+                    resolve(html);
+                }else{
+                    resolve('空页面');
+                }
+            });
+        },
+
         //登录页公告单个模块
         getLoginNoticeData(data){
             let html = '';
@@ -363,6 +391,32 @@ const tableModel = (() =>{
                         width: 200px;">
                             <el-button @click="showEdit({sbjId:'${items['id']}',stuId:'${items['studentId']}'})" type="text" icon="el-icon-edit">通过审核</el-button>                        
                         </div>
+                     </div>
+                    `;
+                    html += dataColumn;
+                });
+                if(html != null){
+                    resolve(html);
+                }else{
+                    resolve('空页面');
+                }
+            });
+        },
+        //最终选题学生表行(教师端)
+        getTeaFinalStuData(data){
+            let html = '';
+            return new Promise((resolve,reject)=> {
+                data.forEach((items, index) => {
+                    let dataTime =tools.dateFormat(new Date(parseInt(items['chosenTime'])),'yyyy-MM-dd hh:mm:ss');//时间
+                    let dataDifficulty = items['difficult'] == '0'?'容易':items['difficult'] == '1'?'普通':items['difficult'] == '2'?'困难':'?';//难度
+                    let dataColumn = `
+                    <div class="dateColumn" style='padding:20px 0px' >
+                        <p class="nmDate">${items['studentName']}</p>
+                        <p class="nmDate">${items['title']}</p>
+                        <p class="nmDate">${items['content']}</p>
+                        <p class="nmDate">${items['source']}</p>
+                        <p class="nmDate">${dataDifficulty}</p>   
+                        <p class="nmDate">${dataTime}</p>                      
                      </div>
                     `;
                     html += dataColumn;
