@@ -9,4 +9,5 @@ public interface FinalSubjectService {
     public FinalSubject getStudentFinalChosen(long studentId);
     public List<FinalSubject> getTeacherFinalChosen(long teacherId);
     public List<FinalSubject> getAllFinalChosen();
+    public boolean hasFinalSubject(long studentId);
 }

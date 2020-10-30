@@ -72,4 +72,12 @@ public class FinalSubjectServiceImpl implements FinalSubjectService {
         FinalSubjectExample subjectExample = new FinalSubjectExample();
         return finalSubjectMapper.selectByExample(subjectExample);
     }
+
+    @Override
+    public boolean hasFinalSubject(long studentId) {
+        FinalSubjectExample subjectExample = new FinalSubjectExample();
+        subjectExample.createCriteria().andSubjectIdEqualTo(studentId);
+
+        return finalSubjectMapper.countByExample(subjectExample) >= 1;
+    }
 }
