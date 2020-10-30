@@ -1,20 +1,16 @@
 package com.haoduor.graduation.controller;
 
 import cn.hutool.core.convert.Convert;
-import com.haoduor.graduation.model.FinalSubject;
-import com.haoduor.graduation.model.Student;
-import com.haoduor.graduation.model.Subject;
-import com.haoduor.graduation.model.Teacher;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.haoduor.graduation.model.*;
 import com.haoduor.graduation.service.FinalSubjectService;
 import com.haoduor.graduation.service.StudentService;
 import com.haoduor.graduation.service.SubjectService;
 import com.haoduor.graduation.service.TeacherService;
 import com.haoduor.graduation.util.ConvertUtil;
 import com.haoduor.graduation.util.UserUtil;
-import com.haoduor.graduation.vo.BaseMessage;
-import com.haoduor.graduation.vo.DataMessage;
-import com.haoduor.graduation.vo.FinalSubjectVo;
-import com.haoduor.graduation.vo.SubjectVo;
+import com.haoduor.graduation.vo.*;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -23,6 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.LinkedList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/final")
@@ -76,7 +75,7 @@ public class FinalSubjectController {
 
     @RequestMapping("/student")
     @RequiresRoles(value = {"student", "admin"}, logical = Logical.OR)
-    public DataMessage studentFinal(String studentId) {
+    public DataMessage studentFinal(@RequestParam String studentId) {
         org.apache.shiro.subject.Subject currentUser = SecurityUtils.getSubject();
 
         Long id;
@@ -99,6 +98,59 @@ public class FinalSubjectController {
         } else {
             return new DataMessage(4, "该学生没有最终选题");
         }
+    }
+
+    @RequestMapping("/teacher")
+    @RequiresRoles(value = {"teacher", "admin"}, logical = Logical.OR)
+    public PageMessage teacherFinal(@RequestParam String teacherId,
+                                    @RequestParam(defaultValue = "1") int page,
+                                    @RequestParam(defaultValue = "30") int pageSize) {
+        org.apache.shiro.subject.Subject currentUser = SecurityUtils.getSubject();
+
+        Long id;
+        try {
+            id = Long.parseLong(teacherId);
+        } catch (NumberFormatException e) {
+            return new PageMessage(2, "格式化失败");
+        }
+
+        if (!userUtil.isMe(id, currentUser) && !currentUser.hasRole("admin")) {
+            return new PageMessage(3, "不能查询其他用户的最终选题");
+        }
+
+        PageHelper.startPage(page, pageSize);
+        List<FinalSubject> finalSubjectList = finalSubjectService.getTeacherFinalChosen(id);
+        PageInfo<FinalSubject> pages = new PageInfo<>(finalSubjectList);
+        PageHelper.clearPage();
+
+        PageMessage pm = PageMessage.instance(pages);
+        pm.setData(convertData(finalSubjectList));
+        return pm;
+    }
+
+
+    @RequestMapping("/all")
+    @RequiresRoles("admin")
+    public PageMessage all(@RequestParam(defaultValue = "1") int page,
+                           @RequestParam(defaultValue = "30") int pageSize) {
+        PageHelper.startPage(page, pageSize);
+        List<FinalSubject> finalSubjectList = finalSubjectService.getAllFinalChosen();
+        PageInfo<FinalSubject> pages = new PageInfo<>(finalSubjectList);
+        PageHelper.clearPage();
+
+        PageMessage pm = PageMessage.instance(pages);
+        pm.setData(convertData(finalSubjectList));
+        return pm;
+    }
+
+    private List<FinalSubjectVo> convertData(List<FinalSubject> finalSubjectList) {
+        List<FinalSubjectVo> res = new LinkedList<>();
+
+        for (FinalSubject fs: finalSubjectList) {
+            res.add(convertData(fs));
+        }
+
+        return res;
     }
 
     private FinalSubjectVo convertData(FinalSubject fs) {

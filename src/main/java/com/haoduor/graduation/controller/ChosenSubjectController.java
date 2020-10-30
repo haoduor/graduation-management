@@ -61,7 +61,7 @@ public class ChosenSubjectController {
             return new DataMessage(2, "格式化错误");
         }
 
-        if (!userUtil.isMe(_id, currentUser)) {
+        if (!userUtil.isMe(_id, currentUser) && !currentUser.hasRole("admin")) {
             return new DataMessage(3, "只能获取自己选择的课题");
         }
 
@@ -87,7 +87,7 @@ public class ChosenSubjectController {
             return new PageMessage(2, "格式化错误");
         }
 
-        if (!userUtil.isMe(_id, currentUser)) {
+        if (!userUtil.isMe(_id, currentUser) && !currentUser.hasRole("admin")) {
             return new PageMessage(3, "只能获取自己的课题");
         }
 
