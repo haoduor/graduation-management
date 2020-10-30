@@ -62,7 +62,7 @@ public class FinalSubjectServiceImpl implements FinalSubjectService {
                                         .collect(Collectors.toList());
 
         FinalSubjectExample subjectExample = new FinalSubjectExample();
-        subjectExample.createCriteria().andSubjectIdIn(subjectIds);fi
+        subjectExample.createCriteria().andSubjectIdIn(subjectIds);
 
         return finalSubjectMapper.selectByExample(subjectExample);
     }
