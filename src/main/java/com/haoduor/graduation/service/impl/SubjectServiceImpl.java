@@ -129,6 +129,16 @@ public class SubjectServiceImpl implements SubjectService {
     }
 
     @Override
+    public boolean teacherHasSubject(long teacherId, long subjectId) {
+        SubjectExample se = new SubjectExample();
+        se.createCriteria()
+          .andTeacheridEqualTo(teacherId)
+          .andIdEqualTo(subjectId);
+
+        return subjectMapper.countByExample(se) == 1;
+    }
+
+    @Override
     public int countStudentChoseSubject(long id) {
         ChosenSubjectExample cse = new ChosenSubjectExample();
         cse.createCriteria().andStudentIdEqualTo(id);
