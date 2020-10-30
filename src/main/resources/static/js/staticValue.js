@@ -6,6 +6,7 @@ const staticValue = (()=>{
     let mainContentThis = window;  //主页this
     let listToolThis = window; //工具栏this
     let editMainThis = window; //编辑添加删除页this
+    let topicSelectTea = '';//选题页搜索的教师
 
     return{
         //设置当前选中的页面
@@ -81,6 +82,14 @@ const staticValue = (()=>{
             }
             return editMainThis;
         },
+
+        //选题页搜索的教师
+        setTopicSelectTea(_this = '1'){
+            topicSelectTea = _this;
+        },
+        getTopicSelectTea(){
+            return topicSelectTea;
+        }
     }
 })();
 

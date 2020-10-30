@@ -3,9 +3,13 @@
     $title$
 </p>
 
-<el-select style="display: $topicSelect[0]$;" v-model="choseTeacher" placeholder="请选择指导老师">
-    <el-option v-for="item in topicTeachers" :key="item.choseTeacher" :label="item.label" :value="item.choseTeacher">
-    </el-option>
+<el-select style="display: $topicSelect[0]$;" v-model="mainPage.choseTeacher" placeholder="请选择指导老师">
+        <el-option
+                v-for="item in mainPage.topicTeachers"
+                :key="item.key"
+                :label="item.value"
+                :value="item.key">
+        </el-option>
 </el-select>
 <el-button style="display: $topicSelect[1]$;" class="listToolSelect" @click="selectTableItems" type="primary" icon="el-icon-zoom-in">
     查询

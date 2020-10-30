@@ -190,7 +190,7 @@ const tableModel = (() =>{
                     html += dataColumn;
                 });
                 if(html != null){
-                    let lastHtml = ` <el-collapse>${html}</el-collapse>`
+                    let lastHtml = ` <el-collapse v-model="topicItems">${html}</el-collapse>`
                     resolve(lastHtml);
                 }else{
                     resolve('空页面');

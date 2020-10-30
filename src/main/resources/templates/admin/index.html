@@ -118,33 +118,12 @@
                         nowPage:1,
                         totalData: parseInt(studentData['data']['total']),
                     },
-                    topicTeachers: [
-                        {
-                            key: 0,
-                            choseTeacher: '全选',
-                            label: '全选'
-                        }, {
-                            key: 1,
-                            choseTeacher: '王老师',
-                            label: '王老师'
-                        }, {
-                            key: 2,
-                            choseTeacher: '李老师',
-                            label: '李老师'
-                        }, {
-                            key: 3,
-                            choseTeacher: '陈老师',
-                            label: '蚵仔煎'
-                        }, {
-                            key: 4,
-                            choseTeacher: '张老师',
-                            label: '龙须面'
-                        }, {
-                            key: 5,
-                            choseTeacher: '杨老师',
-                            label: '北京烤鸭'
-                        }],
-                    choseTeacher:'',
+                    mainPage:{
+                        topicTeachers: [],
+                        choseTeacher:'',
+                    },
+
+
                     //编辑用户表单
                     //学生
                     studentEdit: {
@@ -274,6 +253,7 @@
             methods: {
                 //左栏选择
                 handleSelect(key, keyPath) {
+                    staticValue.setTopicSelectTea('');//设置默认无选择老师
                     staticValue.setCurrentPage(key);//设置当前页面
                     tools.$('#pagination').style.display = 'block';//翻页初始存在
                     //学生用户列表
@@ -323,11 +303,15 @@
                                 title: '选题管理',
                                 topicSelect: ['block', 'block']
                             });
+
                             await tools.setPage('mainContent', '/view/data/selectTopicTable.html');
                             let subjectData = await tools.getAxiosData('/subject/list?page=1&pageSize=4');
                             tools.$('#tableDate').innerHTML = await tableModel.getTopicTableData(subjectData['data']['data']);
                             new app().$mount("#mainContent");
                             new app().$mount("#listTool");
+
+                            this.teacherSelectList(false);//初始教师列表
+
                             tools.$('#mainContent').style.opacity = '1';
                             this.refreshTables(1,subjectData['data']['total'],4);
                         });
@@ -978,7 +962,9 @@
                 //                    查询功能                    //
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 selectTableItems() {
-
+                    let choseTeacherId = staticValue.getListToolThis()['mainPage']['choseTeacher'];
+                    staticValue.setTopicSelectTea(choseTeacherId);
+                    this.refreshBtn();
                 },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                      杂                       //
@@ -995,17 +981,31 @@
                         this.$message.warning('您已登出该账号,请刷新页面');
                     }
                 },
-                //初始化教师下拉框数据
-                async teacherSelectList(){
+                //初始化教师下拉框数据,flag为是否加载表单的下拉框
+                async teacherSelectList(flag = true){
                     let teacherList = [];
                     let teacherData = await tools.getAxiosData('/teacher/list');
+                    //如果是首页搜素,加个全部选项
+                    if(flag == false){
+                        teacherList.push({
+                            value:`全部`,
+                            key:false
+                        })
+                    }
                     teacherData['data']['data'].forEach((items,index)=>{
                         teacherList.push({
                             value:`${items['teacherId']}--${items['name']}`,
                             key:items['id']
                         })
                     });
-                    staticValue.getEditMainThis().$set(staticValue.getEditMainThis().topicSelect,'teacher',teacherList);
+
+                    if(flag == false){
+                        staticValue.getListToolThis().$set(staticValue.getListToolThis()['mainPage'],'topicTeachers',teacherList);
+                    }
+                    if(flag == true) {
+                        staticValue.getEditMainThis().$set(staticValue.getEditMainThis().topicSelect, 'teacher', teacherList);
+                    }
+
                 },
                 //选题和编辑标题添加标签
                 addTags(elementId,tagValueSource,isEdit = false){
@@ -1128,8 +1128,13 @@
                     }
                     //选题页刷新
                     if(staticValue.getCurrentPage() == '3'){
+                        let rule = staticValue.getTopicSelectTea();
+                        //是否有选中老师
                         let subjectData = await tools.getAxiosData('/subject/list?page=1&pageSize=4');
-                        staticValue.getThat().refreshTables(1,subjectData['data']['total'],4);
+                        if(rule){
+                            subjectData = await tools.getAxiosData(`/subject/list?page=1&pageSize=4&teacherId=${rule}`);
+                        }
+                        staticValue.getThat().refreshTables(1,subjectData['data']['total'],4,rule);
                     }
                     //公告页刷新
                     if(staticValue.getCurrentPage() == '5'){
@@ -1145,7 +1150,7 @@
                     new app().$mount("#mainContent");
                 },
                 //单页面刷新
-                async refreshTableItems() {
+                async refreshTableItems(rule = false) {
                     //学生页刷新
                     if(staticValue.getCurrentPage() == '1'){
                         let studentData = await tools.getAxiosData(`/student/list?page=${staticValue.getPageNumber()}&pageSize=8`);
@@ -1158,7 +1163,11 @@
                     }
                     //选题页刷新
                     if(staticValue.getCurrentPage() == '3'){
+                        //是否有选中老师
                         let subjectData = await tools.getAxiosData(`/subject/list?page=${staticValue.getPageNumber()}&pageSize=4`);
+                        if(rule){
+                             subjectData = await tools.getAxiosData(`/subject/list?page=${staticValue.getPageNumber()}&pageSize=4&teacherId=${rule}`);
+                        }
                         tools.$('#tableDate').innerHTML = await tableModel.getTopicTableData(subjectData['data']['data']);
                     }
                     //公告页刷新
@@ -1174,20 +1183,20 @@
                     new app().$mount("#mainContent");
                 },
                 //切换页面刷新
-                refreshTables(nowPage,totalData,pageSize){
+                refreshTables(nowPage,totalData,pageSize,rule){
                     console.log(pageSize)
                     staticValue.getThat().$set(staticValue.getThat().pageInfo,'nowPage',nowPage);
                     staticValue.getThat().$set(staticValue.getThat().pageInfo,'pageSize', pageSize);
                     staticValue.getThat().$set(staticValue.getThat().pageInfo,'totalData',parseInt(totalData));
                     staticValue.setPageNumber(nowPage);
-                    this.refreshTableItems();
+                    this.refreshTableItems(rule);
                 },
                 //换页
                 async handleCurrentChange(val) {
                     this.$set(this.pageInfo,'nowPage',val);
                     staticValue.setPageNumber(this.pageInfo['nowPage']);
                     //学生换页
-                    this.refreshTableItems();
+                    this.refreshTableItems(staticValue.getTopicSelectTea());
                 }
             }
         });
