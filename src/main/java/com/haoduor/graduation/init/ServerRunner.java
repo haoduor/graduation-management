@@ -4,6 +4,7 @@ import cn.hutool.bloomfilter.BitMapBloomFilter;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Snowflake;
 import com.haoduor.graduation.dao.RoleMapper;
+import com.haoduor.graduation.model.Period;
 import com.haoduor.graduation.model.Role;
 import com.haoduor.graduation.model.RoleExample;
 import com.haoduor.graduation.model.User;
@@ -23,6 +24,7 @@ import javax.sql.DataSource;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -39,6 +41,9 @@ public class ServerRunner implements CommandLineRunner {
 
     @Autowired
     private PeriodService periodService;
+
+    @Resource(name = "periodMap")
+    private Map<String, Period> periodMap;
 
     @Autowired
     @Qualifier("snowflake")
@@ -96,6 +101,13 @@ public class ServerRunner implements CommandLineRunner {
             periodService.addPeriod("中期检查-interim", startTime, endTime);
             periodService.addPeriod("验收/答辩-check", startTime, endTime);
             periodService.addPeriod("论文审核-paper", startTime, endTime);
+        }
+
+        log.info("初始化阶段缓存");
+        List<Period> periods = periodService.getPeriod();
+        for (Period p: periods) {
+            String name = p.getName().split("-")[1];
+            periodMap.put(name, p);
         }
 
         log.info("初始化完成");
