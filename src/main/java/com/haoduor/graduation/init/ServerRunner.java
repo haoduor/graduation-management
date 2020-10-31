@@ -91,11 +91,11 @@ public class ServerRunner implements CommandLineRunner {
             Date startTime = DateUtil.parse("1997-01-01 12:00");
             Date endTime = DateUtil.parse("3000-01-01 12:00");
 
-            periodService.addPeriod("选择课题", startTime, endTime);
-            periodService.addPeriod("开题报告", startTime, endTime);
-            periodService.addPeriod("中期检查", startTime, endTime);
-            periodService.addPeriod("验收/答辩", startTime, endTime);
-            periodService.addPeriod("论文审核", startTime, endTime);
+            periodService.addPeriod("选择课题-chose", startTime, endTime);
+            periodService.addPeriod("开题报告-opening", startTime, endTime);
+            periodService.addPeriod("中期检查-interim", startTime, endTime);
+            periodService.addPeriod("验收/答辩-check", startTime, endTime);
+            periodService.addPeriod("论文审核-paper", startTime, endTime);
         }
 
         log.info("初始化完成");
