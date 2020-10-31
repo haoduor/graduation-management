@@ -1,5 +1,6 @@
 package com.haoduor.graduation.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Snowflake;
 import com.haoduor.graduation.dao.PeriodMapper;
 import com.haoduor.graduation.model.Period;
@@ -24,6 +25,15 @@ public class PeriodServiceImpl implements PeriodService {
     public List<Period> getPeriod() {
         PeriodExample pe = new PeriodExample();
         return periodMapper.selectByExample(pe);
+    }
+
+    @Override
+    public Period getPeriodById(Long id) {
+        PeriodExample pe = new PeriodExample();
+        pe.createCriteria().andIdEqualTo(id);
+
+        List<Period> periods = periodMapper.selectByExample(pe);
+        return CollUtil.getFirst(periods);
     }
 
     @Override

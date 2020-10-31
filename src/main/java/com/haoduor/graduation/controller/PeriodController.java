@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/period")
@@ -22,6 +24,9 @@ public class PeriodController {
 
     @Autowired
     private PeriodService periodService;
+
+    @Resource(name = "periodMap")
+    private Map<String, Period> periodMap;
 
     @GetMapping("/list")
     public DataMessage list() {
@@ -61,10 +66,22 @@ public class PeriodController {
         }
 
         if (periodService.setPeriod(_id, st, et)) {
+            Period p = periodService.getPeriodById(_id);
+            if (p != null) {
+                updatePeriodCache(p);
+            } else {
+                return new BaseMessage(6, "数据出错请查看控制台");
+            }
+
             return new BaseMessage(1, "更新成功");
         } else {
             return new BaseMessage(4, "数据库出错");
         }
+    }
+
+    private void updatePeriodCache(Period p) {
+        String name = p.getName().split("-")[1];
+        periodMap.put(name, p);
     }
 
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 public interface PeriodService {
     public List<Period> getPeriod();
+    public Period getPeriodById(Long id);
     public boolean addPeriod(String name, Date startTime, Date endTime);
     public boolean addPeriod(Period p);
     public boolean setPeriod(long id, Date startTime, Date endTime);
