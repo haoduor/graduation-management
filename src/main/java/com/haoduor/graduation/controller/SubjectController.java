@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.haoduor.graduation.adapter.SubjectAdapter;
+import com.haoduor.graduation.annotation.TimeLimit;
 import com.haoduor.graduation.dto.SubjectDto;
 import com.haoduor.graduation.model.Subject;
 import com.haoduor.graduation.model.Tag;
@@ -163,11 +164,9 @@ public class SubjectController {
 
     @PostMapping("/chose")
     @RequiresRoles("student")
+    @TimeLimit(periodName = "chose")
     public BaseMessage choseSubject(@RequestParam String subjectId, @RequestParam String studentId) {
         org.apache.shiro.subject.Subject currentUser = SecurityUtils.getSubject();
-        userUtil.cacheId(currentUser);
-
-        Session se = currentUser.getSession();
 
         long _subjectId;
         long _studentId;
@@ -178,11 +177,8 @@ public class SubjectController {
             return new BaseMessage(2, "格式化错误");
         }
 
-        Long id = (Long) se.getAttribute("id");
-        if (currentUser.hasRole("student")) {
-            if (id.equals(_studentId)) {
-                return new BaseMessage(5, "用户不符合");
-            }
+        if (!userUtil.isMe(_studentId, currentUser)) {
+            return new BaseMessage(10, "只能选择自己");
         }
 
         if (subjectService.hasSubject(_subjectId)) {

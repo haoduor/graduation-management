@@ -3,6 +3,7 @@ package com.haoduor.graduation.vo;
 import com.github.pagehelper.PageInfo;
 import com.sun.org.apache.bcel.internal.classfile.PMGClass;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * nowPage 当前页面
@@ -10,8 +11,8 @@ import lombok.Data;
  * data 数据
  */
 @Data
-public class PageMessage{
-    long id;
+public class PageMessage implements Message{
+    int id;
     String message;
 
     long nowPage;
@@ -21,7 +22,7 @@ public class PageMessage{
 
     public PageMessage() { }
 
-    public PageMessage(long id, String message) {
+    public PageMessage(int id, String message) {
         this.id = id;
         this.message = message;
     }
@@ -32,5 +33,10 @@ public class PageMessage{
         pm.setNowPage(pages.getPageNum());
         pm.setTotalPage(pages.getPages());
         return pm;
+    }
+
+    @Override
+    public Object invoke(int id, String message) {
+        return new PageMessage(id, message);
     }
 }
