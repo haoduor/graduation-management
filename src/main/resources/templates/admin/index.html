@@ -56,17 +56,9 @@
                     <i class="el-icon-user"></i>
                     <span slot="title">最终选题学生列表</span>
                 </el-menu-item>
-                <el-menu-item index="7">
-                    <i class="el-icon-document"></i>
-                    <span slot="title">学生提交文件管理</span>
-                </el-menu-item>
                 <el-menu-item index="8">
                     <i class="el-icon-date"></i>
                     <span slot="title">毕业设计流程日期管理</span>
-                </el-menu-item>
-                <el-menu-item index="9">
-                    <i class="el-icon-user"></i>
-                    <span slot="title">用户管理</span>
                 </el-menu-item>
             </el-menu>
         </el-row>
@@ -223,6 +215,27 @@
                     },
                     noticeEdit:{
                         noticeContent:''
+                    },
+                    //时间
+                    periodEdit:{
+                        startDay:'',
+                        startTime:'',
+                        endDay:'',
+                        endTime:'',
+                    },
+                    periodEditRule:{
+                        startDay:[
+                            { type: 'string', required: true, message: '请选择开始日期', trigger: 'change' }
+                        ],
+                        startTime:[
+                            { type: 'string', required: true, message: '请选择开始时间', trigger: 'change' }
+                        ],
+                        endDay:[
+                            { type: 'string', required: true, message: '请选择结束日期', trigger: 'change' }
+                        ],
+                        endTime:[
+                            { type: 'string', required: true, message: '请选择结束时间', trigger: 'change' }
+                        ],
                     }
                 }
             },
@@ -351,6 +364,25 @@
                             new app().$mount("#listTool");
                             tools.$('#mainContent').style.opacity = '1';
                             this.refreshTables(1,templateData['data']['total'],8);
+                        });
+                    }
+                    //时间管理
+                    if(key == 8){
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#mainContent').style.opacity = '0';
+                            tools.$('#pagination').style.display = 'none';//翻页隐藏
+                        }).then(async val => {
+                            await tools.setPage('listTool', '/view/listTool/listTool.html', {
+                                title: '毕业设计流程日期管理',
+                                addBtn:'none'
+                            });
+                            await tools.setPage('mainContent', '/view/data/periodTable.html');
+                            let periodData = await tools.getAxiosData('/period/list');
+                            tools.$('#tableDate').innerHTML = await tableModel.getPeriodTableData(periodData['data']['data']);
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                            this.refreshTables(1,1,1);
                         });
                     }
                     //最终选题学生列表
@@ -497,6 +529,29 @@
                                     tools.$('#noticeContent').value = items['content'];
                                     tools.inputIsNull('#noticeContent','blur');//判空校验
                                     staticValue.setChoseId(items['id']);
+                                }
+                            });
+                        }
+
+                        //时间管理编辑
+                        if(staticValue.getCurrentPage() == 8){
+                            staticValue.setChoseId(data);
+                            await tools.setPage('editMain', '/view/form/periodEdit.html');
+                            new app().$mount('#editMain');
+                            //数据为默认选中的数据
+                            let periodData = await tools.getAxiosData('/period/list');
+                            let copyData = periodData['data']['data'];
+
+                            copyData.forEach(items=>{
+                                if(items['id'] == staticValue.getChoseId()){
+                                    let startDay =tools.dateFormat(new Date(parseInt(items['startTime'])),'yyyy-MM-dd');//开始日期
+                                    let startTime =tools.dateFormat(new Date(parseInt(items['startTime'])),'hh:mm:ss');//开始时间
+                                    let endDay =tools.dateFormat(new Date(parseInt(items['endTime'])),'yyyy-MM-dd');//开始日期
+                                    let endTime =tools.dateFormat(new Date(parseInt(items['endTime'])),'hh:mm:ss');//开始时间
+                                    staticValue.getEditMainThis().$set(staticValue.getEditMainThis()['periodEdit'],'startDay',startDay);
+                                    staticValue.getEditMainThis().$set(staticValue.getEditMainThis()['periodEdit'],'startTime',startTime);
+                                    staticValue.getEditMainThis().$set(staticValue.getEditMainThis()['periodEdit'],'endDay',endDay);
+                                    staticValue.getEditMainThis().$set(staticValue.getEditMainThis()['periodEdit'],'endTime',endTime);
                                 }
                             });
                         }
@@ -972,6 +1027,7 @@
                         this.$message.error('网络错误');
                     });
                 },
+                //下载模板文件
                 downLoadFile(sha256){
                     axios.get(`/template/download/${sha256}`).then(val=>{
                         tools.jump(`/template/download/${sha256}`);
@@ -979,6 +1035,32 @@
                         console.log(err);
                         this.$message.error('网络错误');
                     })
+                },
+                //编辑时间
+                periodEditForm(formName){
+                    this.$refs[formName].validate((valid) => {
+                        if (valid) {
+                            let periodData = staticValue.getEditMainThis()['periodEdit'];
+                            let postData = {
+                                id:staticValue.getChoseId(),
+                                startTime:periodData['startDay'] + ' ' + periodData['startTime'],
+                                endTime:periodData['endDay'] + ' ' + periodData['endTime']
+                            }
+                            axios.post('/period/set',tools.buildFormData(postData)).then(val=>{
+                                let id = val['data']['id'];
+                                if(id == 1){
+                                    this.$message.success('更新成功');
+                                    this.refreshBtn();//刷新
+                                    this.closeEdit();//关闭表单页面
+                                }else{
+                                    this.$message.error(val['data']['message']);
+                                }
+                            }).catch(err=>{
+                                console.log(err);
+                                this.$message.error('网络错误');
+                            })
+                        }
+                    });
                 },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                    查询功能                    //
@@ -1168,6 +1250,10 @@
                         let templateData = await tools.getAxiosData(`/template/list?page=1&pageSize=8`);
                         staticValue.getThat().refreshTables(1,templateData['data']['total'],8);
                     }
+                    //时间管理刷新
+                    if(staticValue.getCurrentPage() == '8'){
+                        staticValue.getThat().refreshTables(0,0,0);
+                    }
                     //最终学生页刷新
                     if(staticValue.getCurrentPage() == '10'){
                         let finalStuData = await tools.getAxiosData('/final/all?page=1&pageSize=8');
@@ -1206,6 +1292,11 @@
                     if(staticValue.getCurrentPage() == '6'){
                         let templateData = await tools.getAxiosData(`/template/list?page=${staticValue.getPageNumber()}&pageSize=8`);
                         tools.$('#tableDate').innerHTML = await tableModel.getTemplateTableData(templateData['data']['data']);
+                    }
+                    //时间管理页刷新
+                    if(staticValue.getCurrentPage() == '8'){
+                        let periodData = await tools.getAxiosData('/period/list');
+                        tools.$('#tableDate').innerHTML = await tableModel.getPeriodTableData(periodData['data']['data']);
                     }
                     //最终学生页刷新
                     if(staticValue.getCurrentPage() == '10'){

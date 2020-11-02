@@ -204,7 +204,32 @@ const tableModel = (() =>{
                 }
             });
         },
-
+        //时间管理表行
+        getPeriodTableData(data){
+            let html = '';
+            return new Promise((resolve,reject)=> {
+                data.forEach((items, index) => {
+                    let dataTimeStart =tools.dateFormat(new Date(parseInt(items['startTime'])),'yyyy-MM-dd hh:mm:ss');//时间
+                    let dataTimeEnd =tools.dateFormat(new Date(parseInt(items['endTime'])),'yyyy-MM-dd hh:mm:ss');//时间
+                    let dataColumn = `
+                    <div class="dateColumn">
+                        <p class="nmDate">${items['name']}</p>
+                        <p class="nmDate">${dataTimeStart}</p>
+                        <p class="nmDate">${dataTimeEnd}</p>                  
+                        <div class="staticDate">
+                            <el-button @click="showEdit('${items['id']}')" type="text" icon="el-icon-edit">编辑时间</el-button>
+                        </div>
+                     </div>
+                    `;
+                    html += dataColumn;
+                });
+                if(html != null){
+                    resolve(html);
+                }else{
+                    resolve('空页面');
+                }
+            });
+        },
         //登录页公告单个模块
         getLoginNoticeData(data){
             let html = '';
