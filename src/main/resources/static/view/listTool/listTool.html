@@ -3,9 +3,13 @@
     $title$
 </p>
 
-<el-select style="display: $topicSelect[0]$;" v-model="choseTeacher" placeholder="请选择指导老师">
-    <el-option v-for="item in topicTeachers" :key="item.choseTeacher" :label="item.label" :value="item.choseTeacher">
-    </el-option>
+<el-select style="display: $topicSelect[0]$;" v-model="mainPage.choseTeacher" placeholder="请选择指导老师">
+        <el-option
+                v-for="item in mainPage.topicTeachers"
+                :key="item.key"
+                :label="item.value"
+                :value="item.key">
+        </el-option>
 </el-select>
 <el-button style="display: $topicSelect[1]$;" class="listToolSelect" @click="selectTableItems" type="primary" icon="el-icon-zoom-in">
     查询
@@ -13,8 +17,12 @@
 <el-button class="listToolRefresh" @click="refreshBtn" type="primary" icon="el-icon-refresh">
     刷新
 </el-button>
-<el-button class="listToolAdd" @click="addItems" type="primary" icon="el-icon-document-add">
+<el-button style="display: $addBtn$;" class="listToolAdd" @click="addItems" type="primary" icon="el-icon-document-add">
     添加
+</el-button>
+<el-button style="display: $listToolAdd$;" class="listToolAddAll" @click="addFile" type="primary"
+           icon="el-icon-document-add">
+    上传
 </el-button>
 <el-button style="display: $listToolAddAll$;" class="listToolAddAll" @click="addItemsAll" type="primary"
     icon="el-icon-document-add">

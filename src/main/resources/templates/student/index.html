@@ -43,6 +43,14 @@
                         <i class="el-icon-document-checked"></i>
                         <span slot="title">已选课题</span>
                     </el-menu-item>
+                    <el-menu-item index="6">
+                        <i class="el-icon-document-checked"></i>
+                        <span slot="title">我的最终选题</span>
+                    </el-menu-item>
+                    <el-menu-item index="5">
+                        <i class="el-icon-s-custom"></i>
+                        <span slot="title">模板文件下载</span>
+                    </el-menu-item>
                     <el-menu-item index="4">
                         <i class="el-icon-edit-outline"></i>
                         <span slot="title">修改密码</span>
@@ -79,7 +87,8 @@
     //设置工具栏默认显示
     tools.setDefaultPage({
         title: '标题',
-        studentInfo:['','','','']
+        studentInfo:['','','',''],
+        finalSubjectInfo:['无','无','无','无','无','无']
     });
 
     (async () => {
@@ -238,6 +247,54 @@
 
                         });
                     }
+                    //模板文件下载
+                    if(key == 5){
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#mainContent').style.opacity = '0';
+                            tools.$('#pagination').style.display = 'block';
+                        }).then(async val => {
+                            await tools.setPage('listTool', '/view/listTool/listToolTea.html', {
+                                title: '模板文件下载',
+                            });
+                            await tools.setPage('mainContent', '/view/data/templateFileTable.html');
+                            let templateData = await tools.getAxiosData('/template/list?page=1&pageSize=8');
+                            tools.$('#tableDate').innerHTML = await tableModel.getTemplateTableData2(templateData['data']['data']);
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                            this.refreshTables(1,templateData['data']['total'],8);
+
+                        });
+                    }
+
+                    //我的最终选题
+                    if(key == 6){
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#pagination').style.display = 'none';
+                            tools.$('#mainContent').style.opacity = '0';
+                        }).then(async val => {
+                            let myFinalSubjectData = await tools.getAxiosData(`/final/student?studentId=${staticValue.getThat().userInfo['data']['userId']}`);
+                            let symbolData = myFinalSubjectData['data']['data'];
+                            let dataTime =tools.dateFormat(new Date(parseInt(symbolData['chosenTime'])),'yyyy-MM-dd hh:mm:ss');//时间
+                            let dataDifficulty = symbolData['difficult'] == '0'?'容易':symbolData['difficult'] == '1'?'普通':symbolData['difficult'] == '2'?'困难':'?';//难度
+                            await tools.setPage('listTool', './view/listTool/listToolStu.html', { title: '我的最终选题' });
+                            await tools.setPage('mainContent', './view/data/student/stuFinalSubjectInfo.html',
+                                {
+                                    finalSubjectInfo:[
+                                        symbolData['teacherName'],
+                                        symbolData['title'],
+                                        symbolData['content'],
+                                        symbolData['source'],
+                                        dataDifficulty,
+                                        dataTime,
+                                    ]
+                                });
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+
+                        });
+                    }
                 },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                   编辑页面                     //
@@ -385,6 +442,15 @@
                         }
                     });
                 },
+                //下载模板文件
+                downLoadFile(sha256){
+                    axios.get(`/template/download/${sha256}`).then(val=>{
+                        tools.jump(`/template/download/${sha256}`);
+                    }).catch(err=>{
+                        console.log(err);
+                        this.$message.error('网络错误');
+                    })
+                },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                      杂                       //
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
@@ -419,6 +485,11 @@
                         let subjectData = await tools.getAxiosData('/subject/list?page=1&pageSize=8');
                         staticValue.getThat().refreshTables(1,parseInt(subjectData['data']['total']),8);
                     }
+                    //模板页刷新
+                    if(staticValue.getCurrentPage() == '5'){
+                        let templateData = await tools.getAxiosData('/template/list?page=1&pageSize=8');
+                        staticValue.getThat().refreshTables(1,templateData['data']['total'],8);
+                    }
                     this.$message('刷新成功');
                 },
                 //单页面刷新
@@ -427,6 +498,11 @@
                     if(staticValue.getCurrentPage() == '2'){
                         let subjectData = await tools.getAxiosData(`/subject/list?page=${staticValue.getPageNumber()}&pageSize=8`);
                         tools.$('#tableDate').innerHTML = await tableModel.getStuTopicTableData(subjectData['data']['data'],staticValue.getThat().userInfo['choseSubjectId']);
+                    }
+                    //模板页刷新
+                    if(staticValue.getCurrentPage() == '5') {
+                        let templateData = await tools.getAxiosData(`/template/list?page=${staticValue.getPageNumber()}&pageSize=8`);
+                        tools.$('#tableDate').innerHTML = await tableModel.getTemplateTableData2(templateData['data']['data']);
                     }
                     new app().$mount("#mainContent");
                 },

@@ -62,15 +62,11 @@
                     username: '',
                     password: '',
                     verificationCode: '',
-                    // noticeName: ['1']
+                    topicItems: ['1','2','3']
                 }
             },
             mounted:function(){
-                //是否登录
-                let username = tools.getCookie('loginUserName');
-                if(username !=''){
-                    tools.jump('/');
-                }
+
             },
             methods: {
                 // 登录
