@@ -1,11 +1,14 @@
 package com.haoduor.graduation.init;
 
 import cn.hutool.bloomfilter.BitMapBloomFilter;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.lang.Snowflake;
 import com.haoduor.graduation.dao.RoleMapper;
+import com.haoduor.graduation.model.Period;
 import com.haoduor.graduation.model.Role;
 import com.haoduor.graduation.model.RoleExample;
 import com.haoduor.graduation.model.User;
+import com.haoduor.graduation.service.PeriodService;
 import com.haoduor.graduation.service.RoleService;
 import com.haoduor.graduation.service.UserService;
 import com.haoduor.graduation.util.EncryptedUtil;
@@ -18,8 +21,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -35,6 +40,12 @@ public class ServerRunner implements CommandLineRunner {
     private UserService userService;
 
     @Autowired
+    private PeriodService periodService;
+
+    @Resource(name = "periodMap")
+    private Map<String, Period> periodMap;
+
+    @Autowired
     @Qualifier("snowflake")
     private Snowflake snowflake;
 
@@ -47,6 +58,8 @@ public class ServerRunner implements CommandLineRunner {
     // 服务器初始化
     @Override
     public void run(String... args) throws Exception {
+        log.info("系统初始化");
+
         if (!roleIsGenerate()) {
             log.info("首次初始化 角色库");
             List<Role> roles = getAllRoles();
@@ -75,6 +88,26 @@ public class ServerRunner implements CommandLineRunner {
                 log.info("添加默认管理员失败, 请检查数据库");
                 System.exit(-1);
             }
+        }
+
+        if (periodService.getPeriod().size() < 1) {
+            log.info("初始化阶段设置");
+
+            Date startTime = DateUtil.parse("1997-01-01 12:00");
+            Date endTime = DateUtil.parse("3000-01-01 12:00");
+
+            periodService.addPeriod("选择课题-chose", startTime, endTime);
+            periodService.addPeriod("开题报告-opening", startTime, endTime);
+            periodService.addPeriod("中期检查-interim", startTime, endTime);
+            periodService.addPeriod("验收/答辩-check", startTime, endTime);
+            periodService.addPeriod("论文审核-paper", startTime, endTime);
+        }
+
+        log.info("初始化阶段缓存");
+        List<Period> periods = periodService.getPeriod();
+        for (Period p: periods) {
+            String name = p.getName().split("-")[1];
+            periodMap.put(name, p);
         }
 
         log.info("初始化完成");
