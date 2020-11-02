@@ -1,9 +1,7 @@
 package com.haoduor.graduation.vo;
 
 import com.github.pagehelper.PageInfo;
-import com.sun.org.apache.bcel.internal.classfile.PMGClass;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 /**
  * nowPage 当前页面
