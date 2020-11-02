@@ -470,6 +470,7 @@
                 stuChoseSubjectId(){
                     return new Promise(async (resolve,reject)=>{
                         let choseSubjectId = [];
+
                         let stuSubjectData = await tools.getAxiosData(`/chosen/student?studentId=${staticValue.getThat().userInfo['data']['userId']}`);
                         stuSubjectData['data']['data'].forEach(items=>{
                             choseSubjectId.push(items['id']);

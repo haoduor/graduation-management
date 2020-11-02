@@ -1,0 +1,13 @@
+<div style=" width: 30rem;margin-top: 3rem;">
+    <el-form style="margin-right: 2rem" :model="changeUserPwd" status-icon ref="changeUserPwd" :rules="changeUserPwdRule"  label-width="100px" class="demo-ruleForm">
+        <el-form-item prop="userId" label="用户id:" label-position="left">
+            <el-input id="userId" v-model="changeUserPwd.userId" clearable></el-input>
+        </el-form-item>
+        <el-form-item prop="newPwd" label="新密码:" label-position="left">
+            <el-input id="newPwd" v-model="changeUserPwd.newPwd" clearable></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="changeUserPwdForm('changeUserPwd')" icon="el-icon-edit">修改密码</el-button>
+        </el-form-item>
+    </el-form>
+</div>

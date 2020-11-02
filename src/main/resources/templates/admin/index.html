@@ -24,6 +24,7 @@
         <p class="navTitle"><i class="el-icon-user-solid"></i> 管理端</p>
         <div class="userInformation">
             <p id="nowUser">当前用户:</p>
+            <el-button class="userLoginOut" @click="changeAdminPassword" type="text" icon="el-icon-switch-button">修改密码</el-button>
             <el-button class="userLoginOut" @click="loginOut" type="text" icon="el-icon-switch-button">登出</el-button>
         </div>
     </div>
@@ -59,6 +60,10 @@
                 <el-menu-item index="8">
                     <i class="el-icon-date"></i>
                     <span slot="title">毕业设计流程日期管理</span>
+                </el-menu-item>
+                <el-menu-item index="11">
+                    <i class="el-icon-s-operation"></i>
+                    <span slot="title">修改用户密码</span>
                 </el-menu-item>
             </el-menu>
         </el-row>
@@ -236,6 +241,32 @@
                         endTime:[
                             { type: 'string', required: true, message: '请选择结束时间', trigger: 'change' }
                         ],
+                    },
+                    //修改用户密码
+                    changeUserPwd:{
+                        userId:'',
+                        newPwd:''
+                    },
+                    changeUserPwdRule:{
+                        userId: [
+                            { required: true, message: '请输入用户id', trigger: 'blur' }
+                        ],
+                        newPwd: [
+                            { required: true, message: '请输入新密码', trigger: 'blur' }
+                        ],
+                    },
+                    //修改管理员密码
+                    changeAdminPwd:{
+                        oldPwd:'',
+                        newPed:'',
+                    },
+                    changeAdminPwdRule:{
+                        oldPwd:[
+                            { required: true, message: '请输入旧密码', trigger: 'blur' }
+                        ],
+                        newPed:[
+                            { required: true, message: '请输入新密码', trigger: 'blur' }
+                        ],
                     }
                 }
             },
@@ -403,11 +434,40 @@
                             this.refreshTables(1,finalStuData['data']['total'],8);
                         });
                     }
+                    //修改用户密码
+                    if(key == 11){
+
+                        tools.setTimeOutP(300, async () => {
+                            tools.$('#mainContent').style.opacity = '0';
+                            tools.$('#pagination').style.display = 'none';
+                        }).then(async val => {
+                            await tools.setPage('listTool', '/view/listTool/listTool.html', {
+                                title: '修改用户密码',
+                                addBtn:'none'
+                            });
+                            await tools.setPage('mainContent', '/view/data/changeUserPwd.html');
+
+                            new app().$mount("#mainContent");
+                            new app().$mount("#listTool");
+                            tools.$('#mainContent').style.opacity = '1';
+                        });
+                    }
                 },
 
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                   编辑页面                     //
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
+                //编辑管理员的密码
+                changeAdminPassword(){
+                    tools.setTimeOutP(0, async () => {
+                        tools.$('#editMark').style.display = 'block';
+                        await tools.setPage('editMain', '/view/form/changeAdminPwd.html');
+                        new app().$mount('#editMain');
+
+                    }).then(val => {
+                        tools.$('#editMark').style.opacity = '1';
+                    });
+                },
                 //编辑页面
                 showEdit(data = '',index = '1') {
                     tools.setTimeOutP(0, async () => {
@@ -557,7 +617,7 @@
                         }
                     }).then(val => {
                         tools.$('#editMark').style.opacity = '1';
-                    })
+                    });
                 },
                 //关闭编辑
                 closeEdit() {
@@ -1059,6 +1119,78 @@
                                 console.log(err);
                                 this.$message.error('网络错误');
                             })
+                        }
+                    });
+                },
+                //用户修改密码
+                changeUserPwdForm(formName){
+                    this.$refs[formName].validate(async (valid) => {
+                        if (valid) {
+                            try{
+                                let userData =  await tools.getAxiosData(`/user/info/${ staticValue.getMainContentThis()['changeUserPwd']['userId']}`);
+                                if(userData['data']['id'] == 1){
+                                    let postData = {
+                                        id : userData['data']['data']['userId'],
+                                        password : staticValue.getMainContentThis()['changeUserPwd']['newPwd'],
+                                    }
+                                    console.log(postData);
+                                    axios.post('/user/pass',tools.buildFormData(postData)).then(val=>{
+                                        let id = val['data']['id'];
+                                        let msg = val['data']['message'];
+                                        if (id == 1){
+                                            this.$message.success(msg);
+                                        }else{
+                                            this.$message.error(msg);
+                                            staticValue.getMainContentThis().$set(staticValue.getMainContentThis()['changeUserPwd'],'userId','');
+                                            staticValue.getMainContentThis().$set(staticValue.getMainContentThis()['changeUserPwd'],'newPwd','');
+                                        }
+                                    }).catch(err=>{
+                                        console.log(err);
+                                        this.$message.error('网络错误');
+                                    });
+                                }else{
+                                    this.$message.error('用户不存在');
+                                }
+                            }catch (e) {
+                                console.log(e);
+                                this.$message.error('网络错误');
+                            }
+                        }
+                    });
+                },
+                //修改管理员密码
+                changeAdminPwdForm(formName){
+                    this.$refs[formName].validate(async (valid) => {
+                        if (valid) {
+                            try{
+                                let userData =  await tools.getAxiosData(`/user/info/admin`);
+                                if(userData['data']['id'] == 1) {
+                                    let pwdData = staticValue.getEditMainThis()['changeAdminPwd'];
+                                    let postData = {
+                                        id: userData['data']['data']['userId'],
+                                        oldPassword: pwdData['oldPwd'],
+                                        newPassword: pwdData['newPed']
+                                    };
+                                    axios.post('/user/repass', tools.buildFormData(postData)).then(val => {
+                                        let id = val['data']['id'];
+                                        if (id == '1') {
+                                            staticValue.getEditMainThis().$message.success('更改密码成功');
+                                            staticValue.getEditMainThis().$set(staticValue.getEditMainThis().changePwd, 'oldPwd', '');
+                                            staticValue.getEditMainThis().$set(staticValue.getEditMainThis().changePwd, 'newPwd', '');
+                                        } else {
+                                            staticValue.getEditMainThis().$message.error(val['data']['message']);
+                                        }
+                                    }).catch(err => {
+                                        console.log(err);
+                                        staticValue.getEditMainThis().$message.error('网络错误');
+                                    });
+                                }else{
+                                    this.$message.error('用户不存在');
+                                }
+                            }catch (e) {
+                                console.log(e);
+                                this.$message.error('网络错误');
+                            }
                         }
                     });
                 },
