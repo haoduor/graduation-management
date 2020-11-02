@@ -8,10 +8,7 @@ import com.haoduor.graduation.vo.BaseMessage;
 import com.haoduor.graduation.vo.DataMessage;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -43,7 +40,9 @@ public class PeriodController {
 
     @PostMapping("/set")
     @RequiresRoles("admin")
-    public BaseMessage set(String id, String startTime, String endTime) {
+    public BaseMessage set(@RequestParam String id,
+                           @RequestParam String startTime,
+                           @RequestParam String endTime) {
         Long _id;
         try {
             _id = Long.parseLong(id);

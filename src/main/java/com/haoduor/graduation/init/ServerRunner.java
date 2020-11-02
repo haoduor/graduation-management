@@ -12,7 +12,6 @@ import com.haoduor.graduation.service.PeriodService;
 import com.haoduor.graduation.service.RoleService;
 import com.haoduor.graduation.service.UserService;
 import com.haoduor.graduation.util.EncryptedUtil;
-import com.sun.org.apache.regexp.internal.RE;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -20,7 +19,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.sql.DataSource;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
