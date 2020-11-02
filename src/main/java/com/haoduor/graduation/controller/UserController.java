@@ -45,12 +45,20 @@ public class UserController {
     @ResponseBody
     @PostMapping("/pass")
     @RequiresRoles("admin")
-    public BaseMessage renewPassword(@RequestParam long id, @RequestParam String password) {
+    public BaseMessage renewPassword(@RequestParam String id, @RequestParam String password) {
+
+        Long _id;
+        try {
+            _id = Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            return new BaseMessage(6, "id 格式化失败");
+        }
+
         if (StrUtil.isEmpty(password)) {
             return new BaseMessage(2, "密码不能为空");
         }
 
-        User u = userService.getUserById(id);
+        User u = userService.getUserById(_id);
         Role admin = roleService.getAdminRole();
         if (u == null) {
             return new BaseMessage(3, "无效id");
@@ -60,7 +68,7 @@ public class UserController {
             return new BaseMessage(5, "无法更改管理员id");
         }
 
-        if (userService.setUserPasswordById(id, password, u.getSalt())) {
+        if (userService.setUserPasswordById(_id, password, u.getSalt())) {
             return new BaseMessage(1, "更改密码成功");
         } else {
             return new BaseMessage(4, "数据库错误");
@@ -71,7 +79,8 @@ public class UserController {
     @ResponseBody
     @PostMapping("/repass")
     @RequiresRoles(value = {"student", "teacher"}, logical = Logical.OR)
-    public BaseMessage resetPassword(@RequestParam String id, @RequestParam String oldPassword,
+    public BaseMessage resetPassword(@RequestParam String id,
+                                     @RequestParam String oldPassword,
                                      @RequestParam String newPassword) {
         if (StrUtil.isEmpty(oldPassword) || StrUtil.isEmpty(newPassword)) {
             return new BaseMessage(3, "参数不能为空");
