@@ -1,5 +1,6 @@
 package com.haoduor.graduation.controller;
 
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.haoduor.graduation.model.Department;
@@ -21,6 +22,8 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -146,6 +149,17 @@ public class UserController {
 
             Role r = roleService.getRoleById(user.getRoleId());
             DataMessage dm = new DataMessage(1, "获取成功");
+
+            if (r.getName().equals("admin")) {
+                Map<Object, Object> data = MapUtil.builder()
+                                                  .put("username", user.getUsername())
+                                                  .put("id", user.getId())
+                                                  .build();
+
+                dm.setData(data);
+                return dm;
+            }
+
 
             if (!cu.hasRole("admin")) {
                 se.setAttribute("id", user.getId());
