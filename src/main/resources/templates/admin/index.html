@@ -101,11 +101,13 @@
             listToolAddAll: 'none',
             listToolAdd:'none',
             importUri:'/import/student',
-            addBtn:'block'
+            addBtn:'block',
+            teaDownload:'none',
+            stuDownload:'none',
         });
         await tools.setPage('editMain', '/view/form/none.html');//初始加载页
         await tools.setPage('mainContent', '/view/data/studentTable.html');
-        await tools.setPage('listTool', '/view/listTool/listTool.html', {title: '学生用户管理', listToolAddAll: 'block'});
+        await tools.setPage('listTool', '/view/listTool/listTool.html', {title: '学生用户管理', listToolAddAll: 'block',stuDownload:'block',});
         let studentData = await tools.getAxiosData('/student/list?page=1&pageSize=8');//获取数据
         tools.$('#tableDate').innerHTML = await tableModel.getStudentTableData(studentData['data']['data']);//绑定数据
 
@@ -303,7 +305,8 @@
                         }).then(async val => {
                             await tools.setPage('listTool', '/view/listTool/listTool.html', {
                                 title: '学生用户管理',
-                                listToolAddAll: 'block'
+                                listToolAddAll: 'block',
+                                stuDownload:'block',
                             });
                             await tools.setPage('mainContent', '/view/data/studentTable.html');
                             let studentData = await tools.getAxiosData('/student/list?page=1&pageSize=8');
@@ -322,7 +325,8 @@
                         }).then(async val => {
                             await tools.setPage('listTool', '/view/listTool/listTool.html', {
                                 title: '教师用户管理',
-                                listToolAddAll: 'block'
+                                listToolAddAll: 'block',
+                                teaDownload:'block',
                             });
                             await tools.setPage('mainContent', '/view/data/teacherTable.html');
                             let teacherData = await tools.getAxiosData('/teacher/list?page=1&pageSize=8');
@@ -1185,6 +1189,14 @@
                             }
                         }
                     });
+                },
+                //教师模板下载
+                teaDownload(){
+                    tools.jump('/template/teacher');
+                },
+                //教师模板下载
+                stuDownload(){
+                    tools.jump('/template/student');
                 },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                    查询功能                    //
