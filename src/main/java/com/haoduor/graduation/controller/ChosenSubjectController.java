@@ -49,6 +49,7 @@ public class ChosenSubjectController {
     @Autowired
     private UserUtil userUtil;
 
+    // 获取学生自己选中的课题 不能超过3个
     @GetMapping("/student")
     @RequiresRoles(value = {"student", "admin"}, logical = Logical.OR)
     public DataMessage studentChosen(@RequestParam String studentId) {
@@ -74,6 +75,7 @@ public class ChosenSubjectController {
         return dm;
     }
 
+    // 教师获取选择了自己课题的学生
     @GetMapping("/teacher")
     @RequiresRoles(value = {"teacher", "admin"}, logical = Logical.OR)
     public PageMessage teacherChosen(@RequestParam String teacherId,
@@ -111,6 +113,7 @@ public class ChosenSubjectController {
         return pm;
     }
 
+    // 管理员获取所有被选择的课题
     @GetMapping("/all")
     @RequiresRoles("admin")
     public PageMessage allChosen(@RequestParam(defaultValue = "1") int page,
@@ -126,6 +129,11 @@ public class ChosenSubjectController {
         return pm;
     }
 
+    /**
+     * 数据转换方法
+     * @param chosenSubjectList 选择课题列表
+     * @return
+     */
     private List<ChosenSubjectVo> convertData(List<ChosenSubject> chosenSubjectList) {
         List<ChosenSubjectVo> res = new LinkedList<>();
 

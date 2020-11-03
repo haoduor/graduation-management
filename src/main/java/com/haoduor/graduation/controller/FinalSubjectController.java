@@ -42,6 +42,12 @@ public class FinalSubjectController {
     @Autowired
     private UserUtil userUtil;
 
+    /**
+     * 教师选择最终的学生
+     * @param studentId
+     * @param subjectId
+     * @return
+     */
     @RequestMapping("/chose")
     @RequiresRoles(value = {"teacher", "admin"}, logical = Logical.OR)
     public BaseMessage chose(@RequestParam String studentId,
@@ -77,6 +83,11 @@ public class FinalSubjectController {
         }
     }
 
+    /**
+     * 学生获取自己的最终选题
+     * @param studentId
+     * @return
+     */
     @RequestMapping("/student")
     @RequiresRoles(value = {"student", "admin"}, logical = Logical.OR)
     public DataMessage studentFinal(@RequestParam String studentId) {
@@ -104,6 +115,13 @@ public class FinalSubjectController {
         }
     }
 
+    /**
+     * 教师获取自己最终选择的学生
+     * @param teacherId
+     * @param page
+     * @param pageSize
+     * @return
+     */
     @RequestMapping("/teacher")
     @RequiresRoles(value = {"teacher", "admin"}, logical = Logical.OR)
     public PageMessage teacherFinal(@RequestParam String teacherId,
@@ -132,6 +150,12 @@ public class FinalSubjectController {
         return pm;
     }
 
+    /**
+     * 管理员获取拥有最终选题的学生
+     * @param page
+     * @param pageSize
+     * @return
+     */
     @RequestMapping("/all")
     @RequiresRoles("admin")
     public PageMessage all(@RequestParam(defaultValue = "1") int page,
@@ -146,6 +170,11 @@ public class FinalSubjectController {
         return pm;
     }
 
+    /**
+     * 数据转换方法
+     * @param finalSubjectList
+     * @return
+     */
     private List<FinalSubjectVo> convertData(List<FinalSubject> finalSubjectList) {
         List<FinalSubjectVo> res = new LinkedList<>();
 

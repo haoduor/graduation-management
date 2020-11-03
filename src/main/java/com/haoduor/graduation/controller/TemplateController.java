@@ -163,6 +163,7 @@ public class TemplateController {
         return pm;
     }
 
+    // 删除样板
     @PostMapping("/delete")
     @RequiresRoles("admin")
     public BaseMessage delete(@RequestParam String sha256) {

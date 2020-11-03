@@ -37,6 +37,12 @@ public class TeacherController {
     @Resource(name = "teacherFilter")
     private BitMapBloomFilter teacherFilter;
 
+    /**
+     * 获取教师列表
+     * @param page
+     * @param pageSize
+     * @return
+     */
     @GetMapping("/list")
     public PageMessage getTeacher(@RequestParam(defaultValue = "1") int page,
                                   @RequestParam(defaultValue = "30") int pageSize) {
@@ -54,6 +60,11 @@ public class TeacherController {
         return pageMessage;
     }
 
+    /**
+     * 删除教师
+     * @param id
+     * @return
+     */
     @PostMapping("/delete")
     public BaseMessage delete(@RequestParam String id) {
         long _id = -1;
@@ -72,6 +83,11 @@ public class TeacherController {
         }
     }
 
+    /**
+     * 添加教师
+     * @param teacherVo
+     * @return
+     */
     @PostMapping("/add")
     public BaseMessage add(@RequestBody TeacherVo teacherVo) {
         if (teacherFilter.contains(teacherVo.getTeacherId())) {
@@ -88,6 +104,11 @@ public class TeacherController {
         }
     }
 
+    /**
+     * 更改教师信息
+     * @param teacherVo
+     * @return
+     */
     @PostMapping("/set")
     public BaseMessage set(@RequestParam TeacherVo teacherVo) {
         boolean res = teacherService.updateTeacherByVo(teacherVo);
