@@ -8,6 +8,9 @@ import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
 
+/**
+ * 数据库配置类
+ */
 @Configuration
 public class DruidConfig {
     @Autowired

@@ -51,6 +51,7 @@ public class SubjectController {
     @Autowired
     private UserUtil userUtil;
 
+    // 修改课题接口
     @PostMapping("/set")
     @RequiresRoles(value = {"admin", "teacher"}, logical = Logical.OR)
     public BaseMessage set(@RequestBody SubjectForm subjectForm, @RequestParam String id) {
@@ -73,6 +74,7 @@ public class SubjectController {
         }
     }
 
+    // 管理员添加课题接口
     @PostMapping("/add")
     @RequiresRoles("admin")
     public BaseMessage add(@RequestBody SubjectForm subjectForm) {
@@ -91,6 +93,7 @@ public class SubjectController {
         }
     }
 
+    // 教师添加课题接口
     @PostMapping("/teacher/add")
     @RequiresRoles("teacher")
     public BaseMessage teacherAdd(@RequestBody SubjectForm subjectForm) {
@@ -116,6 +119,7 @@ public class SubjectController {
         }
     }
 
+    // 获取课题列表
     @GetMapping("/list")
     public PageMessage list(@RequestParam(defaultValue = "1") int page,
                             @RequestParam(defaultValue = "30") int pageSize,
@@ -162,6 +166,12 @@ public class SubjectController {
         return pm;
     }
 
+    /**
+     * 学生选择课题接口
+     * @param subjectId 课题id
+     * @param studentId 学生的id
+     * @return
+     */
     @PostMapping("/chose")
     @RequiresRoles("student")
     @TimeLimit(periodName = "chose")
@@ -203,6 +213,42 @@ public class SubjectController {
             return new BaseMessage(1, "选择成功");
         } else {
             return new BaseMessage(8, "数据库出错");
+        }
+    }
+
+    /**
+     * 删除课题接口
+     * @param teacherId 教师id
+     * @param subjectId 课题id
+     * @return
+     */
+    @PostMapping("/delete")
+    @RequiresRoles(value = {"teacher", "admin"}, logical = Logical.OR)
+    public BaseMessage delete(@RequestParam String teacherId,
+                              @RequestParam String subjectId) {
+        org.apache.shiro.subject.Subject currentUser = SecurityUtils.getSubject();
+
+        Long _subjectId;
+        Long _teacherId;
+        try {
+            _subjectId = Long.parseLong(subjectId);
+            _teacherId = Long.parseLong(teacherId);
+        } catch (NumberFormatException e) {
+            return new BaseMessage(2, "格式化错误");
+        }
+
+        if (currentUser.hasRole("teacher") && !userUtil.isMe(_teacherId, currentUser)) {
+            return new BaseMessage(3, "只能修改自己的课题");
+        }
+
+        if (!subjectService.teacherHasSubject(_teacherId, _subjectId)) {
+            return new BaseMessage(4, "教师不拥有该课题");
+        }
+
+        if (subjectService.deleteSubjectById(_subjectId)) {
+            return new BaseMessage(1, "删除成功");
+        } else {
+            return new BaseMessage(5, "数据库错误");
         }
     }
 }

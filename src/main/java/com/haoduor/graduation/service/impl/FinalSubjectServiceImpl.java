@@ -76,7 +76,7 @@ public class FinalSubjectServiceImpl implements FinalSubjectService {
     @Override
     public boolean hasFinalSubject(long studentId) {
         FinalSubjectExample subjectExample = new FinalSubjectExample();
-        subjectExample.createCriteria().andSubjectIdEqualTo(studentId);
+        subjectExample.createCriteria().andStudentIdEqualTo(studentId);
 
         return finalSubjectMapper.countByExample(subjectExample) >= 1;
     }
