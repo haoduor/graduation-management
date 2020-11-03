@@ -150,13 +150,6 @@
                         staticValue.getThat().$set(staticValue.getThat().userInfo,'data',studentInfoData['data']['data']);
                         //app this绑定用户已选课题信息
                         this.stuChoseSubjectId();
-
-                    }else{
-                        tools.setTimeOutP(3000,()=>{
-                            this.$message.error('请登录,3秒后跳转至登录页');
-                        }).then(()=>{
-                            tools.jump('/');
-                        });
                     }
                 }
                 //主页this

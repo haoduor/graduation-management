@@ -24,7 +24,7 @@
         <p class="navTitle"><i class="el-icon-user-solid"></i> 管理端</p>
         <div class="userInformation">
             <p id="nowUser">当前用户:</p>
-            <el-button class="userLoginOut" @click="changeAdminPassword" type="text" icon="el-icon-switch-button">修改密码</el-button>
+            <el-button class="userLoginOut" @click="changeAdminPassword" type="text" icon="el-icon-edit">修改密码</el-button>
             <el-button class="userLoginOut" @click="loginOut" type="text" icon="el-icon-switch-button">登出</el-button>
         </div>
     </div>
@@ -272,15 +272,7 @@
             },
             mounted:function(){
                 //获取当前登录的用户
-                if(tools.getCookie("loginUserName") != ''){
-                    tools.$('#nowUser').innerHTML = '当前用户:' + tools.getCookie("loginUserName");
-                }else{
-                    tools.setTimeOutP(3000,()=>{
-                        this.$message.error('请登录,3秒后跳转至登录页');
-                    }).then(()=>{
-                        tools.jump('/');
-                    });
-                }
+                tools.$('#nowUser').innerHTML = '当前用户:' + tools.getCookie("loginUserName");
                 //入口this
                 if(this['$el'].getAttribute('id') == 'app'){
                      staticValue.setThat(this);

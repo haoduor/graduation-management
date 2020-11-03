@@ -171,12 +171,6 @@
                         let teacherInfoData = await tools.getAxiosData(`/user/info/${tools.getCookie("loginUserName")}`);
                         staticValue.getThat().$set(staticValue.getThat().userInfo,'data',teacherInfoData['data']['data']);
                         tools.$('#pagination').style.display = 'none';//翻页初始不存在
-                    }else{
-                        tools.setTimeOutP(3000,()=>{
-                            this.$message.error('请登录,3秒后跳转至登录页');
-                        }).then(()=>{
-                            tools.jump('/');
-                        });
                     }
                 }
                 //主页this
