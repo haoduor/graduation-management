@@ -16,6 +16,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 测试用控制器
+ */
 @RestController
 @RequestMapping("/test")
 @RequiresRoles("admin")
@@ -24,12 +27,14 @@ public class TestController {
     @Autowired
     private RequestMappingHandlerMapping mapping;
 
+    // 获取个人的信息
     @RequestMapping("/personal")
     public Object getPersonalInfo() {
         Subject sub = SecurityUtils.getSubject();
         return sub.getPrincipal();
     }
 
+    // 尝试获取所有注册的路由
     @ResponseBody
     @GetMapping("/url")
     public Object getAllUrl() {
