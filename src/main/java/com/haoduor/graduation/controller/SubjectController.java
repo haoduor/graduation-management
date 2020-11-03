@@ -205,4 +205,34 @@ public class SubjectController {
             return new BaseMessage(8, "数据库出错");
         }
     }
+
+    @PostMapping("/delete")
+    @RequiresRoles(value = {"teacher", "admin"}, logical = Logical.OR)
+    public BaseMessage delete(@RequestParam String teacherId,
+                              @RequestParam String subjectId) {
+        org.apache.shiro.subject.Subject currentUser = SecurityUtils.getSubject();
+
+        Long _subjectId;
+        Long _teacherId;
+        try {
+            _subjectId = Long.parseLong(subjectId);
+            _teacherId = Long.parseLong(teacherId);
+        } catch (NumberFormatException e) {
+            return new BaseMessage(2, "格式化错误");
+        }
+
+        if (currentUser.hasRole("teacher") && !userUtil.isMe(_teacherId, currentUser)) {
+            return new BaseMessage(3, "只能修改自己的课题");
+        }
+
+        if (!subjectService.teacherHasSubject(_teacherId, _subjectId)) {
+            return new BaseMessage(4, "教师不拥有该课题");
+        }
+
+        if (subjectService.deleteSubjectById(_subjectId)) {
+            return new BaseMessage(1, "删除成功");
+        } else {
+            return new BaseMessage(5, "数据库错误");
+        }
+    }
 }
