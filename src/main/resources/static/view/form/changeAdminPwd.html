@@ -1,0 +1,12 @@
+<el-form style="margin-right: 2rem" :model="changeAdminPwd" status-icon ref="changeAdminPwd" :rules="changeAdminPwdRule"  label-width="100px" class="demo-ruleForm">
+    <el-form-item prop="oldPwd" label="旧密码:" label-position="left">
+        <el-input id="oldPwd" v-model="changeAdminPwd.oldPwd" clearable></el-input>
+    </el-form-item>
+    <el-form-item prop="newPed" label="新密码:" label-position="left">
+        <el-input id="newPed" v-model="changeAdminPwd.newPed" clearable></el-input>
+    </el-form-item>
+    <el-form-item>
+        <el-button type="primary" @click="changeAdminPwdForm('changeAdminPwd')" icon="el-icon-edit">修改</el-button>
+        <el-button class="editClose" @click="closeEdit" type="primary" icon="el-icon-switch-button">关闭</el-button>
+    </el-form-item>
+</el-form>
