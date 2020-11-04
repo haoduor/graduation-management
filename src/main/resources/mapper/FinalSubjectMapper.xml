@@ -5,6 +5,7 @@
     <result column="student_id" property="studentId" jdbcType="BIGINT" />
     <result column="subject_id" property="subjectId" jdbcType="BIGINT" />
     <result column="final_chosen_time" property="finalChosenTime" jdbcType="TIMESTAMP" />
+    <result column="score" property="score" jdbcType="INTEGER" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -65,7 +66,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    student_id, subject_id, final_chosen_time
+    student_id, subject_id, final_chosen_time, score
   </sql>
   <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.haoduor.graduation.model.FinalSubjectExample" >
     select
@@ -88,10 +89,10 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.haoduor.graduation.model.FinalSubject" >
-    insert into final_subject (student_id, subject_id, final_chosen_time
-      )
-    values (#{studentId,jdbcType=BIGINT}, #{subjectId,jdbcType=BIGINT}, #{finalChosenTime,jdbcType=TIMESTAMP}
-      )
+    insert into final_subject (student_id, subject_id, final_chosen_time, 
+      score)
+    values (#{studentId,jdbcType=BIGINT}, #{subjectId,jdbcType=BIGINT}, #{finalChosenTime,jdbcType=TIMESTAMP}, 
+      #{score,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.haoduor.graduation.model.FinalSubject" >
     insert into final_subject
@@ -105,6 +106,9 @@
       <if test="finalChosenTime != null" >
         final_chosen_time,
       </if>
+      <if test="score != null" >
+        score,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
       <if test="studentId != null" >
@@ -115,6 +119,9 @@
       </if>
       <if test="finalChosenTime != null" >
         #{finalChosenTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="score != null" >
+        #{score,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -136,6 +143,9 @@
       <if test="record.finalChosenTime != null" >
         final_chosen_time = #{record.finalChosenTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.score != null" >
+        score = #{record.score,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
@@ -145,7 +155,8 @@
     update final_subject
     set student_id = #{record.studentId,jdbcType=BIGINT},
       subject_id = #{record.subjectId,jdbcType=BIGINT},
-      final_chosen_time = #{record.finalChosenTime,jdbcType=TIMESTAMP}
+      final_chosen_time = #{record.finalChosenTime,jdbcType=TIMESTAMP},
+      score = #{record.score,jdbcType=INTEGER}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>
