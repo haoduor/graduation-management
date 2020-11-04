@@ -10,4 +10,5 @@ public interface FinalSubjectService {
     public List<FinalSubject> getTeacherFinalChosen(long teacherId);
     public List<FinalSubject> getAllFinalChosen();
     public boolean hasFinalSubject(long studentId);
+    public boolean setFinalSubjectScoreByStuId(Long studentId, Long subjectId, int score);
 }

@@ -35,6 +35,7 @@ public class FinalSubjectServiceImpl implements FinalSubjectService {
         FinalSubject fs = new FinalSubject();
         fs.setStudentId(studentId);
         fs.setSubjectId(subjectId);
+        fs.setScore(-1);
         fs.setFinalChosenTime(DateUtil.date());
 
         int res = finalSubjectMapper.insert(fs);
@@ -79,5 +80,19 @@ public class FinalSubjectServiceImpl implements FinalSubjectService {
         subjectExample.createCriteria().andStudentIdEqualTo(studentId);
 
         return finalSubjectMapper.countByExample(subjectExample) >= 1;
+    }
+
+    @Override
+    public boolean setFinalSubjectScoreByStuId(Long studentId, Long subjectId, int score) {
+        FinalSubjectExample subjectExample = new FinalSubjectExample();
+        subjectExample.createCriteria()
+                      .andStudentIdEqualTo(studentId)
+                      .andSubjectIdEqualTo(subjectId);
+
+        FinalSubject fs = new FinalSubject();
+        fs.setScore(score);
+
+        int res = finalSubjectMapper.updateByExampleSelective(fs, subjectExample);
+        return res == 1;
     }
 }

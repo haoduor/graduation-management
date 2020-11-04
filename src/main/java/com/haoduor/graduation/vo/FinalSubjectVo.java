@@ -12,4 +12,5 @@ public class FinalSubjectVo extends SubjectVo {
     private long   studentId;
     private String studentName;
     private Date   chosenTime;
+    private int    score;
 }
