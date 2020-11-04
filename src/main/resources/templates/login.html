@@ -34,6 +34,7 @@
         await tools.setPage('loginForm', './view/login/loginForm.html');
         await tools.setPage('loginMsg', './view/login/loginMsg.html');
 
+        // 设置登录页背景图片
         tools.$('.loginBk').style.background = `url(/image/Sola.png)`;
         //初始加载二维码
         tools.$('.codeImg').src =`${codeUrl}${(Math.random()*100 + '').slice(0,2)}`;
