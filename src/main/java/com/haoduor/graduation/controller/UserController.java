@@ -81,7 +81,6 @@ public class UserController {
     // 用户更改密码
     @ResponseBody
     @PostMapping("/repass")
-    @RequiresRoles(value = {"student", "teacher"}, logical = Logical.OR)
     public BaseMessage resetPassword(@RequestParam String id,
                                      @RequestParam String oldPassword,
                                      @RequestParam String newPassword) {

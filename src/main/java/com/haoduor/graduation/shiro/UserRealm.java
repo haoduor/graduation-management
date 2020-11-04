@@ -42,7 +42,7 @@ public class UserRealm extends AuthorizingRealm {
         // 获取用户名
         String username = t.getUsername();
 
-        // 更具用户名 获取数据库的用户
+        // 根据用户名 获取数据库的用户
         User dbuser = userService.getUserByName(username);
         if (dbuser == null) {
             // 如果数据库中没有用户 返回空用户错误
