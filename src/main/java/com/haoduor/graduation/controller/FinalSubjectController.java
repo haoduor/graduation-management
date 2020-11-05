@@ -208,7 +208,7 @@ public class FinalSubjectController {
         }
 
         finalSubjectVo.setChosenTime(fs.getFinalChosenTime());
-
+        finalSubjectVo.setScore(fs.getScore());
         return finalSubjectVo;
     }
 
