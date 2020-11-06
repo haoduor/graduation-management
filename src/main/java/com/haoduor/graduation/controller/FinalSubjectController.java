@@ -4,10 +4,7 @@ import cn.hutool.core.convert.Convert;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.haoduor.graduation.model.*;
-import com.haoduor.graduation.service.FinalSubjectService;
-import com.haoduor.graduation.service.StudentService;
-import com.haoduor.graduation.service.SubjectService;
-import com.haoduor.graduation.service.TeacherService;
+import com.haoduor.graduation.service.*;
 import com.haoduor.graduation.util.ConvertUtil;
 import com.haoduor.graduation.util.UserUtil;
 import com.haoduor.graduation.vo.*;
@@ -38,6 +35,9 @@ public class FinalSubjectController {
 
     @Autowired
     private TeacherService teacherService;
+
+    @Autowired
+    private UploadFileService uploadFileService;
 
     @Autowired
     private UserUtil userUtil;
@@ -207,6 +207,7 @@ public class FinalSubjectController {
             finalSubjectVo.setStudentName(stu.getName());
         }
 
+        finalSubjectVo.setUploadFileList(uploadFileService.getFileByStudentId(fs.getStudentId()));
         finalSubjectVo.setChosenTime(fs.getFinalChosenTime());
         finalSubjectVo.setScore(fs.getScore());
         return finalSubjectVo;

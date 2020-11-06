@@ -83,6 +83,14 @@ public class UploadFileServiceImpl implements UploadFileService {
     }
 
     @Override
+    public List<UploadFile> getFileByStudentId(long studentId) {
+        UploadFileExample ufe = new UploadFileExample();
+        ufe.createCriteria().andStudentIdEqualTo(studentId);
+
+        return uploadFileMapper.selectByExample(ufe);
+    }
+
+    @Override
     public List<UploadFile> getAllUploadFile() {
         return uploadFileMapper.selectByExample(new UploadFileExample());
     }
