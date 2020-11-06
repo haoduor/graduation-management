@@ -4,10 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import com.haoduor.graduation.dao.ChosenSubjectMapper;
 import com.haoduor.graduation.dao.FinalSubjectMapper;
-import com.haoduor.graduation.model.ChosenSubject;
-import com.haoduor.graduation.model.FinalSubject;
-import com.haoduor.graduation.model.FinalSubjectExample;
-import com.haoduor.graduation.model.Subject;
+import com.haoduor.graduation.model.*;
 import com.haoduor.graduation.service.ChosenSubjectService;
 import com.haoduor.graduation.service.FinalSubjectService;
 import com.haoduor.graduation.service.SubjectService;
@@ -79,7 +76,22 @@ public class FinalSubjectServiceImpl implements FinalSubjectService {
         FinalSubjectExample subjectExample = new FinalSubjectExample();
         subjectExample.createCriteria().andStudentIdEqualTo(studentId);
 
-        return finalSubjectMapper.countByExample(subjectExample) >= 1;
+        return countOverOne(subjectExample);
+    }
+
+    @Override
+    public boolean ownFinalSubject(long studentId, long subjectId) {
+        FinalSubjectExample subjectExample = new FinalSubjectExample();
+        subjectExample.createCriteria()
+                      .andStudentIdEqualTo(studentId)
+                      .andSubjectIdEqualTo(subjectId);
+
+        return countOverOne(subjectExample);
+    }
+
+    @Override
+    public boolean countOverOne(FinalSubjectExample se) {
+        return finalSubjectMapper.countByExample(se) >= 1;
     }
 
     @Override

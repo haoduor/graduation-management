@@ -100,6 +100,7 @@ public class TemplateController {
      * @param response 用户的请求对象
      * @return
      */
+    @ResponseBody
     @GetMapping("/download/{sha256}")
     public BaseMessage download(@PathVariable String sha256, HttpServletResponse response) {
         if (StrUtil.isEmpty(sha256)) {

@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     2020/11/4 19:30:37                           */
+/* Created on:     2020/11/5 16:17:11                           */
 /*==============================================================*/
 
 
@@ -27,6 +27,8 @@ drop table if exists tag;
 drop table if exists teacher;
 
 drop table if exists template;
+
+drop table if exists upload_file;
 
 drop table if exists user;
 
@@ -68,7 +70,7 @@ create table final_subject
    student_id           bigint comment '学生id',
    subject_id           bigint comment '选题id',
    final_chosen_time    datetime comment '最终选中时间',
-   score                int comment '评分'
+   score                int comment '分数'
 );
 
 /*==============================================================*/
@@ -157,6 +159,21 @@ create table template
    upload_time          datetime comment '上传时间',
    is_delete            bool comment '是否被删除',
    delete_time          datetime comment '删除时间',
+   primary key (id)
+);
+
+/*==============================================================*/
+/* Table: upload_file                                           */
+/*==============================================================*/
+create table upload_file
+(
+   id                   bigint comment 'id',
+   student_id           bigint comment '学生id',
+   subject_id           bigint comment '最终选题的id',
+   filename             varchar(64) comment '上传的文件名',
+   sha256               varchar(64) comment '文件的sha256值',
+   size                 int comment '文件的大小',
+   upload_time          datetime comment '上传时间',
    primary key (id)
 );
 
