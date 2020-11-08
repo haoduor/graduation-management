@@ -10,7 +10,9 @@ public class FinalSubject implements Serializable {
 
     private Date finalChosenTime;
 
-    private static final long serialVersionUID = -5154338290957356527L;
+    private Integer score;
+
+    private static final long serialVersionUID = 600072399828546295L;
 
     public Long getStudentId() {
         return studentId;
@@ -34,5 +36,13 @@ public class FinalSubject implements Serializable {
 
     public void setFinalChosenTime(Date finalChosenTime) {
         this.finalChosenTime = finalChosenTime;
+    }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
     }
 }

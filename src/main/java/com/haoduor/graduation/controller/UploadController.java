@@ -145,6 +145,7 @@ public class UploadController {
         return new BaseMessage(5, "文件不能为空");
     }
 
+    // 导入教师用户
     @ResponseBody
     @PostMapping("/teacher")
     public BaseMessage uploadTeacher(MultipartFile file) {

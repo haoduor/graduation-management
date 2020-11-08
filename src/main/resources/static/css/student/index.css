@@ -1,7 +1,62 @@
 .stuInfoBox{
-    display: block;
+    height: 100%;
     position: relative;
 }
+
+.stuInfoBox .info{
+    width: 50%;
+    padding-right: 5rem;
+}
+
+.stuInfoBox .fileList{
+    display: block;
+    width: 50%;
+    overflow-y: auto;
+}
+
+.stuInfoBox .fileList .fileTitle{
+    display: flex;
+}
+
+.fileTitle:hover{
+    color:black;
+    background: white !important;
+}
+/*自定义按钮样式*/
+.fileTitle .btnDownLoad span{
+    width: 47px!important;
+    margin: 0px!important;
+    display: inline;
+}
+
+.fileTitle .btnDownLoad{
+    font-size: 1.1rem;
+}
+
+.fileListBody .fileItems{
+    height: 4rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    border-bottom: 1px solid #e4e4e4;
+    display: flex;
+    flex-flow: row nowrap;
+    font-size: 1.1rem;
+    color: #555555;
+    align-items: center;
+    box-sizing: border-box;
+    transition: all 0.3s;
+}
+
+.fileListBody .fileItems:hover{
+    color:black;
+    background: #eeeeee;
+}
+
+.fileListBody .fileItems span{
+    font-size: 1.1rem;
+    flex: 1;
+}
+
 .stuInfoBox p , .stuInfoBox .subjectContent{
     width: 100%;
     height: 4rem;

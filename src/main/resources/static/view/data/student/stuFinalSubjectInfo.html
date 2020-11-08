@@ -1,8 +1,30 @@
-<div class="stuInfoBox">
-    <p><span>所选教师:</span>$finalSubjectInfo[0]$</p>
-    <p><span>所选题目名称:</span>$finalSubjectInfo[1]$</p>
-    <div class="subjectContent"><span>所选题目内容:</span><div>$finalSubjectInfo[2]$</div></div>
-    <p><span>所选题目来源:</span>$finalSubjectInfo[3]$</p>
-    <p><span>所选题目难度:</span>$finalSubjectInfo[4]$</p>
-    <p><span>所选时间:</span>$finalSubjectInfo[5]$</p>
+<div class="stuInfoBox" style="display: flex;flex-flow: row nowrap">
+    <div class="info">
+        <p><span>所选教师:</span>$finalSubjectInfo[0]$</p>
+        <p><span>所选题目名称:</span>$finalSubjectInfo[1]$</p>
+        <div class="subjectContent"><span>所选题目内容:</span><div>$finalSubjectInfo[2]$</div></div>
+        <p><span>所选题目来源:</span>$finalSubjectInfo[3]$</p>
+        <p><span>所选题目难度:</span>$finalSubjectInfo[4]$</p>
+        <p><span>所选时间:</span>$finalSubjectInfo[5]$</p>
+        <p style="font-size: 1.2rem;font-weight: 600"><span>我的分数:</span>$finalSubjectInfo[6]$</p>
+    </div>
+    <div class="fileList">
+        <p class="fileTitle"
+           style="padding-left: 3rem;
+                  padding-right: 1.75rem;
+                  box-sizing: border-box">
+            <span style="flex: 1;
+                         text-align: left">文件列表:</span>
+            <el-upload
+                    class="btnDownLoad"
+                    action="/file/upload"
+                    :on-success="stuUploadFile"
+                    :data="uploadId">
+                <el-button type="primary">点击上传  <i class="el-icon-upload"></i></el-button>
+            </el-upload>
+        </p>
+        <div id="fileListBody" class="fileListBody">
+
+        </div>
+    </div>
 </div>

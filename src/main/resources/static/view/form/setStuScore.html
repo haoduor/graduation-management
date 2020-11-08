@@ -1,0 +1,10 @@
+<el-form style="margin-right: 2rem;margin-top: 3rem" :model="stuScore" status-icon ref="stuScore" :rules="stuScoreRule"  label-width="100px" class="demo-ruleForm">
+    <el-form-item prop="score" label="学生成绩:" label-position="left">
+        <el-input id="score" v-model="stuScore.score" clearable></el-input>
+    </el-form-item>
+
+    <el-form-item>
+        <el-button type="primary" @click="setStuScore('stuScore')" icon="el-icon-edit">设置</el-button>
+        <el-button class="editClose" @click="closeEdit" type="primary" icon="el-icon-switch-button">关闭</el-button>
+    </el-form-item>
+</el-form>

@@ -269,6 +269,15 @@
                         newPed:[
                             { required: true, message: '请输入新密码', trigger: 'blur' }
                         ],
+                    },
+                    //学生成绩修改
+                    stuScore:{
+                        score:''
+                    },
+                    stuScoreRule:{
+                        score:[
+                            { required: true, message: '请输入学生成绩', trigger: 'blur' }
+                        ],
                     }
                 }
             },
@@ -611,6 +620,13 @@
                                 }
                             });
                         }
+
+                        //最终学生编辑
+                        if(staticValue.getCurrentPage() == 10){
+                            staticValue.setChoseId(data);
+                            await tools.setPage('editMain', '/view/form/setStuScore.html');
+                            new app().$mount('#editMain');
+                        }
                     }).then(val => {
                         tools.$('#editMark').style.opacity = '1';
                     });
@@ -737,6 +753,12 @@
                         //模板页面删除
                         if (staticValue.getCurrentPage() == 6) {
                             await tools.setPage('editMain', '/view/form/templateFileDelete.html');
+                            new app().$mount("#editMain");
+                        }
+
+                        //最终选题学生删除
+                        if (staticValue.getCurrentPage() == 10) {
+                            await tools.setPage('editMain', '/view/form/student/deleteSubjectFile.html');
                             new app().$mount("#editMain");
                         }
                     }).then(val => {
@@ -1197,6 +1219,57 @@
                 //教师模板下载
                 stuDownload(){
                     tools.jump('/template/student');
+                },
+                //最终选题页下载文件
+                subjectFileDownLoad(sha256){
+                    console.log(sha256);
+                    axios.get(`/file/download/${sha256}`).then(val=>{
+                        tools.jump(`/file/download/${sha256}`);
+                    }).catch(err=>{
+                        console.log(err);
+                        this.$message.error('网络错误');
+                    })
+                },
+                //最终选题页下载文件
+                deleteSubjectFile(){
+                    let fileData = staticValue.getChoseId();
+                    axios.post('/file/delete',tools.buildFormData(fileData)).then(val=>{
+                        let id = val['data']['id'];
+                        let msg = val['data']['message'];
+                        if(id == 1){
+                            this.refreshBtn();
+                            this.closeEdit();//关闭表单页面
+                            this.$message.success(msg);
+                        }else{
+                            this.$message.error(msg);
+                        }
+                    });
+                },
+                //设置学生成绩
+                setStuScore(formName){
+                    this.$refs[formName].validate(async (valid) => {
+                        if (valid) {
+                            let postData = {
+                                score:this.stuScore['score'],
+                                subjectId:staticValue.getChoseId()['subjectId'],
+                                studentId:staticValue.getChoseId()['studentId']
+                            };
+                            axios.post('/score/set',tools.buildFormData(postData)).then(val=>{
+                                let id = val['data']['id'];
+                                let msg = val['data']['message'];
+                                if(id == '1'){
+                                    this.refreshBtn();
+                                    this.closeEdit();
+                                    this.$message.success(msg);
+                                }else{
+                                    this.$message.error(msg);
+                                }
+                            }).catch(err=>{
+                                console.log(err);
+                                this.$message.error('网络错误');
+                            })
+                        }
+                    });
                 },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                    查询功能                    //

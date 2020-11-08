@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.haoduor.graduation.dao.FinalSubjectMapper" >
-  <resultMap id="BaseResultMap" type="com.haoduor.graduation.model.FinalSubject" >
+<mapper namespace="com.haoduor.graduation.dao.UploadFileMapper" >
+  <resultMap id="BaseResultMap" type="com.haoduor.graduation.model.UploadFile" >
+    <result column="id" property="id" jdbcType="BIGINT" />
     <result column="student_id" property="studentId" jdbcType="BIGINT" />
     <result column="subject_id" property="subjectId" jdbcType="BIGINT" />
-    <result column="final_chosen_time" property="finalChosenTime" jdbcType="TIMESTAMP" />
-    <result column="score" property="score" jdbcType="INTEGER" />
+    <result column="filename" property="filename" jdbcType="VARCHAR" />
+    <result column="sha256" property="sha256" jdbcType="VARCHAR" />
+    <result column="size" property="size" jdbcType="INTEGER" />
+    <result column="upload_time" property="uploadTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Example_Where_Clause" >
     <where >
@@ -66,15 +69,15 @@
     </where>
   </sql>
   <sql id="Base_Column_List" >
-    student_id, subject_id, final_chosen_time, score
+    id, student_id, subject_id, filename, sha256, size, upload_time
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.haoduor.graduation.model.FinalSubjectExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.haoduor.graduation.model.UploadFileExample" >
     select
     <if test="distinct" >
       distinct
     </if>
     <include refid="Base_Column_List" />
-    from final_subject
+    from upload_file
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
@@ -82,69 +85,98 @@
       order by ${orderByClause}
     </if>
   </select>
-  <delete id="deleteByExample" parameterType="com.haoduor.graduation.model.FinalSubjectExample" >
-    delete from final_subject
+  <delete id="deleteByExample" parameterType="com.haoduor.graduation.model.UploadFileExample" >
+    delete from upload_file
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.haoduor.graduation.model.FinalSubject" >
-    insert into final_subject (student_id, subject_id, final_chosen_time, 
-      score)
-    values (#{studentId,jdbcType=BIGINT}, #{subjectId,jdbcType=BIGINT}, #{finalChosenTime,jdbcType=TIMESTAMP}, 
-      #{score,jdbcType=INTEGER})
+  <insert id="insert" parameterType="com.haoduor.graduation.model.UploadFile" >
+    insert into upload_file (id, student_id, subject_id, 
+      filename, sha256, size, 
+      upload_time)
+    values (#{id,jdbcType=BIGINT}, #{studentId,jdbcType=BIGINT}, #{subjectId,jdbcType=BIGINT}, 
+      #{filename,jdbcType=VARCHAR}, #{sha256,jdbcType=VARCHAR}, #{size,jdbcType=INTEGER}, 
+      #{uploadTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.haoduor.graduation.model.FinalSubject" >
-    insert into final_subject
+  <insert id="insertSelective" parameterType="com.haoduor.graduation.model.UploadFile" >
+    insert into upload_file
     <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
       <if test="studentId != null" >
         student_id,
       </if>
       <if test="subjectId != null" >
         subject_id,
       </if>
-      <if test="finalChosenTime != null" >
-        final_chosen_time,
+      <if test="filename != null" >
+        filename,
       </if>
-      <if test="score != null" >
-        score,
+      <if test="sha256 != null" >
+        sha256,
+      </if>
+      <if test="size != null" >
+        size,
+      </if>
+      <if test="uploadTime != null" >
+        upload_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
       <if test="studentId != null" >
         #{studentId,jdbcType=BIGINT},
       </if>
       <if test="subjectId != null" >
         #{subjectId,jdbcType=BIGINT},
       </if>
-      <if test="finalChosenTime != null" >
-        #{finalChosenTime,jdbcType=TIMESTAMP},
+      <if test="filename != null" >
+        #{filename,jdbcType=VARCHAR},
       </if>
-      <if test="score != null" >
-        #{score,jdbcType=INTEGER},
+      <if test="sha256 != null" >
+        #{sha256,jdbcType=VARCHAR},
+      </if>
+      <if test="size != null" >
+        #{size,jdbcType=INTEGER},
+      </if>
+      <if test="uploadTime != null" >
+        #{uploadTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.haoduor.graduation.model.FinalSubjectExample" resultType="java.lang.Integer" >
-    select count(*) from final_subject
+  <select id="countByExample" parameterType="com.haoduor.graduation.model.UploadFileExample" resultType="java.lang.Integer" >
+    select count(*) from upload_file
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map" >
-    update final_subject
+    update upload_file
     <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
       <if test="record.studentId != null" >
         student_id = #{record.studentId,jdbcType=BIGINT},
       </if>
       <if test="record.subjectId != null" >
         subject_id = #{record.subjectId,jdbcType=BIGINT},
       </if>
-      <if test="record.finalChosenTime != null" >
-        final_chosen_time = #{record.finalChosenTime,jdbcType=TIMESTAMP},
+      <if test="record.filename != null" >
+        filename = #{record.filename,jdbcType=VARCHAR},
       </if>
-      <if test="record.score != null" >
-        score = #{record.score,jdbcType=INTEGER},
+      <if test="record.sha256 != null" >
+        sha256 = #{record.sha256,jdbcType=VARCHAR},
+      </if>
+      <if test="record.size != null" >
+        size = #{record.size,jdbcType=INTEGER},
+      </if>
+      <if test="record.uploadTime != null" >
+        upload_time = #{record.uploadTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null" >
@@ -152,11 +184,14 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map" >
-    update final_subject
-    set student_id = #{record.studentId,jdbcType=BIGINT},
+    update upload_file
+    set id = #{record.id,jdbcType=BIGINT},
+      student_id = #{record.studentId,jdbcType=BIGINT},
       subject_id = #{record.subjectId,jdbcType=BIGINT},
-      final_chosen_time = #{record.finalChosenTime,jdbcType=TIMESTAMP},
-      score = #{record.score,jdbcType=INTEGER}
+      filename = #{record.filename,jdbcType=VARCHAR},
+      sha256 = #{record.sha256,jdbcType=VARCHAR},
+      size = #{record.size,jdbcType=INTEGER},
+      upload_time = #{record.uploadTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null" >
       <include refid="Update_By_Example_Where_Clause" />
     </if>

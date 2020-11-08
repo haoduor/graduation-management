@@ -4,10 +4,7 @@ import cn.hutool.core.convert.Convert;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.haoduor.graduation.model.*;
-import com.haoduor.graduation.service.FinalSubjectService;
-import com.haoduor.graduation.service.StudentService;
-import com.haoduor.graduation.service.SubjectService;
-import com.haoduor.graduation.service.TeacherService;
+import com.haoduor.graduation.service.*;
 import com.haoduor.graduation.util.ConvertUtil;
 import com.haoduor.graduation.util.UserUtil;
 import com.haoduor.graduation.vo.*;
@@ -40,8 +37,17 @@ public class FinalSubjectController {
     private TeacherService teacherService;
 
     @Autowired
+    private UploadFileService uploadFileService;
+
+    @Autowired
     private UserUtil userUtil;
 
+    /**
+     * 教师选择最终的学生
+     * @param studentId
+     * @param subjectId
+     * @return
+     */
     @RequestMapping("/chose")
     @RequiresRoles(value = {"teacher", "admin"}, logical = Logical.OR)
     public BaseMessage chose(@RequestParam String studentId,
@@ -77,6 +83,11 @@ public class FinalSubjectController {
         }
     }
 
+    /**
+     * 学生获取自己的最终选题
+     * @param studentId
+     * @return
+     */
     @RequestMapping("/student")
     @RequiresRoles(value = {"student", "admin"}, logical = Logical.OR)
     public DataMessage studentFinal(@RequestParam String studentId) {
@@ -104,6 +115,13 @@ public class FinalSubjectController {
         }
     }
 
+    /**
+     * 教师获取自己最终选择的学生
+     * @param teacherId
+     * @param page
+     * @param pageSize
+     * @return
+     */
     @RequestMapping("/teacher")
     @RequiresRoles(value = {"teacher", "admin"}, logical = Logical.OR)
     public PageMessage teacherFinal(@RequestParam String teacherId,
@@ -132,6 +150,12 @@ public class FinalSubjectController {
         return pm;
     }
 
+    /**
+     * 管理员获取拥有最终选题的学生
+     * @param page
+     * @param pageSize
+     * @return
+     */
     @RequestMapping("/all")
     @RequiresRoles("admin")
     public PageMessage all(@RequestParam(defaultValue = "1") int page,
@@ -146,6 +170,11 @@ public class FinalSubjectController {
         return pm;
     }
 
+    /**
+     * 数据转换方法
+     * @param finalSubjectList
+     * @return
+     */
     private List<FinalSubjectVo> convertData(List<FinalSubject> finalSubjectList) {
         List<FinalSubjectVo> res = new LinkedList<>();
 
@@ -178,8 +207,9 @@ public class FinalSubjectController {
             finalSubjectVo.setStudentName(stu.getName());
         }
 
+        finalSubjectVo.setUploadFileList(uploadFileService.getFileByStudentId(fs.getStudentId()));
         finalSubjectVo.setChosenTime(fs.getFinalChosenTime());
-
+        finalSubjectVo.setScore(fs.getScore());
         return finalSubjectVo;
     }
 

@@ -5,16 +5,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class FinalSubjectExample implements Serializable {
+public class UploadFileExample implements Serializable {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    private static final long serialVersionUID = -430650137064865892L;
+    private static final long serialVersionUID = -1520143260408840056L;
 
-    public FinalSubjectExample() {
+    public UploadFileExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -106,6 +106,66 @@ public class FinalSubjectExample implements Serializable {
                 throw new RuntimeException("Between values for " + property + " cannot be null");
             }
             criteria.add(new Criterion(condition, value1, value2));
+        }
+
+        public Criteria andIdIsNull() {
+            addCriterion("id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdIsNotNull() {
+            addCriterion("id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdEqualTo(Long value) {
+            addCriterion("id =", value, "id");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdNotEqualTo(Long value) {
+            addCriterion("id <>", value, "id");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdGreaterThan(Long value) {
+            addCriterion("id >", value, "id");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("id >=", value, "id");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdLessThan(Long value) {
+            addCriterion("id <", value, "id");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdLessThanOrEqualTo(Long value) {
+            addCriterion("id <=", value, "id");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdIn(List<Long> values) {
+            addCriterion("id in", values, "id");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdNotIn(List<Long> values) {
+            addCriterion("id not in", values, "id");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdBetween(Long value1, Long value2) {
+            addCriterion("id between", value1, value2, "id");
+            return (Criteria) this;
+        }
+
+        public Criteria andIdNotBetween(Long value1, Long value2) {
+            addCriterion("id not between", value1, value2, "id");
+            return (Criteria) this;
         }
 
         public Criteria andStudentIdIsNull() {
@@ -228,123 +288,263 @@ public class FinalSubjectExample implements Serializable {
             return (Criteria) this;
         }
 
-        public Criteria andFinalChosenTimeIsNull() {
-            addCriterion("final_chosen_time is null");
+        public Criteria andFilenameIsNull() {
+            addCriterion("filename is null");
             return (Criteria) this;
         }
 
-        public Criteria andFinalChosenTimeIsNotNull() {
-            addCriterion("final_chosen_time is not null");
+        public Criteria andFilenameIsNotNull() {
+            addCriterion("filename is not null");
             return (Criteria) this;
         }
 
-        public Criteria andFinalChosenTimeEqualTo(Date value) {
-            addCriterion("final_chosen_time =", value, "finalChosenTime");
+        public Criteria andFilenameEqualTo(String value) {
+            addCriterion("filename =", value, "filename");
             return (Criteria) this;
         }
 
-        public Criteria andFinalChosenTimeNotEqualTo(Date value) {
-            addCriterion("final_chosen_time <>", value, "finalChosenTime");
+        public Criteria andFilenameNotEqualTo(String value) {
+            addCriterion("filename <>", value, "filename");
             return (Criteria) this;
         }
 
-        public Criteria andFinalChosenTimeGreaterThan(Date value) {
-            addCriterion("final_chosen_time >", value, "finalChosenTime");
+        public Criteria andFilenameGreaterThan(String value) {
+            addCriterion("filename >", value, "filename");
             return (Criteria) this;
         }
 
-        public Criteria andFinalChosenTimeGreaterThanOrEqualTo(Date value) {
-            addCriterion("final_chosen_time >=", value, "finalChosenTime");
+        public Criteria andFilenameGreaterThanOrEqualTo(String value) {
+            addCriterion("filename >=", value, "filename");
             return (Criteria) this;
         }
 
-        public Criteria andFinalChosenTimeLessThan(Date value) {
-            addCriterion("final_chosen_time <", value, "finalChosenTime");
+        public Criteria andFilenameLessThan(String value) {
+            addCriterion("filename <", value, "filename");
             return (Criteria) this;
         }
 
-        public Criteria andFinalChosenTimeLessThanOrEqualTo(Date value) {
-            addCriterion("final_chosen_time <=", value, "finalChosenTime");
+        public Criteria andFilenameLessThanOrEqualTo(String value) {
+            addCriterion("filename <=", value, "filename");
             return (Criteria) this;
         }
 
-        public Criteria andFinalChosenTimeIn(List<Date> values) {
-            addCriterion("final_chosen_time in", values, "finalChosenTime");
+        public Criteria andFilenameLike(String value) {
+            addCriterion("filename like", value, "filename");
             return (Criteria) this;
         }
 
-        public Criteria andFinalChosenTimeNotIn(List<Date> values) {
-            addCriterion("final_chosen_time not in", values, "finalChosenTime");
+        public Criteria andFilenameNotLike(String value) {
+            addCriterion("filename not like", value, "filename");
             return (Criteria) this;
         }
 
-        public Criteria andFinalChosenTimeBetween(Date value1, Date value2) {
-            addCriterion("final_chosen_time between", value1, value2, "finalChosenTime");
+        public Criteria andFilenameIn(List<String> values) {
+            addCriterion("filename in", values, "filename");
             return (Criteria) this;
         }
 
-        public Criteria andFinalChosenTimeNotBetween(Date value1, Date value2) {
-            addCriterion("final_chosen_time not between", value1, value2, "finalChosenTime");
+        public Criteria andFilenameNotIn(List<String> values) {
+            addCriterion("filename not in", values, "filename");
             return (Criteria) this;
         }
 
-        public Criteria andScoreIsNull() {
-            addCriterion("score is null");
+        public Criteria andFilenameBetween(String value1, String value2) {
+            addCriterion("filename between", value1, value2, "filename");
             return (Criteria) this;
         }
 
-        public Criteria andScoreIsNotNull() {
-            addCriterion("score is not null");
+        public Criteria andFilenameNotBetween(String value1, String value2) {
+            addCriterion("filename not between", value1, value2, "filename");
             return (Criteria) this;
         }
 
-        public Criteria andScoreEqualTo(Integer value) {
-            addCriterion("score =", value, "score");
+        public Criteria andSha256IsNull() {
+            addCriterion("sha256 is null");
             return (Criteria) this;
         }
 
-        public Criteria andScoreNotEqualTo(Integer value) {
-            addCriterion("score <>", value, "score");
+        public Criteria andSha256IsNotNull() {
+            addCriterion("sha256 is not null");
             return (Criteria) this;
         }
 
-        public Criteria andScoreGreaterThan(Integer value) {
-            addCriterion("score >", value, "score");
+        public Criteria andSha256EqualTo(String value) {
+            addCriterion("sha256 =", value, "sha256");
             return (Criteria) this;
         }
 
-        public Criteria andScoreGreaterThanOrEqualTo(Integer value) {
-            addCriterion("score >=", value, "score");
+        public Criteria andSha256NotEqualTo(String value) {
+            addCriterion("sha256 <>", value, "sha256");
             return (Criteria) this;
         }
 
-        public Criteria andScoreLessThan(Integer value) {
-            addCriterion("score <", value, "score");
+        public Criteria andSha256GreaterThan(String value) {
+            addCriterion("sha256 >", value, "sha256");
             return (Criteria) this;
         }
 
-        public Criteria andScoreLessThanOrEqualTo(Integer value) {
-            addCriterion("score <=", value, "score");
+        public Criteria andSha256GreaterThanOrEqualTo(String value) {
+            addCriterion("sha256 >=", value, "sha256");
             return (Criteria) this;
         }
 
-        public Criteria andScoreIn(List<Integer> values) {
-            addCriterion("score in", values, "score");
+        public Criteria andSha256LessThan(String value) {
+            addCriterion("sha256 <", value, "sha256");
             return (Criteria) this;
         }
 
-        public Criteria andScoreNotIn(List<Integer> values) {
-            addCriterion("score not in", values, "score");
+        public Criteria andSha256LessThanOrEqualTo(String value) {
+            addCriterion("sha256 <=", value, "sha256");
             return (Criteria) this;
         }
 
-        public Criteria andScoreBetween(Integer value1, Integer value2) {
-            addCriterion("score between", value1, value2, "score");
+        public Criteria andSha256Like(String value) {
+            addCriterion("sha256 like", value, "sha256");
             return (Criteria) this;
         }
 
-        public Criteria andScoreNotBetween(Integer value1, Integer value2) {
-            addCriterion("score not between", value1, value2, "score");
+        public Criteria andSha256NotLike(String value) {
+            addCriterion("sha256 not like", value, "sha256");
+            return (Criteria) this;
+        }
+
+        public Criteria andSha256In(List<String> values) {
+            addCriterion("sha256 in", values, "sha256");
+            return (Criteria) this;
+        }
+
+        public Criteria andSha256NotIn(List<String> values) {
+            addCriterion("sha256 not in", values, "sha256");
+            return (Criteria) this;
+        }
+
+        public Criteria andSha256Between(String value1, String value2) {
+            addCriterion("sha256 between", value1, value2, "sha256");
+            return (Criteria) this;
+        }
+
+        public Criteria andSha256NotBetween(String value1, String value2) {
+            addCriterion("sha256 not between", value1, value2, "sha256");
+            return (Criteria) this;
+        }
+
+        public Criteria andSizeIsNull() {
+            addCriterion("size is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSizeIsNotNull() {
+            addCriterion("size is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSizeEqualTo(Integer value) {
+            addCriterion("size =", value, "size");
+            return (Criteria) this;
+        }
+
+        public Criteria andSizeNotEqualTo(Integer value) {
+            addCriterion("size <>", value, "size");
+            return (Criteria) this;
+        }
+
+        public Criteria andSizeGreaterThan(Integer value) {
+            addCriterion("size >", value, "size");
+            return (Criteria) this;
+        }
+
+        public Criteria andSizeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("size >=", value, "size");
+            return (Criteria) this;
+        }
+
+        public Criteria andSizeLessThan(Integer value) {
+            addCriterion("size <", value, "size");
+            return (Criteria) this;
+        }
+
+        public Criteria andSizeLessThanOrEqualTo(Integer value) {
+            addCriterion("size <=", value, "size");
+            return (Criteria) this;
+        }
+
+        public Criteria andSizeIn(List<Integer> values) {
+            addCriterion("size in", values, "size");
+            return (Criteria) this;
+        }
+
+        public Criteria andSizeNotIn(List<Integer> values) {
+            addCriterion("size not in", values, "size");
+            return (Criteria) this;
+        }
+
+        public Criteria andSizeBetween(Integer value1, Integer value2) {
+            addCriterion("size between", value1, value2, "size");
+            return (Criteria) this;
+        }
+
+        public Criteria andSizeNotBetween(Integer value1, Integer value2) {
+            addCriterion("size not between", value1, value2, "size");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadTimeIsNull() {
+            addCriterion("upload_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadTimeIsNotNull() {
+            addCriterion("upload_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadTimeEqualTo(Date value) {
+            addCriterion("upload_time =", value, "uploadTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadTimeNotEqualTo(Date value) {
+            addCriterion("upload_time <>", value, "uploadTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadTimeGreaterThan(Date value) {
+            addCriterion("upload_time >", value, "uploadTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("upload_time >=", value, "uploadTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadTimeLessThan(Date value) {
+            addCriterion("upload_time <", value, "uploadTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadTimeLessThanOrEqualTo(Date value) {
+            addCriterion("upload_time <=", value, "uploadTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadTimeIn(List<Date> values) {
+            addCriterion("upload_time in", values, "uploadTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadTimeNotIn(List<Date> values) {
+            addCriterion("upload_time not in", values, "uploadTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadTimeBetween(Date value1, Date value2) {
+            addCriterion("upload_time between", value1, value2, "uploadTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUploadTimeNotBetween(Date value1, Date value2) {
+            addCriterion("upload_time not between", value1, value2, "uploadTime");
             return (Criteria) this;
         }
     }

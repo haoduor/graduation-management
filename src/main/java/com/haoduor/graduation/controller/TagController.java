@@ -26,6 +26,11 @@ public class TagController {
     @Autowired
     private SubjectService subjectService;
 
+    /**
+     * 根据课题获取课题中的标签
+     * @param subjectId
+     * @return
+     */
     @GetMapping("/list")
     public DataMessage list(@RequestParam String subjectId) {
         long _subjectId = -1;
@@ -43,6 +48,12 @@ public class TagController {
         return dm;
     }
 
+    /**
+     * 添加标签
+     * @param tagName
+     * @param subjectId
+     * @return
+     */
     @PostMapping("/add")
     public BaseMessage add(@RequestParam String tagName, @RequestParam String subjectId) {
         if (StrUtil.isEmpty(tagName)) {
@@ -69,6 +80,12 @@ public class TagController {
         return new BaseMessage(5, "数据库错误");
     }
 
+    /**
+     * 删除标签
+     * @param tagId
+     * @param subjectId
+     * @return
+     */
     @PostMapping("/delete")
     public BaseMessage delete(@RequestParam String tagId, @RequestParam String subjectId) {
         long _tagId  = -1;

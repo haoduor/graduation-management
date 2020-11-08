@@ -25,6 +25,10 @@ public class PeriodController {
     @Resource(name = "periodMap")
     private Map<String, Period> periodMap;
 
+    /**
+     * 获取每个阶段
+     * @return
+     */
     @GetMapping("/list")
     public DataMessage list() {
         DataMessage dm = new DataMessage(1, "获取成功");
@@ -38,6 +42,13 @@ public class PeriodController {
         return dm;
     }
 
+    /**
+     * 管理员设置阶段的时间
+     * @param id
+     * @param startTime
+     * @param endTime
+     * @return
+     */
     @PostMapping("/set")
     @RequiresRoles("admin")
     public BaseMessage set(@RequestParam String id,
@@ -78,6 +89,10 @@ public class PeriodController {
         }
     }
 
+    /**
+     * 更新缓存中的阶段时间
+     * @param p
+     */
     private void updatePeriodCache(Period p) {
         String name = p.getName().split("-")[1];
         periodMap.put(name, p);

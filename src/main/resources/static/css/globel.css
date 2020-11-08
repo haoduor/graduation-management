@@ -116,3 +116,8 @@ body {
         left: 0px;
     }
 }
+
+/*隐藏列表*/
+.el-upload-list{
+    display: none!important;
+}

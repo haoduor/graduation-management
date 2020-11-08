@@ -100,6 +100,7 @@ public class TemplateController {
      * @param response 用户的请求对象
      * @return
      */
+    @ResponseBody
     @GetMapping("/download/{sha256}")
     public BaseMessage download(@PathVariable String sha256, HttpServletResponse response) {
         if (StrUtil.isEmpty(sha256)) {
@@ -163,6 +164,7 @@ public class TemplateController {
         return pm;
     }
 
+    // 删除样板
     @PostMapping("/delete")
     @RequiresRoles("admin")
     public BaseMessage delete(@RequestParam String sha256) {
