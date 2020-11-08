@@ -174,7 +174,7 @@ public class FileController {
             }
         }
 
-        if (uploadFileService.hasUploadFile(_studentId, _fileId)) {
+        if (!uploadFileService.hasUploadFile(_studentId, _fileId)) {
             return new BaseMessage(3, "文件不存在");
         }
 
