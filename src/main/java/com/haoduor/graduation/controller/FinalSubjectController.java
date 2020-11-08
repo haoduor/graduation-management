@@ -3,6 +3,7 @@ package com.haoduor.graduation.controller;
 import cn.hutool.core.convert.Convert;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.haoduor.graduation.annotation.TimeCount;
 import com.haoduor.graduation.model.*;
 import com.haoduor.graduation.service.*;
 import com.haoduor.graduation.util.ConvertUtil;
@@ -88,6 +89,7 @@ public class FinalSubjectController {
      * @param studentId
      * @return
      */
+    @TimeCount
     @RequestMapping("/student")
     @RequiresRoles(value = {"student", "admin"}, logical = Logical.OR)
     public DataMessage studentFinal(@RequestParam String studentId) {
@@ -122,6 +124,7 @@ public class FinalSubjectController {
      * @param pageSize
      * @return
      */
+    @TimeCount
     @RequestMapping("/teacher")
     @RequiresRoles(value = {"teacher", "admin"}, logical = Logical.OR)
     public PageMessage teacherFinal(@RequestParam String teacherId,
@@ -156,6 +159,7 @@ public class FinalSubjectController {
      * @param pageSize
      * @return
      */
+    @TimeCount
     @RequestMapping("/all")
     @RequiresRoles("admin")
     public PageMessage all(@RequestParam(defaultValue = "1") int page,

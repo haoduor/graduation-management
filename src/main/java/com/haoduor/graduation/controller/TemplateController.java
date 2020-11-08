@@ -10,6 +10,7 @@ import cn.hutool.poi.excel.ExcelWriter;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.haoduor.graduation.adapter.CommonAdapter;
+import com.haoduor.graduation.annotation.TimeCount;
 import com.haoduor.graduation.model.Template;
 import com.haoduor.graduation.service.TemplateService;
 import com.haoduor.graduation.util.ResponseUtil;
@@ -100,6 +101,7 @@ public class TemplateController {
      * @param response 用户的请求对象
      * @return
      */
+    @TimeCount
     @ResponseBody
     @GetMapping("/download/{sha256}")
     public BaseMessage download(@PathVariable String sha256, HttpServletResponse response) {

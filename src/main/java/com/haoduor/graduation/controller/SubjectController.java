@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.haoduor.graduation.adapter.SubjectAdapter;
+import com.haoduor.graduation.annotation.TimeCount;
 import com.haoduor.graduation.annotation.TimeLimit;
 import com.haoduor.graduation.dto.SubjectDto;
 import com.haoduor.graduation.model.Subject;
@@ -122,6 +123,7 @@ public class SubjectController {
     }
 
     // 获取课题列表
+    @TimeCount
     @GetMapping("/list")
     public PageMessage list(@RequestParam(defaultValue = "1") int page,
                             @RequestParam(defaultValue = "30") int pageSize,

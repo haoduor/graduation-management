@@ -3,6 +3,7 @@ package com.haoduor.graduation.controller;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IORuntimeException;
 import cn.hutool.crypto.SecureUtil;
+import com.haoduor.graduation.annotation.TimeCount;
 import com.haoduor.graduation.model.UploadFile;
 import com.haoduor.graduation.service.FinalSubjectService;
 import com.haoduor.graduation.service.UploadFileService;
@@ -48,6 +49,7 @@ public class FileController {
      * @param subjectId 课题id
      * @return
      */
+    @TimeCount
     @PostMapping("/upload")
     @RequiresRoles("student")
     public BaseMessage upload(MultipartFile file,
@@ -116,6 +118,7 @@ public class FileController {
      * @param sha256 文件的sha256值
      * @return
      */
+    @TimeCount
     @GetMapping("/download/{sha256}")
     public BaseMessage download(HttpServletResponse response, @PathVariable String sha256) {
         Subject currentUser = SecurityUtils.getSubject();
