@@ -88,7 +88,7 @@
     tools.setDefaultPage({
         title: '标题',
         studentInfo:['','','',''],
-        finalSubjectInfo:['无','无','无','无','无','无']
+        finalSubjectInfo:['无','无','无','无','无','无','无']
     });
 
     (async () => {
@@ -111,6 +111,7 @@
         var app = Vue.extend({
             data() {
                 return {
+
                     //用户信息
                     userInfo:{
                         data:{},
@@ -134,7 +135,12 @@
                         newPwd: [
                             { required: true, message: '请输入新密码', trigger: 'blur' }
                         ],
-                    }
+                    },
+                    //上传文件的id
+                    uploadId:{
+                        studentId:'',
+                        subjectId:''
+                    },
                 }
             },
             mounted:async function(){
@@ -147,16 +153,9 @@
                         tools.$('#nowUser').innerHTML = '当前用户:' + tools.getCookie("loginUserName");
                         //app this绑定用户信息
                         let studentInfoData = await tools.getAxiosData(`/user/info/${tools.getCookie("loginUserName")}`);
-                        staticValue.getThat().$set(staticValue.getThat().userInfo,'data',studentInfoData['data']['data']);
+                        staticValue.getThat().$set(staticValue.getThat()['userInfo'],'data',studentInfoData['data']['data']);
                         //app this绑定用户已选课题信息
                         this.stuChoseSubjectId();
-
-                    }else{
-                        tools.setTimeOutP(3000,()=>{
-                            this.$message.error('请登录,3秒后跳转至登录页');
-                        }).then(()=>{
-                            tools.jump('/');
-                        });
                     }
                 }
                 //主页this
@@ -277,6 +276,7 @@
                             let symbolData = myFinalSubjectData['data']['data'];
                             let dataTime =tools.dateFormat(new Date(parseInt(symbolData['chosenTime'])),'yyyy-MM-dd hh:mm:ss');//时间
                             let dataDifficulty = symbolData['difficult'] == '0'?'容易':symbolData['difficult'] == '1'?'普通':symbolData['difficult'] == '2'?'困难':'?';//难度
+                            let score = symbolData['score'] == '-1'?'未评分':symbolData['score'];
                             await tools.setPage('listTool', './view/listTool/listToolStu.html', { title: '我的最终选题' });
                             await tools.setPage('mainContent', './view/data/student/stuFinalSubjectInfo.html',
                                 {
@@ -287,10 +287,15 @@
                                         symbolData['source'],
                                         dataDifficulty,
                                         dataTime,
+                                        score
                                     ]
                                 });
+                            tools.$('#fileListBody').innerHTML = await tableModel.getStuUploadFileData(symbolData['uploadFileList']);//绑定文件列表
                             new app().$mount("#mainContent");
                             new app().$mount("#listTool");
+                            //绑定id
+                            staticValue.getMainContentThis().$set(staticValue.getMainContentThis()['uploadId'],'studentId',symbolData['studentId']);
+                            staticValue.getMainContentThis().$set(staticValue.getMainContentThis()['uploadId'],'subjectId',symbolData['id']);
                             tools.$('#mainContent').style.opacity = '1';
 
                         });
@@ -381,8 +386,10 @@
                         if (staticValue.getCurrentPage() == 1) {
 
                         }
-                        if (staticValue.getCurrentPage() == 2) {
-
+                        //文件删除
+                        if (staticValue.getCurrentPage() == 6) {
+                            await tools.setPage('editMain', '/view/form/student/deleteSubjectFile.html');
+                            new app().$mount("#editMain");
                         }
                     }).then(val => {
                         tools.$('#editMark').style.opacity = '1';
@@ -451,6 +458,41 @@
                         this.$message.error('网络错误');
                     })
                 },
+                //最终上传文件回调
+                stuUploadFile(data){
+                    if(data['id'] == 1){
+                        this.refreshBtn();
+                        this.$message.success("上传成功");
+                    }else{
+                        this.$message.error(data['message']);
+                    }
+                },
+
+                //下载文件
+                subjectFileDownLoad(sha256){
+                    console.log(sha256);
+                    axios.get(`/file/download/${sha256}`).then(val=>{
+                        tools.jump(`/file/download/${sha256}`);
+                    }).catch(err=>{
+                        console.log(err);
+                        this.$message.error('网络错误');
+                    })
+                },
+                //删除文件
+                deleteSubjectFile(){
+                    let fileData = staticValue.getChoseId();
+                    axios.post('/file/delete',tools.buildFormData(fileData)).then(val=>{
+                        let id = val['data']['id'];
+                        let msg = val['data']['message'];
+                        if(id == 1){
+                            this.refreshBtn();
+                            this.closeEdit();//关闭表单页面
+                            this.$message.success(msg);
+                        }else{
+                            this.$message.error(msg);
+                        }
+                    });
+                },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                      杂                       //
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
@@ -491,6 +533,10 @@
                         let templateData = await tools.getAxiosData('/template/list?page=1&pageSize=8');
                         staticValue.getThat().refreshTables(1,templateData['data']['total'],8);
                     }
+                    //最终选题页刷新
+                    if(staticValue.getCurrentPage() == '6'){
+                        staticValue.getThat().refreshTables(0,0,0);
+                    }
                     this.$message('刷新成功');
                 },
                 //单页面刷新
@@ -504,6 +550,31 @@
                     if(staticValue.getCurrentPage() == '5') {
                         let templateData = await tools.getAxiosData(`/template/list?page=${staticValue.getPageNumber()}&pageSize=8`);
                         tools.$('#tableDate').innerHTML = await tableModel.getTemplateTableData2(templateData['data']['data']);
+                    }
+                    //最终选题页刷新
+                    if(staticValue.getCurrentPage() == '6'){
+                        let myFinalSubjectData = await tools.getAxiosData(`/final/student?studentId=${staticValue.getThat().userInfo['data']['userId']}`);
+                        let symbolData = myFinalSubjectData['data']['data'];
+                        let dataTime =tools.dateFormat(new Date(parseInt(symbolData['chosenTime'])),'yyyy-MM-dd hh:mm:ss');//时间
+                        let dataDifficulty = symbolData['difficult'] == '0'?'容易':symbolData['difficult'] == '1'?'普通':symbolData['difficult'] == '2'?'困难':'?';//难度
+                        let score = symbolData['score'] == '-1'?'未评分':symbolData['score'];
+                        await tools.setPage('mainContent', './view/data/student/stuFinalSubjectInfo.html',
+                            {
+                                finalSubjectInfo:[
+                                    symbolData['teacherName'],
+                                    symbolData['title'],
+                                    symbolData['content'],
+                                    symbolData['source'],
+                                    dataDifficulty,
+                                    dataTime,
+                                    score
+                                ]
+                            });
+                        tools.$('#fileListBody').innerHTML = await tableModel.getStuUploadFileData(symbolData['uploadFileList']);//绑定文件列表
+                        new app().$mount("#mainContent");
+                        staticValue.getMainContentThis().$set(staticValue.getMainContentThis()['uploadId'],'studentId',symbolData['studentId']);
+                        staticValue.getMainContentThis().$set(staticValue.getMainContentThis()['uploadId'],'subjectId',symbolData['id']);
+                        return;
                     }
                     new app().$mount("#mainContent");
                 },

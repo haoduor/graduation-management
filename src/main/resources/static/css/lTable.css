@@ -50,6 +50,28 @@
     color: #606266;
     text-align: center;
 }
+/*有子项的表单元*/
+.lTable .tableDate .dateColumn .InnerBox{
+    display: flex;
+    flex-flow: column nowrap;
+}
+/*子项*/
+.lTable .tableDate .dateColumn .nmDate .nmInnerData{
+    height: 2rem;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.lTable .tableDate .dateColumn .nmDate .nmInnerData span{
+    width: 6rem;
+    text-align: center;
+}
+
+.lTable .tableDate .dateColumn .stressData{
+    font-size: 1.1rem;
+    font-weight: 600;
+}
 
 .lTable .tableDate .dateColumn .staticDate{
     width: 280px;
@@ -78,4 +100,16 @@
     display: inline-block;
     position: absolute;
     right: 1rem;
+}
+
+/*文件模组*/
+.fileModel{
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+
+.fileModel .fileName{
+    width: 10rem;
+    text-align: center;
 }

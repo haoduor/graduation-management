@@ -158,6 +158,15 @@
                         topicDifficult:'',
                         topicSource:'',
                     },
+                    //学生成绩修改
+                    stuScore:{
+                        score:''
+                    },
+                    stuScoreRule:{
+                        score:[
+                            { required: true, message: '请输入学生成绩', trigger: 'blur' }
+                        ],
+                    }
                 }
             },
             mounted:async function(){
@@ -171,12 +180,6 @@
                         let teacherInfoData = await tools.getAxiosData(`/user/info/${tools.getCookie("loginUserName")}`);
                         staticValue.getThat().$set(staticValue.getThat().userInfo,'data',teacherInfoData['data']['data']);
                         tools.$('#pagination').style.display = 'none';//翻页初始不存在
-                    }else{
-                        tools.setTimeOutP(3000,()=>{
-                            this.$message.error('请登录,3秒后跳转至登录页');
-                        }).then(()=>{
-                            tools.jump('/');
-                        });
                     }
                 }
                 //主页this
@@ -246,12 +249,12 @@
                                 title: '我的学生',
                             });
                             await tools.setPage('mainContent', '/view/data/teacher/myFinalStuTable.html');
-                            let myFinalStuData = await tools.getAxiosData(`/final/teacher?page=1&pageSize=8&teacherId=${staticValue.getThat().userInfo['data']['userId']}`);
+                            let myFinalStuData = await tools.getAxiosData(`/final/teacher?page=1&pageSize=4&teacherId=${staticValue.getThat().userInfo['data']['userId']}`);
                             tools.$('#tableDate').innerHTML = await tableModel.getTeaFinalStuData(myFinalStuData['data']['data']);
                             new app().$mount("#mainContent");
                             new app().$mount("#listTool");
                             tools.$('#mainContent').style.opacity = '1';
-                            this.refreshTables(1,myFinalStuData['data']['total'],8);
+                            this.refreshTables(1,myFinalStuData['data']['total'],4);
 
                         });
                     }
@@ -394,6 +397,12 @@
                             // console.log(data);
                             await tools.setPage('editMain', '/view/form/teacher/stuAndSubject.html');
                             new app().$mount("#editMain");
+                        }
+
+                        //最终学生编辑
+                        if(staticValue.getCurrentPage() == 3){
+                            await tools.setPage('editMain', '/view/form/setStuScore.html');
+                            new app().$mount('#editMain');
                         }
 
                     }).then(val => {
@@ -606,6 +615,42 @@
                         this.$message.error('网络错误');
                     })
                 },
+                //下载学生文件
+                subjectFileDownLoad(sha256){
+                    console.log(sha256);
+                    axios.get(`/file/download/${sha256}`).then(val=>{
+                        tools.jump(`/file/download/${sha256}`);
+                    }).catch(err=>{
+                        console.log(err);
+                        this.$message.error('网络错误');
+                    })
+                },
+                //设置学生成绩
+                setStuScore(formName){
+                    this.$refs[formName].validate(async (valid) => {
+                        if (valid) {
+                            let postData = {
+                                score:this.stuScore['score'],
+                                subjectId:staticValue.getChoseId()['subjectId'],
+                                studentId:staticValue.getChoseId()['studentId']
+                            };
+                            axios.post('/score/set',tools.buildFormData(postData)).then(val=>{
+                                let id = val['data']['id'];
+                                let msg = val['data']['message'];
+                                if(id == '1'){
+                                    this.refreshBtn();
+                                    this.closeEdit();
+                                    this.$message.success(msg);
+                                }else{
+                                    this.$message.error(msg);
+                                }
+                            }).catch(err=>{
+                                console.log(err);
+                                this.$message.error('网络错误');
+                            })
+                        }
+                    });
+                },
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
                 //                      杂                       //
                 // ▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼▲▼//
@@ -743,9 +788,9 @@
                     }
                     //我的学生
                     if(staticValue.getCurrentPage() == '3'){
-                        let myFinalStuData = await tools.getAxiosData(`/final/teacher?page=1&pageSize=8&teacherId=${staticValue.getThat().userInfo['data']['userId']}`);
+                        let myFinalStuData = await tools.getAxiosData(`/final/teacher?page=1&pageSize=4&teacherId=${staticValue.getThat().userInfo['data']['userId']}`);
                         // tools.$('#tableDate').innerHTML = await tableModel.getTeaFinalStuData(myFinalStuData['data']['data']);
-                        staticValue.getThat().refreshTables(1,myFinalStuData['data']['total'],8);
+                        staticValue.getThat().refreshTables(1,myFinalStuData['data']['total'],4);
                     }
                     //模板页刷新
                     if(staticValue.getCurrentPage() == '6'){
@@ -768,7 +813,7 @@
                     }
                     //我的学生
                     if(staticValue.getCurrentPage() == '3'){
-                        let myFinalStuData = await tools.getAxiosData(`/final/teacher?page=${staticValue.getPageNumber()}&pageSize=8&teacherId=${staticValue.getThat().userInfo['data']['userId']}`);
+                        let myFinalStuData = await tools.getAxiosData(`/final/teacher?page=${staticValue.getPageNumber()}&pageSize=4&teacherId=${staticValue.getThat().userInfo['data']['userId']}`);
                         tools.$('#tableDate').innerHTML = await tableModel.getTeaFinalStuData(myFinalStuData['data']['data']);
                     }
                     //模板页刷新
