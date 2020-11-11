@@ -23,11 +23,14 @@ public class UserRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         String username = (String)principals.getPrimaryPrincipal();
+        // 根据用户名获取用户
         User user = userService.getUserByName(username);
         if (user != null) {
+            // 根据用户分发角色
             Role role = roleService.getRoleById(user.getRoleId());
             if (role != null) {
                 SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
+                // 设置用户的角色
                 info.addRole(role.getName());
                 return info;
             }
@@ -35,6 +38,12 @@ public class UserRealm extends AuthorizingRealm {
         return null;
     }
 
+    /**
+     * 登录之后 执行验证
+     * @param token 用户令牌
+     * @return
+     * @throws AuthenticationException
+     */
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         UsernamePasswordToken t = (UsernamePasswordToken)token;
@@ -54,6 +63,8 @@ public class UserRealm extends AuthorizingRealm {
 
         // 设置加密的密码
         t.setPassword(EncryptedUtil.encryptedPassword(pass, salt).toCharArray());
+
+        // 新建验证信息类
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(token.getPrincipal(), dbuser.getPassword(), getName());
         return info;
     }

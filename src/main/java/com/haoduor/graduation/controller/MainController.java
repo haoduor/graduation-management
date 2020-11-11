@@ -32,6 +32,7 @@ public class MainController {
     public String login() {
         Subject currentUser = SecurityUtils.getSubject();
         if (currentUser.isAuthenticated()) {
+            // 根据用户角色分发页面
             if (currentUser.hasRole("student")) {
                 return "redirect:/student";
             }
@@ -67,44 +68,34 @@ public class MainController {
             return new BaseMessage(-1, "用户已登陆");
         }
 
-        // 验证码有效性校验
-        if (StrUtil.isEmpty(code)) {
-            return new BaseMessage(2, "验证码不能为空");
-        }
+        // 用户名与密码有效性校验
+        if (!StrUtil.isEmpty(username) && !StrUtil.isEmpty(password)) {
+            try {
+                // shiro 用户登录
+                currentUser.login(new UsernamePasswordToken(username, password));
+                log.info("{} 用户成功登录", username);
+                Session se = currentUser.getSession();
+                se.setAttribute("username", username);
 
-        String inCode = (String) currentUser.getSession().getAttribute("code");
-
-        if (inCode != null && inCode.equals(code)) {
-
-            // 用户名与密码有效性校验
-            if (!StrUtil.isEmpty(username) && !StrUtil.isEmpty(password)) {
-                try {
-                    // shiro 用户登录
-                    currentUser.login(new UsernamePasswordToken(username, password));
-                    log.info("{} 用户成功登录", username);
-                    Session se = currentUser.getSession();
-                    se.setAttribute("username", username);
-
-                    return new BaseMessage(1, "登录成功");
-                } catch (IncorrectCredentialsException e) {
-                    return new BaseMessage(5, "密码错误");
-                } catch (UnknownAccountException e) {
-                    return new BaseMessage(6, "未知用户名");
-                } catch (Exception e) {
-                    return new BaseMessage(7, "未知错误");
-                }
-            } else {
-                return new BaseMessage(4, "用户名或者密码不能为空");
+                return new BaseMessage(1, "登录成功");
+            } catch (IncorrectCredentialsException e) {
+                return new BaseMessage(5, "密码错误");
+            } catch (UnknownAccountException e) {
+                return new BaseMessage(6, "未知用户名");
+            } catch (Exception e) {
+                return new BaseMessage(7, "未知错误");
             }
         } else {
-            return new BaseMessage(3, "验证码错误");
+            return new BaseMessage(4, "用户名或者密码不能为空");
         }
     }
 
     // 登出接口
     @GetMapping("/logout")
     public String logout() {
+        // 获取用户
         Subject currentUser = SecurityUtils.getSubject();
+        //
         currentUser.logout();
 
         return "redirect:/";

@@ -7,6 +7,7 @@ import com.haoduor.graduation.vo.SubjectVo;
 public class ConvertUtil {
     private ConvertUtil() {}
 
+    // 泛型转换类
     public static <T> T convert(Class<T> type,  Object value) {
         String json = JSONObject.toJSONString(value);
         return JSON.parseObject(json, type);
