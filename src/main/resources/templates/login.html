@@ -36,8 +36,6 @@
 
         // 设置登录页背景图片
         tools.$('.loginBk').style.background = `url(/image/Sola.png)`;
-        //初始加载二维码
-        tools.$('.codeImg').src =`${codeUrl}${(Math.random()*100 + '').slice(0,2)}`;
         //初始化公告
         let noticeData = await tools.getAxiosData('/announcement/list');
         tools.$('#msgBody').innerHTML = await tableModel.getLoginNoticeData(noticeData['data']['data']);
@@ -51,18 +49,13 @@
                         password: [
                             { required: true, message: '请输入密码', trigger: 'blur' }
                         ],
-                        verificationCode: [
-                            { required: true, message: '请输入验证码', trigger: 'blur' }
-                        ]
                     },
                     loginForm: {
                         username: '',
                         password: '',
-                        verificationCode: ''
                     },
                     username: '',
                     password: '',
-                    verificationCode: '',
                     topicItems: ['1','2','3']
                 }
             },
@@ -77,7 +70,6 @@
                             let userData = {
                                 username: this.loginForm.username,
                                 password: this.loginForm.password,
-                                code: this.loginForm.verificationCode,
                             };
                             try {
                                 let loginResult = await axios.post('/login', tools.buildFormData(userData));
@@ -87,13 +79,6 @@
                                         tools.setCookie('loginUserName',this.loginForm.username,1);
                                     }).then(val=>{
                                         tools.jump('/');
-                                    });
-                                }
-                                if(loginResult['data']['id'] == 3){
-                                    tools.setTimeOutP(0,()=>this.$message.error("验证码错误")).then(val=>{
-                                        this.loginForm.verificationCode = '';
-                                        let codeUri = `${codeUrl}${(Math.random()*100 + '').slice(0,2)}`;
-                                        tools.$('.codeImg').src = codeUri;
                                     });
                                 }
                                 if(loginResult['data']['id'] == 4){
@@ -141,15 +126,6 @@
                         }
                     });
                 },
-                // 刷新验证码
-                async refreshCode() {
-                    try {
-                        let codeUri = `${codeUrl}${(Math.random()*100 + '').slice(0,2)}`;
-                        tools.$('.codeImg').src = codeUri;
-                    } catch {
-                        alert('获取失败');
-                    }
-                }
             }
         });
         var fin = new app().$mount("#app");
