@@ -1160,7 +1160,7 @@
                                 if(userData['data']['id'] == 1) {
                                     let pwdData = staticValue.getEditMainThis()['changeAdminPwd'];
                                     let postData = {
-                                        id: userData['data']['data']['userId'],
+                                        id: userData['data']['data']['id'],
                                         oldPassword: pwdData['oldPwd'],
                                         newPassword: pwdData['newPed']
                                     };
@@ -1168,8 +1168,8 @@
                                         let id = val['data']['id'];
                                         if (id == '1') {
                                             staticValue.getEditMainThis().$message.success('更改密码成功');
-                                            staticValue.getEditMainThis().$set(staticValue.getEditMainThis().changePwd, 'oldPwd', '');
-                                            staticValue.getEditMainThis().$set(staticValue.getEditMainThis().changePwd, 'newPwd', '');
+                                            staticValue.getEditMainThis().$set(staticValue.getEditMainThis().changeAdminPwd, 'oldPwd', '');
+                                            staticValue.getEditMainThis().$set(staticValue.getEditMainThis().changeAdminPwd, 'newPwd', '');
                                         } else {
                                             staticValue.getEditMainThis().$message.error(val['data']['message']);
                                         }
