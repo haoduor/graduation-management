@@ -58,6 +58,7 @@ public class ServerRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         log.info("系统初始化");
 
+        // 初始化角色库
         if (!roleIsGenerate()) {
             log.info("首次初始化 角色库");
             List<Role> roles = getAllRoles();
@@ -111,6 +112,7 @@ public class ServerRunner implements CommandLineRunner {
         log.info("初始化完成");
     }
 
+    // 生成默认admin
     private User getDefaultAdmin() {
         User u = new User();
         u.setUsername("admin");
@@ -127,6 +129,7 @@ public class ServerRunner implements CommandLineRunner {
         return u;
     }
 
+    // 生成所有角色
     private List<Role> getAllRoles() {
         List<Role> roles = new LinkedList<>();
 
@@ -148,6 +151,7 @@ public class ServerRunner implements CommandLineRunner {
         return roles;
     }
 
+    // 判断角色是否生成成功
     private boolean roleIsGenerate() {
         List<Role> res = roleMapper.selectByExample(new RoleExample());
 

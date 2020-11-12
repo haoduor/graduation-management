@@ -27,7 +27,6 @@ public class MainController {
     @Autowired
     private HttpServletRequest request;
 
-
     @GetMapping("/")
     public String login() {
         Subject currentUser = SecurityUtils.getSubject();
@@ -59,8 +58,7 @@ public class MainController {
     @ResponseBody
     @PostMapping("/login")
     public BaseMessage login(@RequestParam String username,
-                             @RequestParam String password,
-                             @RequestParam String code) {
+                             @RequestParam String password) {
         Subject currentUser = SecurityUtils.getSubject();
 
         // 用户是否登录校验
@@ -95,19 +93,21 @@ public class MainController {
     public String logout() {
         // 获取用户
         Subject currentUser = SecurityUtils.getSubject();
-        //
+        // 用户登出
         currentUser.logout();
-
+        // 重新向首页
         return "redirect:/";
     }
 
     @GetMapping("/student")
     public String studentPage() {
+        // 学生的主页
         return "student/index";
     }
 
     @GetMapping("/teacher")
     public String teacherPage() {
+        // 教师的主页
         return "teacher/index";
     }
 }
