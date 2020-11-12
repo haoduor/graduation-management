@@ -70,7 +70,6 @@
                             let userData = {
                                 username: this.loginForm.username,
                                 password: this.loginForm.password,
-                                code:''
                             };
                             try {
                                 let loginResult = await axios.post('/login', tools.buildFormData(userData));
