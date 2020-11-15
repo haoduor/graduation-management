@@ -43,15 +43,14 @@ public class StudentController {
     @GetMapping("/list")
     public PageMessage getStudent(@RequestParam(defaultValue = "1") int page,
                                   @RequestParam(defaultValue = "30") int pageSize) {
-
+        // 开始分页
         PageHelper.startPage(page, pageSize);
+        // 获取数据库中的全部学生
         List<StudentVo> res = studentService.getStudentVos();
+        // 封装分页
         PageInfo<StudentVo> pages = new PageInfo<>(res);
-
-        PageMessage pageMessage = new PageMessage();
-        pageMessage.setTotalPage(pages.getPages());
-        pageMessage.setTotal(pages.getTotal());
-        pageMessage.setNowPage(pages.getPageNum());
+        // 封装放回消息
+        PageMessage pageMessage = PageMessage.instance(pages);
         pageMessage.setData(res);
 
         return pageMessage;
@@ -62,12 +61,14 @@ public class StudentController {
     public BaseMessage delete(@RequestParam String id) {
         long _id = -1;
         try {
+            // 格式化id
             _id = Long.parseLong(id);
         } catch (NumberFormatException e) {
             return new BaseMessage(3, "格式化错误");
         }
 
-        if (_id != -1 && studentService.deleteStudentById(_id)) {
+        // 删除数据库中的学生
+        if (studentService.deleteStudentById(_id)) {
             return new BaseMessage(1, "用户删除成功");
         } else {
             return new BaseMessage(2, "用户删除失败");
@@ -77,6 +78,7 @@ public class StudentController {
     // 更改学生 (无法更改学号)
     @PostMapping("/set")
     public BaseMessage set(@RequestBody StudentVo vo) {
+        // 数据库中更新学生信息
         boolean res = studentService.updateStudentByVo(vo);
         if (res) {
             return new BaseMessage(1, "更新成功");
@@ -94,20 +96,24 @@ public class StudentController {
     public BaseMessage add(@RequestBody StudentVo vo) {
         if (vo != null) {
             String id = vo.getStudentId();
+            // 判断学号是否存在
             if (studentFilter.contains(id)) {
                 return new BaseMessage(5, "学号重复");
             }
 
             StudentDto tmp = null;
             try {
+                // 装换对象为 数据库对象dto
                 tmp = StudentAdapter.studentVoToDto(vo);
             } catch (NumberFormatException e) {
                 return new BaseMessage(2, "格式化错误");
             }
 
+            // 添加入数据库
             boolean res = userService.addStudentDto(tmp);
 
             if (res) {
+                // 加入内置id过滤器
                 studentFilter.add(id);
                 return new BaseMessage(1, "添加成功");
             } else {
