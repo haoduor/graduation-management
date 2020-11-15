@@ -584,7 +584,10 @@
                             let noticeData = await tools.getAxiosData(`/announcement/list`);
                             noticeData['data']['data'].forEach((items,index)=>{
                                 if(items['id'] === data){
-                                    tools.$('#noticeContent').value = items['content'];
+                                    // noticeEdit:{
+                                    //     noticeContent:''
+                                    // },
+                                    staticValue.getEditMainThis().$set(staticValue.getEditMainThis()['noticeEdit'],'noticeContent',items['content']);
                                     tools.inputIsNull('#noticeContent','blur');//判空校验
                                     staticValue.setChoseId(items['id']);
                                 }

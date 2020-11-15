@@ -29,7 +29,6 @@
 <script type="module">
     import { tools } from './js/tool.js';
     import { tableModel } from './js/tableModel.js';
-    let codeUrl = '/captcha/get?';
     (async () => {
         await tools.setPage('loginForm', './view/login/loginForm.html');
         await tools.setPage('loginMsg', './view/login/loginMsg.html');
@@ -54,8 +53,6 @@
                         username: '',
                         password: '',
                     },
-                    username: '',
-                    password: '',
                     topicItems: ['1','2','3']
                 }
             },
@@ -70,6 +67,7 @@
                             let userData = {
                                 username: this.loginForm.username,
                                 password: this.loginForm.password,
+                                code:''
                             };
                             try {
                                 let loginResult = await axios.post('/login', tools.buildFormData(userData));
@@ -80,43 +78,10 @@
                                     }).then(val=>{
                                         tools.jump('/');
                                     });
+                                }else{
+                                    this.$message.error(loginResult['data']['message']);
                                 }
-                                if(loginResult['data']['id'] == 4){
-                                    tools.setTimeOutP(0,()=>this.$message.error("用户名或者密码不能为空")).then(val=>{
-                                        let codeUri = `${codeUrl}${(Math.random()*100 + '').slice(0,2)}`;
-                                        tools.$('.codeImg').src = codeUri;
-                                    });
-                                }
-                                if(loginResult['data']['id'] == 5){
-                                    tools.setTimeOutP(0,()=>this.$message.error("密码错误")).then(val=>{
-                                        this.loginForm.password = '';
-                                        let codeUri = `${codeUrl}${(Math.random()*100 + '').slice(0,2)}`;
-                                        tools.$('.codeImg').src = codeUri;
-                                    });
-                                }
-                                if(loginResult['data']['id'] == 6){
-                                    tools.setTimeOutP(0,()=>this.$message.error("未知用户名")).then(val=>{
-                                        this.loginForm.username = '';
-                                        let codeUri = `${codeUrl}${(Math.random()*100 + '').slice(0,2)}`;
-                                        tools.$('.codeImg').src = codeUri;
-                                    });
-                                }
-                                if(loginResult['data']['id'] == 7){
-                                    tools.setTimeOutP(0,()=>this.$message.error("未知错误")).then(val=>{
-                                        this.loginForm.username = '';
-                                        this.loginForm.password = '';
-                                        this.loginForm.verificationCode = '';
-                                        let codeUri = `${codeUrl}${(Math.random()*100 + '').slice(0,2)}`;
-                                        tools.$('.codeImg').src = codeUri;
-                                    });
-                                }
-                                if(loginResult['data']['id'] == -1){
-                                    tools.setTimeOutP(0,()=>this.$message.error("用户已登陆")).then(val=>{
-                                        // this.loginForm.username = '';
-                                        // let codeUri = `${codeUrl}${(Math.random()*100 + '').slice(0,2)}`;
-                                        // tools.$('.codeImg').src = codeUri;
-                                    });
-                                }
+
                             } catch {
                                 this.$message.error("网络出错了")
                             }
