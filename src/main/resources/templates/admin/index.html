@@ -20,6 +20,7 @@
             <div class="editMain" id="editMain"></div>
         </div>
     </div>
+<!--    顶栏-->
     <div class="adminNav">
         <p class="navTitle"><i class="el-icon-user-solid"></i> 管理端</p>
         <div class="userInformation">
@@ -30,6 +31,7 @@
     </div>
     <div class="adminBody">
 
+<!--        菜单栏-->
         <el-row class="adminList">
             <el-menu default-active="1" class="el-menu-vertical-demo" @select="handleSelect"
                      background-color="#545c64" text-color="#fff" active-text-color="#ffd04b">
@@ -68,6 +70,7 @@
             </el-menu>
         </el-row>
         <div class="adminData">
+<!--            工具栏-->
             <div id="listTool" class="listTool"></div>
             <!-- 主体 -->
             <div class="mainContent" id="mainContent">
@@ -102,9 +105,11 @@
             importUri:'/import/student',
             addBtn:'block',
         });
-        await tools.setPage('editMain', '/view/form/none.html');//初始加载页
-        await tools.setPage('mainContent', '/view/data/studentTable.html');
-        await tools.setPage('listTool', '/view/listTool/listTool.html', {title: '学生用户管理'});
+
+        await tools.setPage('editMain', '/view/form/none.html');//绑定表单页
+        await tools.setPage('mainContent', '/view/data/studentTable.html');//绑定数据主页面
+        await tools.setPage('listTool', '/view/listTool/listTool.html', {title: '学生用户管理'});//绑定工具栏
+
         let studentData = await tools.getAxiosData('/student/list?page=1&pageSize=8');//获取数据
         tools.$('#tableDate').innerHTML = await tableModel.getStudentTableData(studentData['data']['data']);//绑定数据
 
@@ -307,18 +312,21 @@
                     //学生用户列表
                     if (key == 1) {
                         tools.setTimeOutP(300, async () => {
-                            tools.$('#mainContent').style.opacity = '0';
+                            //tools.$('#mainContent')获取对应的元素
+                            tools.$('#mainContent').style.opacity = '0';//将页面透明度设置成0
                         }).then(async val => {
                             await tools.setPage('listTool', '/view/listTool/listTool.html', {
                                 title: '学生用户管理'
                             });
-                            await tools.setPage('mainContent', '/view/data/studentTable.html');
-                            let studentData = await tools.getAxiosData('/student/list?page=1&pageSize=8');
-                            tools.$('#tableDate').innerHTML = await tableModel.getStudentTableData(studentData['data']['data']);
-                            new app().$mount("#mainContent");
-                            new app().$mount("#listTool");
-                            tools.$('#mainContent').style.opacity = '1';
-                            this.refreshTables(1,studentData['data']['total'],8);
+                            await tools.setPage('mainContent', '/view/data/studentTable.html');//设置表头
+                            let studentData = await tools.getAxiosData('/student/list?page=1&pageSize=8');//获取学生数据
+                            tools.$('#tableDate').innerHTML = await tableModel.getStudentTableData(studentData['data']['data']);//将学生数据绑定到表体上
+                            new app().$mount("#mainContent");//手动挂载#mainContent，重新加载部分页面
+                            new app().$mount("#listTool");//手动挂载#listTool，重新加载部分页面
+                            tools.$('#mainContent').style.opacity = '1';//将页面显示出来
+
+                            //refreshTables(显示在第几页，所有数据总个数，每页显示多少数据)
+                            this.refreshTables(1,studentData['data']['total'],8);//刷新分页组件
                         });
                     }
 
@@ -651,11 +659,11 @@
                 //添加或新建
                 addItems() {
                     tools.setTimeOutP(0, async () => {
-                        tools.$('#editMark').style.display = 'block';
+                        tools.$('#editMark').style.display = 'block';//显示弹出层
                         //学生添加页面
                         if (staticValue.getCurrentPage() == 1) {
-                            await tools.setPage('editMain', '/view/form/studentOneImport.html');
-                            new app().$mount("#editMain");
+                            await tools.setPage('editMain', '/view/form/studentOneImport.html');//绑定弹出层内的表单
+                            new app().$mount("#editMain");//重新加载#editMain元素
                         }
                         //教师添加页面
                         if (staticValue.getCurrentPage() == 2) {

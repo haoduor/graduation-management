@@ -14,10 +14,11 @@
 <el-button style="display: $topicSelect[1]$;" class="listToolSelect" @click="selectTableItems" type="primary" icon="el-icon-zoom-in">
     查询
 </el-button>
-<el-button class="listToolRefresh" @click="refreshBtn" type="primary" icon="el-icon-refresh">
+<el-button class="listToolRefresh" @click="refreshBtn" type="success" icon="el-icon-refresh">
     刷新
 </el-button>
-<el-button style="display: $addBtn$;" class="listToolAdd" @click="addItems" type="primary" icon="el-icon-document-add">
+<!--@click内的方法名就是点击的事件-->
+<el-button style="display: $addBtn$;" class="listToolAdd" @click="addItems" type="success" icon="el-icon-document-add">
     添加
 </el-button>
 <el-button style="display: $listToolAdd$;" class="listToolAddAll" @click="addFile" type="primary"

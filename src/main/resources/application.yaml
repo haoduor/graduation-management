@@ -6,7 +6,7 @@ spring:
     encoding:
       force: true
       charset: utf-8
-
+  # 定义数据库连接语句
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://192.168.224.132/graduation?serverTimezone=UTC

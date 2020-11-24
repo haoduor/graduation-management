@@ -97,7 +97,7 @@ public class UserServiceImpl implements UserService {
 
         User u = new User();
         u.setPassword(EncryptedUtil.encryptedPassword(password, salt));
-        int res = userMapper.updateByExample(u, ue);
+        int res = userMapper.updateByExampleSelective(u, ue);
 
         return res == 1;
     }
