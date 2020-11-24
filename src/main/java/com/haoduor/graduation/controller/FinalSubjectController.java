@@ -1,5 +1,6 @@
 package com.haoduor.graduation.controller;
 
+import cn.hutool.core.convert.Convert;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.haoduor.graduation.annotation.TimeCount;
@@ -13,7 +14,9 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -46,7 +49,7 @@ public class FinalSubjectController {
      * @param subjectId
      * @return
      */
-    @PostMapping("/chose")
+    @RequestMapping("/chose")
     @RequiresRoles(value = {"teacher", "admin"}, logical = Logical.OR)
     public BaseMessage chose(@RequestParam String studentId,
                              @RequestParam String subjectId) {
@@ -87,7 +90,7 @@ public class FinalSubjectController {
      * @return
      */
     @TimeCount
-    @GetMapping("/student")
+    @RequestMapping("/student")
     @RequiresRoles(value = {"student", "admin"}, logical = Logical.OR)
     public DataMessage studentFinal(@RequestParam String studentId) {
         org.apache.shiro.subject.Subject currentUser = SecurityUtils.getSubject();
@@ -122,7 +125,7 @@ public class FinalSubjectController {
      * @return
      */
     @TimeCount
-    @GetMapping("/teacher")
+    @RequestMapping("/teacher")
     @RequiresRoles(value = {"teacher", "admin"}, logical = Logical.OR)
     public PageMessage teacherFinal(@RequestParam String teacherId,
                                     @RequestParam(defaultValue = "1") int page,
@@ -157,7 +160,7 @@ public class FinalSubjectController {
      * @return
      */
     @TimeCount
-    @GetMapping("/all")
+    @RequestMapping("/all")
     @RequiresRoles("admin")
     public PageMessage all(@RequestParam(defaultValue = "1") int page,
                            @RequestParam(defaultValue = "30") int pageSize) {

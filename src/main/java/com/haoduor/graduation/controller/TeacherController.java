@@ -46,14 +46,15 @@ public class TeacherController {
     @GetMapping("/list")
     public PageMessage getTeacher(@RequestParam(defaultValue = "1") int page,
                                   @RequestParam(defaultValue = "30") int pageSize) {
-        // 开始分页
+
         PageHelper.startPage(page, pageSize);
-        // 从数据库获取全部教师
         List<TeacherVo> res = teacherService.getTeacherVos();
-        // 封装分页
         PageInfo<TeacherVo> pageInfo = new PageInfo<>(res);
-        // 封装返回消息
-        PageMessage pageMessage = PageMessage.instance(pageInfo);
+
+        PageMessage pageMessage = new PageMessage();
+        pageMessage.setTotalPage(pageInfo.getPages());
+        pageMessage.setTotal(pageInfo.getTotal());
+        pageMessage.setNowPage(pageInfo.getPageNum());
         pageMessage.setData(res);
 
         return pageMessage;
@@ -69,13 +70,11 @@ public class TeacherController {
         long _id = -1;
 
         try {
-            // 格式化id
             _id = Long.parseLong(id);
         } catch (NumberFormatException e) {
             return new BaseMessage(3, "格式化错误");
         }
 
-        // 删除数据库中id
         boolean res = teacherService.deleteTeacherById(_id);
         if (_id != -1 && res) {
             return new BaseMessage(1, "删除成功");
@@ -91,14 +90,11 @@ public class TeacherController {
      */
     @PostMapping("/add")
     public BaseMessage add(@RequestBody TeacherVo teacherVo) {
-        // 判断工号是否已经存在
         if (teacherFilter.contains(teacherVo.getTeacherId())) {
             return new BaseMessage(2, "工号已存在");
         }
 
-        // 转换封装类型
         TeacherDto dto = TeacherAdapter.teacherVoToDto(teacherVo);
-        // 添加如数据库
         boolean res = userService.addTeacherDto(dto);
 
         if (res) {

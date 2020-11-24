@@ -28,10 +28,10 @@ public class TestController {
     private RequestMappingHandlerMapping mapping;
 
     // 获取个人的信息
-    @GetMapping("/personal")
+    @RequestMapping("/personal")
     public Object getPersonalInfo() {
         Subject sub = SecurityUtils.getSubject();
-        return sub.toString();
+        return sub.getPrincipal();
     }
 
     // 尝试获取所有注册的路由
@@ -50,8 +50,7 @@ public class TestController {
                 mapT.put("url", url);
             }
 
-            // 类名
-            mapT.put("className", method.getMethod().getDeclaringClass().getName());
+//            map1.put("className", method.getMethod().getDeclaringClass().getName()); // 类名
             // 方法名
             mapT.put("method", method.getMethod().getName());
 

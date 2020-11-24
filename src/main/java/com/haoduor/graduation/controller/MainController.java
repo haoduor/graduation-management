@@ -30,7 +30,6 @@ public class MainController {
     @GetMapping("/")
     public String login() {
         Subject currentUser = SecurityUtils.getSubject();
-        // 判断用户是否登录
         if (currentUser.isAuthenticated()) {
             // 根据用户角色分发页面
             if (currentUser.hasRole("student")) {

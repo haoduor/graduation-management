@@ -56,14 +56,11 @@ public class TemplateController {
     @RequiresRoles("admin")
     public BaseMessage upload(MultipartFile file) {
         Subject currentUser = SecurityUtils.getSubject();
-        // 上传文件不能为空
+
         if (file != null) {
-            // 获取原本的文件的名字
             String filename = file.getOriginalFilename();
-            // 创建临时文件位置
             File tmpFile = new File(tmpPath + filename);
 
-            // 保证临时文件为空
             if (tmpFile.exists()) {
                 FileUtil.del(tmpFile);
             } else {
@@ -71,29 +68,23 @@ public class TemplateController {
             }
 
             try {
-                // 移动文件至临时文件夹
                 file.transferTo(tmpFile);
             } catch (IOException e) {
                 return new BaseMessage(3, "文件io 出错");
             }
 
-            // 创建保存的文件
             File saveFile = new File(savePath + filename);
-
-            // 文件名重复 重命名
             if (saveFile.exists()) {
                 filename = RandomUtil.randomString(8) + " " + filename;
                 saveFile = new File(savePath + filename);
             }
 
             try {
-                // 移动文件至保存文件夹
                 FileUtil.move(tmpFile, saveFile, true);
             } catch (IORuntimeException e) {
                 return new BaseMessage(4, "文件转换出错");
             }
 
-            // 数据库保存记录
             templateService.addTemplate(saveFile);
 
             log.info("管理员 上传了文件{}", filename);
@@ -127,12 +118,27 @@ public class TemplateController {
 
         File file = new File(savePath + filename);
         if (file.exists()) {
+            OutputStream os = null;
+
+            response.setHeader("content-type", "application/octet-stream");
+            response.setContentType("application/octet-stream");
+
             try {
-                ResponseUtil.sendFile(response, filename, file);
-                return new BaseMessage(1, "文件上传成功");
+                response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
             } catch (UnsupportedEncodingException e) {
                 return new BaseMessage(6, "文件编码错误");
-            }catch (IOException e) {
+            }
+
+            try {
+                os = response.getOutputStream();
+                FileInputStream fs = new FileInputStream(file);
+
+                IoUtil.copy(fs, os);
+
+                IoUtil.close(os);
+                IoUtil.close(fs);
+                return new BaseMessage(1, "文件上传成功");
+            } catch (IOException e) {
                 return new BaseMessage(5, "文件io错误");
             }
         } else {
@@ -151,7 +157,10 @@ public class TemplateController {
         List<Template> res = templateService.getTemplate();
         PageInfo<Template> pageInfo = new PageInfo<>(res);
 
-        PageMessage pm = PageMessage.instance(pageInfo);
+        PageMessage pm = new PageMessage();
+        pm.setTotalPage(pageInfo.getPages());
+        pm.setTotal(pageInfo.getTotal());
+        pm.setNowPage(page);
         pm.setData(res);
 
         return pm;

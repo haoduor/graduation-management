@@ -32,7 +32,10 @@ public class AnnouncementController {
         PageInfo<Announcement> pages = new PageInfo<>(data);
         PageHelper.clearPage();
 
-        PageMessage pm = PageMessage.instance(pages);
+        PageMessage pm = new PageMessage();
+        pm.setTotal(pages.getTotal());
+        pm.setNowPage(pages.getPageNum());
+        pm.setTotalPage(pages.getPages());
         pm.setData(data);
 
         return pm;
