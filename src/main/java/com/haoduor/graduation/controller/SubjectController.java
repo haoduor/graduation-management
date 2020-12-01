@@ -128,6 +128,7 @@ public class SubjectController {
     public PageMessage list(@RequestParam(defaultValue = "1") int page,
                             @RequestParam(defaultValue = "30") int pageSize,
                             @RequestParam(required = false) String teacherId) {
+        // 开启分页
         PageHelper.startPage(page, pageSize);
         List<Subject> subs;
 
@@ -138,30 +139,36 @@ public class SubjectController {
             } catch (NumberFormatException e) {
                 return new PageMessage(2, "教师id格式化错误");
             }
-
-            PageHelper.startPage(page, pageSize);
+            // 根据教师id 获取选题
             subs = subjectService.getTeacherSubject(id);
         } else {
+            // 获取所有选题
             subs = subjectService.getSubject();
         }
 
         PageInfo<Subject> pages = new PageInfo<>(subs);
+        // 关闭分页
         PageHelper.clearPage();
 
+        // 封装分页 信息
         PageMessage pm = PageMessage.instance(pages);
+
+        // 连接课题 与 课题的标签
 
         List<SubjectVo> vos = new LinkedList<>();
         for (Subject s: subs) {
+            // 根据课题查询课题拥有的标签
             List<Tag> tags = tagService.getTagsBySubjectId(s.getId());
-
+            // 装换为页面封装类
             SubjectVo vo = ConvertUtil.convert(SubjectVo.class, s);
-
+            // 根据课题查询创建的教师
             Teacher t = teacherService.getTeacherById(s.getTeacherid());
 
             if (t != null) {
                 vo.setTeacherName(t.getName());
             }
 
+            // 设置数据
             vo.setTags(tags);
             vos.add(vo);
         }
@@ -178,7 +185,6 @@ public class SubjectController {
      */
     @PostMapping("/chose")
     @RequiresRoles("student")
-    @TimeLimit(periodName = "chose")
     public BaseMessage choseSubject(@RequestParam String subjectId, @RequestParam String studentId) {
         org.apache.shiro.subject.Subject currentUser = SecurityUtils.getSubject();
 

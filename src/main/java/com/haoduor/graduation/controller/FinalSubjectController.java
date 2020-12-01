@@ -165,6 +165,7 @@ public class FinalSubjectController {
     public PageMessage all(@RequestParam(defaultValue = "1") int page,
                            @RequestParam(defaultValue = "30") int pageSize) {
         PageHelper.startPage(page, pageSize);
+        // 获取所有的最终课题
         List<FinalSubject> finalSubjectList = finalSubjectService.getAllFinalChosen();
         PageInfo<FinalSubject> pages = new PageInfo<>(finalSubjectList);
         PageHelper.clearPage();

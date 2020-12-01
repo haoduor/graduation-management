@@ -1,6 +1,8 @@
 package com.haoduor.graduation.controller;
 
 import cn.hutool.bloomfilter.BitMapBloomFilter;
+import cn.hutool.core.lang.Validator;
+import cn.hutool.core.util.ReUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.haoduor.graduation.adapter.CommonAdapter;
@@ -74,7 +76,6 @@ public class TeacherController {
         } catch (NumberFormatException e) {
             return new BaseMessage(3, "格式化错误");
         }
-
         boolean res = teacherService.deleteTeacherById(_id);
         if (_id != -1 && res) {
             return new BaseMessage(1, "删除成功");
@@ -110,7 +111,7 @@ public class TeacherController {
      * @return
      */
     @PostMapping("/set")
-    public BaseMessage set(@RequestParam TeacherVo teacherVo) {
+    public BaseMessage set(@RequestBody TeacherVo teacherVo) {
         boolean res = teacherService.updateTeacherByVo(teacherVo);
 
         if (res) {

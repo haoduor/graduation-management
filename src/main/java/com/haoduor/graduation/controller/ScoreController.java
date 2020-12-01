@@ -28,6 +28,13 @@ public class ScoreController {
     @Autowired
     private UserUtil userUtil;
 
+    /**
+     * 设置学生课题的分数
+     * @param subjectId 课题id
+     * @param studentId 学生id
+     * @param score 分数 大于0 小于100
+     * @return
+     */
     @PostMapping("/set")
     @RequiresRoles(value = {"admin", "teacher"}, logical = Logical.OR)
     public BaseMessage set(@RequestParam String subjectId,
@@ -38,6 +45,7 @@ public class ScoreController {
         Long _subjectId;
         Long _studentId;
 
+        // 格式化id
         try {
             _subjectId = Long.parseLong(subjectId);
             _studentId = Long.parseLong(studentId);
@@ -45,14 +53,18 @@ public class ScoreController {
             return new BaseMessage(2, "格式化错误");
         }
 
+        // 判断登录用户必须为教师
         if (currentUser.hasRole("teacher")) {
             userUtil.cacheId(currentUser);
             Long teacherId = (Long) currentUser.getSession().getAttribute("id");
+
+            // 教师必须拥有该课题
             if (!subjectService.teacherHasSubject(teacherId, _subjectId)) {
                 return new BaseMessage(3, "只能评分自己的选题");
             }
         }
 
+        // 分数有效判断
         if (score < 0) {
             return new BaseMessage(4, "分数不能为负数");
         }
@@ -61,6 +73,7 @@ public class ScoreController {
             return new BaseMessage(5, "分数不能大于100");
         }
 
+        // 录入数据库并设置成绩
         if (finalSubjectService.setFinalSubjectScoreByStuId(_studentId, _subjectId, score)) {
             return new BaseMessage(1, "设置分数成功");
         } else {

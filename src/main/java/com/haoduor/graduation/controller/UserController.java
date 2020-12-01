@@ -78,12 +78,19 @@ public class UserController {
         }
     }
 
-    // 用户更改密码
+    /**
+     * 用户更改密码
+     * @param id 用户的id
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     * @return
+     */
     @ResponseBody
     @PostMapping("/repass")
     public BaseMessage resetPassword(@RequestParam String id,
                                      @RequestParam String oldPassword,
                                      @RequestParam String newPassword) {
+        // 判断传入参数是否为空
         if (StrUtil.isEmpty(oldPassword) || StrUtil.isEmpty(newPassword)) {
             return new BaseMessage(3, "参数不能为空");
         }
@@ -135,20 +142,25 @@ public class UserController {
     public DataMessage getUserInfo(@PathVariable String username) {
         Subject cu = SecurityUtils.getSubject();
         Session se = cu.getSession();
+
+        // 获取session 中的用户名
         String seUsername = (String) se.getAttribute("username");
         if (StrUtil.isEmpty(seUsername)) {
             return new DataMessage(2, "用户未登录");
         }
 
+        // 判断session 中的用户名 和 传入的用户名相同
         if (seUsername.equals(username) || cu.hasRole("admin")) {
             User user = userService.getUserByName(username);
             if (user == null) {
                 return new DataMessage(4, "用户名不存在");
             }
 
+            // 获取角色
             Role r = roleService.getRoleById(user.getRoleId());
             DataMessage dm = new DataMessage(1, "获取成功");
 
+            // 管理员信息返回
             if (r.getName().equals("admin")) {
                 Map<Object, Object> data = MapUtil.builder()
                                                   .put("username", user.getUsername())
@@ -159,21 +171,24 @@ public class UserController {
                 return dm;
             }
 
-
             if (!cu.hasRole("admin")) {
                 se.setAttribute("id", user.getId());
             }
 
+            // 映射学生和教师的信息
             Object tmpData = infoFactory.getDataByRoleAndId(r.getName(), user.getId());
 
+            // 获取系部的id
             JSONObject jo = (JSONObject) JSONObject.toJSON(tmpData);
             Long departmentId = (Long) jo.get("departmentId");
 
+            // 从数据库获取系部实例
             Department tmpD = departmentService.getDepartmentById(departmentId);
             if (tmpD == null) {
                 return new DataMessage(4, "数据库出错");
             }
 
+            // 设置系部名
             jo.put("departmentName", tmpD.getName());
             dm.setData(jo);
 

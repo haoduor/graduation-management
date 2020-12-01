@@ -73,11 +73,17 @@ public class ServerRunner implements CommandLineRunner {
 
         log.info("初始化用户库");
         List<User> students = userService.getUserByRole(student.getId());
-        students.forEach(s -> studentFilter.add(s.getUsername()));
+
+        for (User u: students) {
+            studentFilter.add(u.getUsername());
+        }
 
         log.info("初始化教师库");
         List<User> teachers = userService.getUserByRole(teacher.getId());
-        teachers.forEach(s -> teacherFilter.add(s.getUsername()));
+
+        for (User u: teachers) {
+            teacherFilter.add(u.getUsername());
+        }
 
         if (!userService.hasAdmin()) {
             log.info("添加初始化管理员");

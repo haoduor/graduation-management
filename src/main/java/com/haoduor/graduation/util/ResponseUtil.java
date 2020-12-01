@@ -37,15 +37,19 @@ public class ResponseUtil {
     public static void sendFile(HttpServletResponse response,
                                 String filename,
                                 File file) throws IOException {
+        // 设置文件下载头
         response.setHeader("content-type", "application/octet-stream");
         response.setContentType("application/octet-stream");
         response.setHeader("Content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "UTF-8"));
 
+        // 获取文件输出流
         OutputStream os = response.getOutputStream();
         FileInputStream fs = new FileInputStream(file);
 
+        // 发送文件
         IoUtil.copy(fs, os);
 
+        // 关闭流
         IoUtil.close(os);
         IoUtil.close(fs);
     }

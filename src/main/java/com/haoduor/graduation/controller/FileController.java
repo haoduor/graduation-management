@@ -59,6 +59,7 @@ public class FileController {
 
         Long _studentId;
         Long _subjectId;
+        // 格式化id
         try {
             _studentId = Long.parseLong(studentId);
             _subjectId = Long.parseLong(subjectId);
@@ -70,6 +71,7 @@ public class FileController {
             return new BaseMessage(3, "不能为其他人上传文件");
         }
 
+        // 判断学生拥有该 最终选题
         if (!finalSubjectService.ownFinalSubject(_studentId, _subjectId)) {
             return new BaseMessage(7, "学生不拥有最终选题");
         }
@@ -171,16 +173,19 @@ public class FileController {
             return new BaseMessage(2, "格式化错误");
         }
 
+        // 判断 用户是否删除的是自己的文件
         if (currentUser.hasRole("student")) {
             if(!userUtil.isMe(_studentId, currentUser)) {
                 return new BaseMessage(4, "不能删除其他学生的文件");
             }
         }
 
+        // 判断 文件是否存在与数据库中
         if (!uploadFileService.hasUploadFile(_studentId, _fileId)) {
             return new BaseMessage(3, "文件不存在");
         }
 
+        // 删除数据库中的记录
         if (uploadFileService.deleteUploadFile(_studentId, _fileId)) {
             return new BaseMessage(1, "删除成功");
         } else {

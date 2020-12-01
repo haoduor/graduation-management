@@ -1493,10 +1493,11 @@
                 //切换页面刷新
                 refreshTables(nowPage,totalData,pageSize,rule){
                     console.log(pageSize)
+                    //设置本地数据
                     staticValue.getThat().$set(staticValue.getThat().pageInfo,'nowPage',nowPage);
                     staticValue.getThat().$set(staticValue.getThat().pageInfo,'pageSize', pageSize);
                     staticValue.getThat().$set(staticValue.getThat().pageInfo,'totalData',parseInt(totalData));
-                    staticValue.setPageNumber(nowPage);
+                    staticValue.setPageNumber(nowPage);//设置当前页面
                     this.refreshTableItems(rule);
                 },
                 //换页
