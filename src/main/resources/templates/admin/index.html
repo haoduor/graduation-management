@@ -592,7 +592,10 @@
                             let noticeData = await tools.getAxiosData(`/announcement/list`);
                             noticeData['data']['data'].forEach((items,index)=>{
                                 if(items['id'] === data){
-                                    tools.$('#noticeContent').value = items['content'];
+                                    // noticeEdit:{
+                                    //     noticeContent:''
+                                    // },
+                                    staticValue.getEditMainThis().$set(staticValue.getEditMainThis()['noticeEdit'],'noticeContent',items['content']);
                                     tools.inputIsNull('#noticeContent','blur');//判空校验
                                     staticValue.setChoseId(items['id']);
                                 }
@@ -1168,7 +1171,7 @@
                                 if(userData['data']['id'] == 1) {
                                     let pwdData = staticValue.getEditMainThis()['changeAdminPwd'];
                                     let postData = {
-                                        id: userData['data']['data']['userId'],
+                                        id: userData['data']['data']['id'],
                                         oldPassword: pwdData['oldPwd'],
                                         newPassword: pwdData['newPed']
                                     };
@@ -1176,8 +1179,8 @@
                                         let id = val['data']['id'];
                                         if (id == '1') {
                                             staticValue.getEditMainThis().$message.success('更改密码成功');
-                                            staticValue.getEditMainThis().$set(staticValue.getEditMainThis().changePwd, 'oldPwd', '');
-                                            staticValue.getEditMainThis().$set(staticValue.getEditMainThis().changePwd, 'newPwd', '');
+                                            staticValue.getEditMainThis().$set(staticValue.getEditMainThis().changeAdminPwd, 'oldPwd', '');
+                                            staticValue.getEditMainThis().$set(staticValue.getEditMainThis().changeAdminPwd, 'newPwd', '');
                                         } else {
                                             staticValue.getEditMainThis().$message.error(val['data']['message']);
                                         }
