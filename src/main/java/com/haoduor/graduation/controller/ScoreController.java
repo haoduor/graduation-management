@@ -3,6 +3,7 @@ package com.haoduor.graduation.controller;
 import com.haoduor.graduation.model.FinalSubject;
 import com.haoduor.graduation.service.FinalSubjectService;
 import com.haoduor.graduation.service.SubjectService;
+import com.haoduor.graduation.service.UploadFileService;
 import com.haoduor.graduation.util.UserUtil;
 import com.haoduor.graduation.vo.BaseMessage;
 import org.apache.shiro.SecurityUtils;
@@ -24,6 +25,9 @@ public class ScoreController {
 
     @Autowired
     private FinalSubjectService finalSubjectService;
+
+    @Autowired
+    private UploadFileService uploadFileService;
 
     @Autowired
     private UserUtil userUtil;
@@ -62,6 +66,11 @@ public class ScoreController {
             if (!subjectService.teacherHasSubject(teacherId, _subjectId)) {
                 return new BaseMessage(3, "只能评分自己的选题");
             }
+        }
+
+        // 学生必须上传了文件才能评分
+        if (uploadFileService.countUploadFileByStuId(_studentId) == 0) {
+            return new BaseMessage(7, "必须有上传文件才可评分");
         }
 
         // 分数有效判断

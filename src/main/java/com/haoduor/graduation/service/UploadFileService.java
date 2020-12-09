@@ -10,6 +10,7 @@ public interface UploadFileService {
     public boolean addUploadFile(File f, String filename, String sha256, long studentId, long subjectId);
     public boolean addUploadFile(int size, String filename, String sha256, long studentId, long subjectId);
     public UploadFile buildModel(int size, String filename, String sha256, long studentId, long subjectId);
+    public int countUploadFileByStuId(long studentId);
     public boolean hasUploadFile(long studentId, long fileId);
     public UploadFile getFileBySha256(String sha256);
     public UploadFile getFileById(long id);

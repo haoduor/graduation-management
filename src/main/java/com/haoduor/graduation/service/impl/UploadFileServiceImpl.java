@@ -57,6 +57,15 @@ public class UploadFileServiceImpl implements UploadFileService {
     }
 
     @Override
+    public int countUploadFileByStuId(long studentId) {
+        UploadFileExample ufe = new UploadFileExample();
+        ufe.createCriteria()
+           .andStudentIdEqualTo(studentId);
+
+        return uploadFileMapper.countByExample(ufe);
+    }
+
+    @Override
     public boolean hasUploadFile(long studentId, long fileId) {
         UploadFileExample ufe = new UploadFileExample();
         ufe.createCriteria()
