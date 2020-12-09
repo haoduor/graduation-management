@@ -44,7 +44,7 @@
                         <span slot="title">已选课题</span>
                     </el-menu-item>
                     <el-menu-item index="6">
-                        <i class="el-icon-document-checked"></i>
+                        <i class="el-icon-s-claim"></i>
                         <span slot="title">我的最终选题</span>
                     </el-menu-item>
                     <el-menu-item index="5">
@@ -452,7 +452,9 @@
                 //下载模板文件
                 downLoadFile(sha256){
                     axios.get(`/template/download/${sha256}`).then(val=>{
-                        tools.jump(`/template/download/${sha256}`);
+
+                            tools.jump(`/template/download/${sha256}`);
+
                     }).catch(err=>{
                         console.log(err);
                         this.$message.error('网络错误');

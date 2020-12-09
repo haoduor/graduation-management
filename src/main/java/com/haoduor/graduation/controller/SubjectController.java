@@ -183,6 +183,7 @@ public class SubjectController {
      * @param studentId 学生的id
      * @return
      */
+    @TimeLimit(periodName = "chose")
     @PostMapping("/chose")
     @RequiresRoles("student")
     public BaseMessage choseSubject(@RequestParam String subjectId, @RequestParam String studentId) {

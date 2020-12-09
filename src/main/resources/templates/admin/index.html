@@ -56,12 +56,8 @@
                     <span slot="title">模板文件管理</span>
                 </el-menu-item>
                 <el-menu-item index="10">
-                    <i class="el-icon-user"></i>
+                    <i class="el-icon-s-unfold"></i>
                     <span slot="title">最终选题学生列表</span>
-                </el-menu-item>
-                <el-menu-item index="8">
-                    <i class="el-icon-date"></i>
-                    <span slot="title">毕业设计流程日期管理</span>
                 </el-menu-item>
                 <el-menu-item index="11">
                     <i class="el-icon-s-operation"></i>
@@ -403,25 +399,7 @@
                             this.refreshTables(1,templateData['data']['total'],8);
                         });
                     }
-                    //时间管理
-                    if(key == 8){
-                        tools.setTimeOutP(300, async () => {
-                            tools.$('#mainContent').style.opacity = '0';
-                            tools.$('#pagination').style.display = 'none';//翻页隐藏
-                        }).then(async val => {
-                            await tools.setPage('listTool', '/view/listTool/listTool.html', {
-                                title: '毕业设计流程日期管理',
-                                addBtn:'none'
-                            });
-                            await tools.setPage('mainContent', '/view/data/periodTable.html');
-                            let periodData = await tools.getAxiosData('/period/list');
-                            tools.$('#tableDate').innerHTML = await tableModel.getPeriodTableData(periodData['data']['data']);
-                            new app().$mount("#mainContent");
-                            new app().$mount("#listTool");
-                            tools.$('#mainContent').style.opacity = '1';
-                            this.refreshTables(1,1,1);
-                        });
-                    }
+
                     //最终选题学生列表
                     if(key == 10){
                         tools.setTimeOutP(300, async () => {

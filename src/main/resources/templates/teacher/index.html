@@ -42,15 +42,15 @@
                     <span slot="title">拥有的选题</span>
                 </el-menu-item>
                 <el-menu-item index="5">
-                    <i class="el-icon-s-custom"></i>
+                    <i class="el-icon-s-order"></i>
                     <span slot="title">学生选题审核</span>
                 </el-menu-item>
                 <el-menu-item index="3">
-                    <i class="el-icon-s-custom"></i>
+                    <i class="el-icon-s-unfold"></i>
                     <span slot="title">我的学生</span>
                 </el-menu-item>
                 <el-menu-item index="6">
-                    <i class="el-icon-s-custom"></i>
+                    <i class="el-icon-download"></i>
                     <span slot="title">模板文件下载</span>
                 </el-menu-item>
                 <el-menu-item index="4">
@@ -609,7 +609,9 @@
                 //下载模板文件
                 downLoadFile(sha256){
                     axios.get(`/template/download/${sha256}`).then(val=>{
-                        tools.jump(`/template/download/${sha256}`);
+
+                            tools.jump(`/template/download/${sha256}`);
+
                     }).catch(err=>{
                         console.log(err);
                         this.$message.error('网络错误');
