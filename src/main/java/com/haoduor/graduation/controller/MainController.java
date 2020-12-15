@@ -52,7 +52,6 @@ public class MainController {
      * 用户登录接口
      * @param username 用户名 学生 使用 学号  教师 使用 工号
      * @param password 密码
-     * @param code 验证码
      * @return
      */
     @ResponseBody
@@ -66,7 +65,7 @@ public class MainController {
             return new BaseMessage(-1, "用户已登陆");
         }
 
-        // 用户名与密码有效性校验
+        // 用户名与密码有效性校验 检验用户名和密码不能为空
         if (!StrUtil.isEmpty(username) && !StrUtil.isEmpty(password)) {
             try {
                 // shiro 用户登录

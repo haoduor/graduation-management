@@ -154,7 +154,6 @@ public class SubjectController {
         PageMessage pm = PageMessage.instance(pages);
 
         // 连接课题 与 课题的标签
-
         List<SubjectVo> vos = new LinkedList<>();
         for (Subject s: subs) {
             // 根据课题查询课题拥有的标签
@@ -183,7 +182,6 @@ public class SubjectController {
      * @param studentId 学生的id
      * @return
      */
-    @TimeLimit(periodName = "chose")
     @PostMapping("/chose")
     @RequiresRoles("student")
     public BaseMessage choseSubject(@RequestParam String subjectId, @RequestParam String studentId) {

@@ -92,8 +92,10 @@ public class StudentController {
      */
     @PostMapping("/add")
     public BaseMessage add(@RequestBody StudentVo vo) {
+        // 字段不能为空
         if (vo != null) {
             String id = vo.getStudentId();
+            //判断学号是否重复
             if (studentFilter.contains(id)) {
                 return new BaseMessage(5, "学号重复");
             }

@@ -18,10 +18,13 @@ public class SubjectAdapter {
     private SubjectAdapter(){}
 
     public static SubjectDto SubjectFormToDto(SubjectForm form) throws NumberFormatException{
+        // 将数据映射为json
         String json = JSONObject.toJSONString(form);
 
+        // json 重新映射入实体类
         SubjectDto dto = JSON.parseObject(json, SubjectDto.class);
 
+        // long类型 需要单独格式化设置 类库无法实现
         dto.setTeacherId(Long.parseLong(form.getTeacherId()));
 
         return dto;

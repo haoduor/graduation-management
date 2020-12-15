@@ -20,6 +20,7 @@ public class UserRealm extends AuthorizingRealm {
     @Autowired
     private RoleService roleService;
 
+    // 赋予用户权限
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
         String username = (String)principals.getPrimaryPrincipal();
@@ -39,7 +40,7 @@ public class UserRealm extends AuthorizingRealm {
     }
 
     /**
-     * 登录之后 执行验证
+     * 登录验证
      * @param token 用户令牌
      * @return
      * @throws AuthenticationException
@@ -58,7 +59,9 @@ public class UserRealm extends AuthorizingRealm {
             throw new UnknownAccountException();
         }
 
+        // 获取用户输入的密码
         String pass = new String(t.getPassword());
+        // 获取数据库中的密码盐
         String salt = dbuser.getSalt();
 
         // 设置加密的密码
