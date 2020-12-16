@@ -156,8 +156,7 @@ public class SubjectController {
         // 连接课题 与 课题的标签
         List<SubjectVo> vos = new LinkedList<>();
         for (Subject s: subs) {
-            // 根据课题查询课题拥有的标签
-            List<Tag> tags = tagService.getTagsBySubjectId(s.getId());
+
             // 装换为页面封装类
             SubjectVo vo = ConvertUtil.convert(SubjectVo.class, s);
             // 根据课题查询创建的教师
@@ -167,8 +166,6 @@ public class SubjectController {
                 vo.setTeacherName(t.getName());
             }
 
-            // 设置数据
-            vo.setTags(tags);
             vos.add(vo);
         }
 

@@ -53,20 +53,6 @@ public class SubjectServiceImpl implements SubjectService {
             return false;
         }
 
-        List<Tag> tags = new LinkedList<>();
-        for (String t: subjectDto.getTags()) {
-            tags.add(tagService.getOrAddTagByName(t));
-        }
-        List<SubjectToTag> stt = SubjectAdapter.tagToSubjecttoTag(tags, s.getId());
-
-        for (SubjectToTag st : stt) {
-            int t = subjectToTagMapper.insert(st);
-
-            if (t != 1) {
-                return false;
-            }
-        }
-
         return true;
     }
 
