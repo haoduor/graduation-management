@@ -58,33 +58,21 @@ const tableModel = (() =>{
             return new Promise((resolve,reject)=> {
                 data.forEach((items, index) => {
                     let dataDifficulty = items['difficult'] == '0'?'容易':items['difficult'] == '1'?'普通':items['difficult'] == '2'?'困难':'?';//难度
-                    let dataTime =tools.dateFormat(new Date(parseInt(items['createTime'])),'yyyy-MM-dd hh:mm:ss');//时间
-                    let dataTag = ``;//标签
-                    items['tags'].forEach((items, index)=>{
-                        dataTag += `
-                            <div class="nmTag">${items['name']}</div>
-                        `;
-                    });
+
 
                     let dataColumn = `
                     <div class="dateColumn">
                         <p class="nmDate">${items['title']}</p>
-                        <p class="nmDate">${items['source']}</p>
                         <p class="nmDate">${items['content']}</p>
                         <p class="nmDate">${dataDifficulty}</p>
-                        <p class="nmDate">${dataTime}</p>
-                        <div class="nmDate" 
-                        style="display: flex;
-                        flex-flow: row wrap;
-                        justify-content: center;">${dataTag}</div>
-                        <p class="nmDate">${items['teacherName']}</p>                        
+                        <p class="nmDate">${items['teacherName']}</p>                                
+                        <p class="nmDate">${items['source']}</p>                
                         <div class="staticDate" 
                         style="display: flex;
                         flex-flow: row wrap;
                         justify-content: center;
                         width: 200px;">
                             <el-button @click="showEdit('${items['id']}',1)" type="text" icon="el-icon-edit">编辑选题</el-button>
-                            <el-button @click="showEdit('${items['id']}',2)" type="text" icon="el-icon-edit">编辑标签</el-button>
                             <el-button @click="deleteList('${items['id']}')" type="text" icon="el-icon-delete">删除</el-button>
                         </div>
                      </div>
@@ -141,6 +129,7 @@ const tableModel = (() =>{
                         <div class="staticDate">
                             <el-button @click="deleteList('${items['sha256']}')" type="text" icon="el-icon-delete">删除</el-button>
                             <el-button @click="downLoadFile('${items['sha256']}')" type="text" icon="el-icon-download">下载</el-button>
+                            <el-button @click="downLoadFile('${items['sha256']}')" type="text" icon="el-icon-download">下载</el-button>
                         </div>
                      </div>
                     `;
@@ -188,6 +177,7 @@ const tableModel = (() =>{
                     let dataDifficulty = items['difficult'] == '0'?'容易':items['difficult'] == '1'?'普通':items['difficult'] == '2'?'困难':'?';//难度
                     let score = items['score'] == '-1'?'未评分':items['score'];
                     let fileList = '';//文件列表
+                    let isOk = false;
                     if(items['uploadFileList'] != ''){
                         items['uploadFileList'].forEach(items=>{
                             fileList += `
@@ -200,6 +190,7 @@ const tableModel = (() =>{
                         });
                     }else{
                         fileList = '无';
+                        isOk = true;
                     }
 
                     let dataColumn = `
@@ -208,7 +199,7 @@ const tableModel = (() =>{
                         <div class="nmDate InnerBox">
                             <p class="nmInnerData"><span>指导教师：</span>${items['teacherName']}</p>
                             <p class="nmInnerData"><span>选题标题：</span>${items['title']}</p>
-                            <p class="nmInnerData"><span>选题来源：</span>${items['source']}</p>
+                            <p class="nmInnerData"><span>选题类型：</span>${items['source']}</p>
                             <p class="nmInnerData"><span>选题难度：</span>${dataDifficulty}</p>
                             <p class="nmInnerData"><span>选择时间：</span>${dataTime}</p>
                         </div>
@@ -218,7 +209,7 @@ const tableModel = (() =>{
                         </div>
                         <p class="nmDate stressData">${score}</p>   
                          <div class="staticDate" style="width:10rem">
-                            <el-button @click="showEdit({studentId:'${items['studentId'].toString()}',subjectId:'${items['id'].toString()}'})" type="text" icon="el-icon-edit">评分</el-button>
+                            <el-button @click="showEdit({studentId:'${items['studentId'].toString()}',subjectId:'${items['id'].toString()}'})" type="text" :disabled="${isOk}" icon="el-icon-edit">评分</el-button>
                         </div>                   
                      </div>
                     `;
@@ -284,17 +275,9 @@ const tableModel = (() =>{
             return new Promise((resolve,reject)=> {
                 data.forEach((items, index) => {
                     let dataDifficulty = items['difficult'] == '0'?'容易':items['difficult'] == '1'?'普通':items['difficult'] == '2'?'困难':'?';//难度
-                    let dataTime =tools.dateFormat(new Date(parseInt(items['createTime'])),'yyyy-MM-dd hh:mm:ss');//时间
-                    let dataTag = ``;//标签
-                    items['tags'].forEach((items, index)=>{
-                        dataTag += `
-                            <div class="nmTag">${items['name']}</div>
-                        `;
-                    });
                     //是否选中
                     let choseBtn = `<el-button @click="showEdit('${items['id']}')" type="text" icon="el-icon-s-order">选择课题</el-button>`;
                     choseId.forEach(id=>{
-
                         if(items['id'] == id){
                             choseBtn = `<el-button @click="showEdit('${items['id']}')" type="text" disabled icon="el-icon-s-order">选择课题</el-button>`;
                             return;
@@ -303,15 +286,10 @@ const tableModel = (() =>{
                     let dataColumn = `
                     <div class="dateColumn">
                         <p class="nmDate">${items['title']}</p>
-                        <p class="nmDate">${items['source']}</p>
                         <p class="nmDate">${items['content']}</p>
                         <p class="nmDate">${dataDifficulty}</p>
-                        <p class="nmDate">${dataTime}</p>
-                        <div class="nmDate" 
-                        style="display: flex;
-                        flex-flow: row wrap;
-                        justify-content: center;">${dataTag}</div>
-                        <p class="nmDate">${items['teacherName']}</p>                        
+                        <p class="nmDate">${items['teacherName']}</p>                              
+                        <p class="nmDate">${items['source']}</p>                  
                         <div class="staticDate" 
                         style="display: flex;
                         flex-flow: row wrap;
@@ -336,23 +314,14 @@ const tableModel = (() =>{
             return new Promise((resolve,reject)=> {
                 data.forEach((items, index) => {
                     let dataDifficulty = items['difficult'] == '0'?'容易':items['difficult'] == '1'?'普通':items['difficult'] == '2'?'困难':'?';//难度
-                    let dataTag = ``;//标签
-                    items['tags'].forEach((items, index)=>{
-                        dataTag += `
-                            <div class="nmTag">${items['name']}</div>
-                        `;
-                    });
+
 
                     let dataColumn = `
                     <div class="dateColumn">
                         <p class="nmDate">${items['title']}</p>
-                        <p class="nmDate">${items['source']}</p>
                         <p class="nmDate">${items['content']}</p>
                         <p class="nmDate">${dataDifficulty}</p>
-                        <div class="nmDate" 
-                        style="display: flex;
-                        flex-flow: row wrap;
-                        justify-content: center;">${dataTag}</div>
+                        <p class="nmDate">${items['source']}</p>
                         <p class="nmDate">${items['teacherName']}</p>                     
                      </div>
                     `;
@@ -395,31 +364,19 @@ const tableModel = (() =>{
             return new Promise((resolve,reject)=> {
                 data.forEach((items, index) => {
                     let dataDifficulty = items['difficult'] == '0'?'容易':items['difficult'] == '1'?'普通':items['difficult'] == '2'?'困难':'?';//难度
-                    let dataTime =tools.dateFormat(new Date(parseInt(items['createTime'])),'yyyy-MM-dd hh:mm:ss');//时间
-                    let dataTag = ``;//标签
-                    items['tags'].forEach((items, index)=>{
-                        dataTag += `
-                            <div class="nmTag">${items['name']}</div>
-                        `;
-                    });
+
                     let dataColumn = `
                     <div class="dateColumn">
                         <p class="nmDate">${items['title']}</p>
-                        <p class="nmDate">${items['source']}</p>
                         <p class="nmDate">${items['content']}</p>
-                        <p class="nmDate">${dataDifficulty}</p>
-                        <p class="nmDate">${dataTime}</p>
-                        <div class="nmDate" 
-                        style="display: flex;
-                        flex-flow: row wrap;
-                        justify-content: center;">${dataTag}</div>                  
+                        <p class="nmDate">${dataDifficulty}</p>                           
+                        <p class="nmDate">${items['source']}</p>         
                         <div class="staticDate" 
                         style="display: flex;
                         flex-flow: row wrap;
                         justify-content: center;
                         width: 200px;">
                             <el-button @click="showEdit('${items['id']}',1)" type="text" icon="el-icon-edit">编辑选题</el-button>
-                            <el-button @click="showEdit('${items['id']}',2)" type="text" icon="el-icon-edit">编辑标签</el-button>
                             <el-button @click="deleteList('${items['id']}')" type="text" icon="el-icon-delete">删除</el-button>
                         </div>
                      </div>
@@ -439,23 +396,14 @@ const tableModel = (() =>{
             return new Promise((resolve,reject)=> {
                 data.forEach((items, index) => {
                     let dataDifficulty = items['difficult'] == '0'?'容易':items['difficult'] == '1'?'普通':items['difficult'] == '2'?'困难':'?';//难度
-                    let dataTime =tools.dateFormat(new Date(parseInt(items['createTime'])),'yyyy-MM-dd hh:mm:ss');//时间
-                    let dataTag = ``;//标签
-                    items['tags'].forEach((items, index)=>{
-                        dataTag += `
-                            <div class="nmTag">${items['name']}</div>
-                        `;
-                    });
+
                     let dataColumn = `
                     <div class="dateColumn">
                         <p class="nmDate">${items['title']}</p>
-                        <p class="nmDate">${items['source']}</p>
                         <p class="nmDate">${items['content']}</p>
                         <p class="nmDate">${dataDifficulty}</p>
-                        <div class="nmDate" 
-                        style="display: flex;
-                        flex-flow: row wrap;
-                        justify-content: center;">${dataTag}</div>      
+                        
+                        <p class="nmDate">${items['source']}</p>
                          <p class="nmDate">${items['studentName']}</p>            
                         <div class="staticDate" 
                         style="display: flex;
@@ -503,7 +451,7 @@ const tableModel = (() =>{
                         <p class="nmDate">${items['studentName']}</p>
                         <div class="nmDate InnerBox">
                             <p class="nmInnerData"><span>选题标题：</span>${items['title']}</p>
-                            <p class="nmInnerData"><span>选题来源：</span>${items['source']}</p>
+                            <p class="nmInnerData"><span>选题类型：</span>${items['source']}</p>
                             <p class="nmInnerData"><span>选题难度：</span>${dataDifficulty}</p>
                             <p class="nmInnerData"><span>选择时间：</span>${dataTime}</p>
                         </div>

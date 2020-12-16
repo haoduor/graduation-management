@@ -16,6 +16,7 @@
 
 <body class="loginBk">
     <div id="app">
+
         <div class="loginBody">
 <!--            登录表单-->
             <div id="loginForm" class="loginForm"></div>
@@ -38,7 +39,7 @@
         // 设置登录页背景图片
         //document.getElementById
         tools.$('.loginBk').style.background = `url(/image/Sola.png)`;
-        //初始化公告
+        //初始化公告FFF
         let noticeData = await tools.getAxiosData('/announcement/list');
         //将数据绑定到公告页面上
         tools.$('#msgBody').innerHTML = await tableModel.getLoginNoticeData(noticeData['data']['data']);

@@ -573,7 +573,7 @@
                                     // noticeEdit:{
                                     //     noticeContent:''
                                     // },
-                                    staticValue.getEditMainThis().$set(staticValue.getEditMainThis()['noticeEdit'],'noticeContent',items['content']);
+                                    staticValue.getEditMainThis().$set(staticValue.getEditMainThis()['noticeEdit'],'noticeContent',items['content']);   
                                     tools.inputIsNull('#noticeContent','blur');//判空校验
                                     staticValue.setChoseId(items['id']);
                                 }
@@ -891,12 +891,6 @@
                 topicAddForm(formName){
                     this.$refs[formName].validate((valid) => {
                         if (valid) {
-                            // private String       title;
-                            // private String       content;
-                            // private String       teacherId;
-                            // private int          difficult;
-                            // private String       source;
-                            // private List<String> tags;
                             let tipArr = [];//所有的标签
                             console.log(staticValue.getThat().topicAdd.topicTags);
                             for(let key in staticValue.getThat().topicAdd.topicTags)
@@ -1112,7 +1106,7 @@
                                 let userData =  await tools.getAxiosData(`/user/info/${ staticValue.getMainContentThis()['changeUserPwd']['userId']}`);
                                 if(userData['data']['id'] == 1){
                                     let postData = {
-                                        id : userData['data']['data']['userId'],
+                                        id :    userData['data']['data']['userId'],
                                         password : staticValue.getMainContentThis()['changeUserPwd']['newPwd'],
                                     }
                                     console.log(postData);

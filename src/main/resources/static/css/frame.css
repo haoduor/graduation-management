@@ -26,14 +26,11 @@
 .adminNav .userInformation p{
     
     padding: 0.75rem 0.5rem;
-    border-bottom: 1px solid white;
     color: white;
     transition: all 0.3s;
 }
 
-.adminNav .userInformation p:hover{
-    border-bottom: 1px solid rgba(0,0,0,0.1);
-}
+
 .adminNav .userInformation .userLoginOut{
     margin: 0px 1rem;
 }

@@ -12,16 +12,8 @@
             <el-option label="困难" value="2"></el-option>
         </el-select>
     </el-form-item>
-    <el-form-item prop="topicSource" label="选题来源:" label-position="left">
+    <el-form-item prop="topicSource" label="选题类型:" label-position="left">
         <el-input id="topicSource" v-model="topicAdd.topicSource" clearable></el-input>
-    </el-form-item>
-    <el-form-item prop="topicOneTag" style="position: relative;width: calc(100% - 56px)" label="选题标签:" label-position="left">
-        <el-input maxlength="10" show-word-limit id="topicOneTag" v-model="topicAdd.topicOneTag"></el-input>
-        <el-button type="primary"style="position: absolute;right: -56px" @click="addTags('topicTags','topicAdd')" icon="el-icon-plus"></el-button>
-    </el-form-item>
-    <el-form-item style="margin-bottom: 2rem" prop="topicTags" label="当前标签:" label-position="left">
-        <div id="topicTags" class="tagBox">
-        </div>
     </el-form-item>
 
     <el-form-item>
